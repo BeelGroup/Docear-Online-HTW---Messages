@@ -5,9 +5,9 @@
 1. checkout the project
 1. go to the project folder with the console
     * check: `dir` (or `ls` on UNIX) should show you the folders app, conf, project and some more
-1. then enter the command `run` or `run.bat`, this may take a while the first time because it downloads a lot of JARs, you my even think that it hangs
+1. then enter the command `run` or `run.bat`, this may take a while the first time because it downloads a lot of JARs, you may even think that it hangs
 1. you can view the application in the browser after it printed something like `play - Listening for HTTP on port 9000...`
 1. open http://localhost:9000 
-
+1. use Ctrl + D or Ctrl + C to stop the application
 
 
