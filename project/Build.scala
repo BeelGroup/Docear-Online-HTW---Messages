@@ -1,6 +1,6 @@
 import sbt._
-import Keys._
-import PlayProject._
+import sbt.Keys._
+import sbt.PlayProject._
 
 object ApplicationBuild extends Build {
 
@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
-      // Add your own project settings here
+      coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
     )
 
 }
