@@ -10,4 +10,13 @@
 1. open [http://localhost:9000](http://localhost:9000) in your browser
 1. use Ctrl + D or Ctrl + C to stop the application
 
-
+# Programming
+* Play Documentation: http://www.playframework.org/documentation/2.0.4/Home
+    * Java Developing: http://www.playframework.org/documentation/2.0.4/JavaHome
+    * Java API: http://www.playframework.org/documentation/api/2.0.4/java/index.html
+* Generate IDE Project Files
+      * `sbt eclipsify` #Eclipse
+      * `sbt idea` #IntelliJ IDEA
+      * Netbeans: http://www.playframework.org/documentation/2.0.4/IDE
+* run unit tests: `sbt test`
+      
