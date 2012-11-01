@@ -24,4 +24,4 @@
 * run unit tests in batch mode: `sbt test`
 * run QUnit tests in Browser [http://localhost:9000/qunit](http://localhost:9000/qunit)
 * Writing QUnit tests:
-     * currently: add a coffee file in app/assets/javascripts/test and add it to /home/michael/Dropbox/imi/Docear/HTW-Frontend/app/views/qunit/test.scala.html as JavaScript link
+     * currently: add a coffee file in app/assets/javascripts/test and add it to app/views/qunit/test.scala.html as JavaScript link
