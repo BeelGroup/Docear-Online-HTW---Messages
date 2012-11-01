@@ -18,5 +18,7 @@
       * `sbt eclipsify` #Eclipse
       * `sbt idea` #IntelliJ IDEA
       * Netbeans: http://www.playframework.org/documentation/2.0.4/IDE
-* run unit tests: `sbt test`
-      
+* run unit tests in batch mode: `sbt test`
+* run QUnit tests in Browser [http://localhost:9000/qunit](http://localhost:9000/qunit)
+* Writing QUnit tests:
+     * currently: add a coffee file in app/assets/javascripts/test and add it to /home/michael/Dropbox/imi/Docear/HTW-Frontend/app/views/qunit/test.scala.html as JavaScript link
