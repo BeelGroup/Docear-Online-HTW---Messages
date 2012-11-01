@@ -15,8 +15,6 @@ _dump
 *.ear
 *.emergency
 /gen
-!.gitignore
-!gradle-wrapper.jar
 *.iml
 *.ipr
 *.iws
@@ -43,3 +41,6 @@ tm*.lck
 tmp
 *.tmp
 *.war
+!.gitignore
+!gradle-wrapper.jar
+!sbtwrapper/sbt-launch.jar
