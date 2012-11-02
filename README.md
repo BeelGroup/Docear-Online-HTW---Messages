@@ -25,3 +25,7 @@
 * run QUnit tests in Browser [http://localhost:9000/qunit](http://localhost:9000/qunit)
 * Writing QUnit tests:
      * currently: add a coffee file in app/assets/javascripts/test and add it to app/views/qunit/test.scala.html as JavaScript link
+
+# Links
+## CoffeeScript
+* http://autotelicum.github.com/Smooth-CoffeeScript/interactive/interactive-coffeescript.html
