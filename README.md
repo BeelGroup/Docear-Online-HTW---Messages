@@ -26,6 +26,15 @@
 * Writing QUnit tests:
      * currently: add a coffee file in app/assets/javascripts/test and add it to app/views/qunit/test.scala.html as JavaScript link
 
+# Deployment
+## Heroku
+## Tomcat
+1. `sbt war`
+1. rename the war file to ROOT.war
+1. put ROOT.war in tomcat/webapps
+1. start Tomcat
+
+
 # Links
 ## CoffeeScript
 * http://autotelicum.github.com/Smooth-CoffeeScript/interactive/interactive-coffeescript.html
