@@ -28,6 +28,12 @@
 
 # Deployment
 ## Heroku
+1. get invitation for collaboration from Michael Schleichardt with your e-mail adress
+1. install the heroku toolbelt: https://toolbelt.herokuapp.com/
+1. checkout the project from github
+1. git remote add heroku git@heroku.com:desolate-wildwood-9229.git
+1. git push heroku # deploys into the cloud, may take a while
+
 ## Tomcat
 1. `sbt war`
 1. rename the war file to ROOT.war
