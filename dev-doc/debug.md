@@ -2,4 +2,4 @@ If you use sbt.bat or run.bat in the project the server side should be ready to 
 
 To setup eclipse:
 
-![Eclipse Settings for Debugging](images/debug/eclipse-configuration.png "Eclipse Settings for Debugging")
+![Eclipse Settings for Debugging](raw/images/debug/eclipse-configuration.png "Eclipse Settings for Debugging")
