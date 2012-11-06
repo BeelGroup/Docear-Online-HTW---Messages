@@ -27,7 +27,7 @@
      * currently: add a coffee file in app/assets/javascripts/test and add it to app/views/qunit/test.scala.html as JavaScript link
 * don't use CSS directly, use [less](http://lesscss.org/) in the folder app/assets/stylesheets
 * don't use JavaScript directly, use [CoffeeScript](http://coffeescript.org/) in the folder app/assets/javascripts
-* [Debugging](dev-doc/debug.md)
+* [Debugging](https://github.com/Docear/HTW-Frontend/blob/master/dev-doc/debug.md)
 
 # Deployment
 ## Heroku
