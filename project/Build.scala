@@ -18,7 +18,8 @@ object ApplicationBuild extends Build {
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
       , resolvers += "schleichardts Github" at "http://schleichardt.github.com/jvmrepo/"
-      ,  Play2WarKeys.servletVersion := "3.0"
+      , Play2WarKeys.servletVersion := "3.0"
+      , templatesImport += "views.TemplateUtil._"
     ).settings(Play2WarPlugin.play2WarSettings: _*)
 
 }
