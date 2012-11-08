@@ -1,8 +1,11 @@
 @(message: String)
 
-@main("Welcome to Docear") {
-    <p class="docear-test">@i("welcome", "user")</p>
+@main("Mindmap") {
+<p class="docear-test">@i("welcome", "user")</p>
+
+<div id="mindmap">
+    <!-- insert mindmap here -->
+</div>
 
 <pre>@examples.JsonDeserialization.serializedMindMap</pre>
-
 }
