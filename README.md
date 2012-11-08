@@ -1,6 +1,6 @@
 # Demo
 * http://desolate-wildwood-9229.herokuapp.com/ with credentials docear freeplane537
-
+ 
 # Installation 
 1. make sure you have installed a JDK (6 or 7) correctly
     * open a console and enter `javac -version`, that should print your java version, for example `javac 1.6.0_37`
@@ -9,6 +9,7 @@
 1. go to the project folder with the console
     * check: `dir` (or `ls` on UNIX) should show you the folders app, conf, project and some more
 1. then enter the command `run` or `run.bat`, this may take a while the first time because it downloads a lot of JARs, you may even think that it hangs
+    * if this is the first time you run this script, check your firewall if it's blocking the download of libraries
 1. you can view the application in the browser after it printed something like `play - Listening for HTTP on port 9000...`
 1. open [http://localhost:9000](http://localhost:9000) in your browser
 1. use Ctrl + D or Ctrl + C to stop the application
@@ -27,6 +28,7 @@
      * currently: add a coffee file in app/assets/javascripts/test and add it to app/views/qunit/test.scala.html as JavaScript link
 * don't use CSS directly, use [less](http://lesscss.org/) in the folder app/assets/stylesheets
 * don't use JavaScript directly, use [CoffeeScript](http://coffeescript.org/) in the folder app/assets/javascripts
+* [Debugging](https://github.com/Docear/HTW-Frontend/blob/master/dev-doc/debug.md)
 
 # Deployment
 ## Heroku
