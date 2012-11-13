@@ -19,6 +19,8 @@ class MindMap
     @leftChildren = []
     @rightChildren = []
 
+  getContent: () -> @content
+
   _append: (children, node) -> children.push node
   ###*
    Appends a childnode on the left side.
@@ -41,3 +43,40 @@ class Node
    @param {Node[]} children childnotes
   ###
   constructor: (@content = "", @children = []) ->
+
+  getContent: () -> @content
+
+class MindMapDrawer
+  constructor: (@mindMap, @$target) ->
+    @x = ""
+
+
+  _drawBox = (content, attributes = {}) ->
+    attributesToString =
+    "<div #{asXmlAttributes(attributes)} class='node'>#{content}</div>"
+
+  ###*
+    Draws the mind map into a jQuery selected field
+    @param {object} jQUery selected field where to draw the mind map
+  ###
+  draw: ($target = @$target) ->
+    console.log "drawing"
+    rootNodeId = "root" #TODO find better system for ids
+    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId}))
+    for i in [0..@mindMap.rightChildren.length]
+      child = @mindMap.rightChildren[i]
+      childCssId = "child-#{i}"
+      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 50px; top: #{i * 45}px; position: relative"}))
+      jsPlumb.connect({source:rootNodeId, target:childCssId});
+
+
+###*
+  Converts a flat object to a xml style list of attributes.
+  Example:
+    input: {"href":"/index.html", "title" : "the title"}
+    output: "href='/index.html' title='the title""
+###
+asXmlAttributes = (attributeDocument) ->
+  result = for key, value of attributeDocument
+    "#{key}='#{value}'"
+  result.reduceRight (x, y) -> x + " " + y
