@@ -8,7 +8,7 @@ initializeJsPlumb = ->
   jsPlumb.Defaults.EndpointStyle = { fillStyle:STROKE_COLOR }
   jsPlumb.Defaults.Anchor = ["RightMiddle","LeftMiddle"]
   jsPlumb.Defaults.PaintStyle = { lineWidth: 2, strokeStyle:STROKE_COLOR }
-  jsPlumb.Defaults.Connector = [ "Bezier", { curviness:4 } ]
+  jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:10 } ] # Bezier causes drawing errors on Firefox 16.0.2 ubuntu
   $(window).resize ->
     jsPlumb.repaintEverything()
 
