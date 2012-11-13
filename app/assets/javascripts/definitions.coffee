@@ -11,10 +11,13 @@ initializeJsPlumb = ->
   jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:20 } ]
 
 class MindMap
-  constructor: () ->
+  ###*
+   Constructs a MindMap.
+   @param {String} content of the root node (text or HTML)
+  ###
+  constructor: (@content = "") ->
     @leftChildren = []
     @rightChildren = []
-    @root = new Node
 
   _append: (children, node) -> children.push node
   ###*
@@ -32,4 +35,9 @@ class MindMap
   A node in a MindMap
 ###
 class Node
-  constructor: (@content = "") ->
+  ###*
+   Constructs a node.
+   @param {String} content of the node (text or HTML)
+   @param {Node[]} children childnotes
+  ###
+  constructor: (@content = "", @children = []) ->
