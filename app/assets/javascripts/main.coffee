@@ -1,15 +1,3 @@
-initializeJsPlumb = ->
-  STROKE_COLOR = "#ff0000" #TODO style information should only be in style.less, idea $("#not-visible-example-element").css('color')
-
-  jsPlumb.Defaults.PaintStyle =
-    lineWidth: 3,
-    strokeStyle: STROKE_COLOR
-  jsPlumb.Defaults.Endpoint = ["Dot", { radius:1 }]
-  jsPlumb.Defaults.EndpointStyle = { fillStyle:STROKE_COLOR }
-  jsPlumb.Defaults.Anchor = ["RightMiddle","LeftMiddle"]
-  jsPlumb.Defaults.PaintStyle = { lineWidth: 1, strokeStyle:STROKE_COLOR }
-  jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:20 } ]
-
 $ ->
   initializeJsPlumb()
 
