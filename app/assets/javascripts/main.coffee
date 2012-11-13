@@ -1,7 +1,4 @@
-$ ->
-  #####################
-  ### SETUP jsplumb ###
-  #####################
+initializeJsPlumb = ->
   STROKE_COLOR = "#ff0000" #TODO style information should only be in style.less, idea $("#not-visible-example-element").css('color')
 
   jsPlumb.Defaults.PaintStyle =
@@ -13,10 +10,9 @@ $ ->
   jsPlumb.Defaults.PaintStyle = { lineWidth: 1, strokeStyle:STROKE_COLOR }
   jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:20 } ]
 
+$ ->
+  initializeJsPlumb()
 
-  #####################
-  ### main code     ###
-  #####################
   $.getJSON "/rest/v1/user/xyz/mindmap/1.json", (data) ->
     console.log data
 
