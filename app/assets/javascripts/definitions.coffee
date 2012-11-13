@@ -9,6 +9,8 @@ initializeJsPlumb = ->
   jsPlumb.Defaults.Anchor = ["RightMiddle","LeftMiddle"]
   jsPlumb.Defaults.PaintStyle = { lineWidth: 1, strokeStyle:STROKE_COLOR }
   jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:20 } ]
+  $(window).resize ->
+    jsPlumb.repaintEverything()
 
 class MindMap
   ###*
