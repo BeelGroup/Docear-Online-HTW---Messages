@@ -63,7 +63,7 @@ class MindMapDrawer
     console.log "drawing"
     rootNodeId = "root" #TODO find better system for ids
     $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId}))
-    for i in [0..@mindMap.rightChildren.length]
+    for i in [0...@mindMap.rightChildren.length]
       child = @mindMap.rightChildren[i]
       childCssId = "child-#{i}"
       $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 50px; top: #{i * 45}px; position: relative"}))
