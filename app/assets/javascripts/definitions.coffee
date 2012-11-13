@@ -7,8 +7,8 @@ initializeJsPlumb = ->
   jsPlumb.Defaults.Endpoint = ["Dot", { radius:1 }]
   jsPlumb.Defaults.EndpointStyle = { fillStyle:STROKE_COLOR }
   jsPlumb.Defaults.Anchor = ["RightMiddle","LeftMiddle"]
-  jsPlumb.Defaults.PaintStyle = { lineWidth: 1, strokeStyle:STROKE_COLOR }
-  jsPlumb.Defaults.Connector = [ "StateMachine", { curviness:20 } ]
+  jsPlumb.Defaults.PaintStyle = { lineWidth: 2, strokeStyle:STROKE_COLOR }
+  jsPlumb.Defaults.Connector = [ "Bezier", { curviness:4 } ]
   $(window).resize ->
     jsPlumb.repaintEverything()
 
@@ -63,14 +63,16 @@ class MindMapDrawer
   ###
   draw: ($target = @$target) ->
     console.log "drawing"
+    topOffsetRoot = () -> 100
     rootNodeId = "root" #TODO find better system for ids
-    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId}))
+    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: "left: 50px; top: #{topOffsetRoot()}px;"}))
     for i in [0...@mindMap.rightChildren.length]
       child = @mindMap.rightChildren[i]
       childCssId = "child-#{i}"
-      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 50px; top: #{i * 45}px; position: relative"}))
+      hardCodet1 = 55
+      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 150px; top: #{i * 55 + topOffsetRoot() - hardCodet1}px;"}))
       jsPlumb.connect({source:rootNodeId, target:childCssId});
-
+    jsPlumb.draggable($(".node"));
 
 ###*
   Converts a flat object to a xml style list of attributes.
