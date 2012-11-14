@@ -70,7 +70,7 @@ class MindMapDrawer
       child = @mindMap.rightChildren[i]
       childCssId = "child-#{i}"
       hardCodet1 = 55
-      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 150px; top: #{i * 55 + topOffsetRoot() - hardCodet1}px;"}))
+      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 150px; top: #{i * 55 + topOffsetRoot() - hardCodet1}px;", "data-next":"child-#{i + 1}"}))
       jsPlumb.connect({source:rootNodeId, target:childCssId});
     jsPlumb.draggable($(".node"));
 
