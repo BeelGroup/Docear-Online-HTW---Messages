@@ -32,6 +32,10 @@
 
 # Deployment
 ## Heroku
+### Auto Deployment
+Nach jedem Push zu Github wird die App automatisch deployed.
+
+### Manuelles Deployment
 1. get invitation for collaboration from Michael Schleichardt with your e-mail adress
 1. install the heroku toolbelt: https://toolbelt.herokuapp.com/
 1. checkout the project from github
