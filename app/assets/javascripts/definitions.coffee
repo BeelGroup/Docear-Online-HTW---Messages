@@ -1,3 +1,11 @@
+cssForClass = (className, property) ->
+  className = className.replace(".","")
+  if $("." + className).length < 1
+    $("<div id='remove-tmp-element' class='#{className}'>").attr('type','hidden').appendTo('body');
+  result = $("." + className).css(property)
+  $("#remove-tmp-element").remove()
+  result
+
 initializeJsPlumb = ->
   STROKE_COLOR = "#ff0000" #TODO style information should only be in style.less, idea $("#not-visible-example-element").css('color')
 

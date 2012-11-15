@@ -4,12 +4,16 @@
     <meta charset="utf-8">
     <title>QUnit Tests</title>
     <link rel="stylesheet" href="/assets/stylesheets/qunit.css">
+    <style type="text/css">
+        .css-test-element {color: #ffaacc}
+    </style>
 </head>
 <body>
 <div id="qunit"></div>
 <script src="/assets/javascripts/qunit.js"></script>
 
 @javaScripts()
+<div class="css-test-element-control" style="color: #ffffcc"></div>
 
 <!-- QUnit test files -->
 <script src='@routes.Assets.at("javascripts/test/definitions.test.js")'></script>
