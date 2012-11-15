@@ -15,7 +15,10 @@ public class QUnitBridge {
                 browser.goTo("http://localhost:3333/qunit");
                 final String selectorFailedCounter = "#qunit-testresult .failed";
                 browser.await().atMost(4, TimeUnit.SECONDS).until(selectorFailedCounter).hasSize(1);
-                assertThat(browser.$(selectorFailedCounter, 0).getText()).overridingErrorMessage("some qunit tests had failed").isEqualTo("0");
+                String debugOutput = browser.$("#qunit-testresult", 0).getText();
+                for(Object item : browser.$("li.fail").getTexts())
+                    debugOutput +=  item.toString();
+                assertThat(browser.$(selectorFailedCounter, 0).getText()).overridingErrorMessage("some qunit tests had failed: "+ debugOutput).isEqualTo("0");
             }
         });
     }
