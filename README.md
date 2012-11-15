@@ -1,5 +1,6 @@
 # Demo
 * http://desolate-wildwood-9229.herokuapp.com/ with credentials docear freeplane537
+
 # Installation 
 1. make sure you have installed a JDK (6 or 7) correctly
     * open a console and enter `javac -version`, that should print your java version, for example `javac 1.6.0_37`
@@ -31,6 +32,10 @@
 
 # Deployment
 ## Heroku
+### Auto Deployment
+Nach jedem Push zu Github wird die App automatisch deployed.
+
+### Manuelles Deployment
 1. get invitation for collaboration from Michael Schleichardt with your e-mail adress
 1. install the heroku toolbelt: https://toolbelt.herokuapp.com/
 1. checkout the project from github

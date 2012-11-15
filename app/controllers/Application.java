@@ -14,5 +14,4 @@ public class Application extends Controller {
   public static Result smallSolutions() {
     return ok(smallSolutions.render("Solutions"));
   }
-
 }
