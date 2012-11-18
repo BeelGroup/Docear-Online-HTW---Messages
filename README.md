@@ -30,6 +30,29 @@
 * don't use JavaScript directly, use [CoffeeScript](http://coffeescript.org/) in the folder app/assets/javascripts
 * [Debugging](https://github.com/Docear/HTW-Frontend/blob/master/dev-doc/debug.md)
 
+# API DOC
+## CoffeeScript
+### View
+http://141.45.146.249:8080/job/Frontend/ws/coffeedoc/index.html
+### Installation Debian
+    #node installation
+    apt-get install python
+    cd /tmp
+    git clone https://github.com/joyent/node.git --depth 1
+    cd node
+    NODE_JS_VERSION_TAG="v0.8.14"
+    git checkout $NODE_JS_VERSION_TAG
+    ./configure
+    make
+    make install
+
+    #installation codo
+    npm install -g coffee-script
+    npm install -g codo
+### Installation Ubuntu
+   sudo apt-get install npm
+   sudo npm install -g codo
+
 # Deployment
 ## Heroku
 ### Auto Deployment
