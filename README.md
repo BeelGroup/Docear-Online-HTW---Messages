@@ -32,9 +32,13 @@
 
 # API DOC
 ## CoffeeScript
-### View
-http://141.45.146.249:8080/job/Frontend/ws/coffeedoc/index.html
+### View and usage
+* http://141.45.146.249:8080/job/Frontend/ws/coffeedoc/index.html with credentials docear freeplane537
+    * updates with every successful build with jenkins
+* how to make doc comments: https://github.com/netzpirat/codo
+
 ### Installation Debian
+
     #node installation
     apt-get install python
     cd /tmp
@@ -50,8 +54,9 @@ http://141.45.146.249:8080/job/Frontend/ws/coffeedoc/index.html
     npm install -g coffee-script
     npm install -g codo
 ### Installation Ubuntu
-   sudo apt-get install npm
-   sudo npm install -g codo
+
+    sudo apt-get install npm
+    sudo npm install -g codo
 
 # Deployment
 ## Heroku
