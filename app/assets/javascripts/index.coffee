@@ -20,20 +20,3 @@ $ ->
     simple.appendRight(new Node("right 3"))
     drawer = new MindMapDrawer(simple, $mindmap)
     drawer.draw()
-
-    $(".node").click ->
-      $(this).css("background", "red")
-      console.log $(this).attr('id')
-
-    $("#root").addClass("selected")
-    $("#root").attr("data-next", "child-0")
-
-    #this is hardcoded for a demo
-    Mousetrap.bind ['right', 'down'], ->
-      $current = $(".selected")
-      nextId = $current.attr("data-next")
-      nextId = if nextId == "child-3" then "root" else nextId
-      $next = $("##{nextId}")
-      console.log $next
-      $current.removeClass("selected")
-      $next.addClass("selected")
