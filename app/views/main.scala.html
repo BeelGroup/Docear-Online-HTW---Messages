@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, additionalBodyJavaScripts: Html = Html.empty)(content: Html)
 
 @import play.api.Play
 @import play.api.Play.current
@@ -43,8 +43,9 @@
                 <a class="brand" href="#">@Play.configuration.getString("application.name")</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        @menuItem("/", "Home")
+                        @menuItem("/", "Mind map demo")
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
+                        @menuItem(controllers.routes.Application.mvc().toString, "MVC")
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -63,7 +64,7 @@
     </div> <!-- /container -->
 
     @javaScripts()
-    <script src='@routes.Assets.at("javascripts/main.js")'></script>
+    @additionalBodyJavaScripts
     </body>
 </html>
 

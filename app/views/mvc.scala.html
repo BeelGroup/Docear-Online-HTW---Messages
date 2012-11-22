@@ -1,0 +1,12 @@
+@()
+
+@additionalJavaScripts() = {
+<script src='@routes.Assets.at("javascripts/mvc.js")'></script>
+}
+
+@main("MVC", additionalBodyJavaScripts = additionalJavaScripts()) {
+<div id="mvc">
+
+
+</div>
+}
