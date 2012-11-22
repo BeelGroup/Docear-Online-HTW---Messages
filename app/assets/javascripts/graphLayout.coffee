@@ -23,7 +23,7 @@ initializeJsPlumb = ->
 class MindMap
   #
   # Constructs a MindMap.
-  # @param [String} content of the root node (text or HTML)
+  # @param [String] content of the root node (text or HTML)
   #
   constructor: (@content = "") ->
     @leftChildren = []
