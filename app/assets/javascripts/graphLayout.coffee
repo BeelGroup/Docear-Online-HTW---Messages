@@ -58,10 +58,27 @@ class Node
 
   getContent: () -> @content
 
+$.fn.extend
+  docear: ->
+    $element = this
+
+    dimension: -> width: $element.width(), height: $element.height()
+
+    centerInBox: ($box) ->
+      @centerVerticalInBox $box
+      @centerHorizontalInBox $box
+
+    centerVerticalInBox: ($box) ->
+      newY = $box.height() / 2 - $element.height()
+      $element.css("top", newY)
+
+    centerHorizontalInBox: ($box) ->
+      newX = $box.width() / 2 - $element.width()
+      $element.css("left", newX)
+
 class MindMapDrawer
   constructor: (@mindMap, @$target) ->
     @x = ""
-
 
   _drawBox = (content, attributes = {}) ->
     attributesToString =
@@ -73,16 +90,10 @@ class MindMapDrawer
   #
   draw: ($target = @$target) ->
     console.log "drawing"
-    topOffsetRoot = () -> 100
     rootNodeId = "root" #TODO find better system for ids
-    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: "left: 50px; top: #{topOffsetRoot()}px;"}))
-    for i in [0...@mindMap.rightChildren.length]
-      child = @mindMap.rightChildren[i]
-      childCssId = "child-#{i}"
-      hardCodet1 = 55
-      $target.append(_drawBox(child.getContent(), {id:childCssId, style: "left: 150px; top: #{i * 55 + topOffsetRoot() - hardCodet1}px;", "data-next":"child-#{i + 1}"}))
-      jsPlumb.connect({source:rootNodeId, target:childCssId});
-    jsPlumb.draggable($(".node"));
+    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: ""}))
+    $root = $("#" + rootNodeId)
+    $root.docear().centerInBox $root.parent()
 
 #
 #  Converts a flat object to a xml style list of attributes.
