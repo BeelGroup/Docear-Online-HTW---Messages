@@ -55,6 +55,7 @@ class Node
   # @param [Node[]] children childnotes
   #
   constructor: (@content = "", @children = []) ->
+    @view = null
 
   getContent: () -> @content
 
@@ -102,10 +103,20 @@ class MindMapDrawer
     $root = @drawRoot $target
     @drawRight $root, $target
 
+  _drawChildren: ($relativeRootNode, children, $target) ->
+    for child in children
+      id = "child-#{@childId}"
+      $target.append _drawBox(child.getContent(), {id: id})
+      $child = $("#" + id)
+      child.view = $child
+      @childId++
+      @_drawChildren $child, child.children, $target
+
   # draws right children of mind map root node
   # @param [jQuery] mind map root node
   # @param [jQuery] $target selected field where to draw the mind map
   drawRight: ($root, $target) ->
+    children = @mindMap.rightChildren
     horizontalSpacer = 40
     verticalSpacer = 40
     moveRightOfRootNode = ($child) ->
@@ -114,13 +125,12 @@ class MindMapDrawer
 
     #TODO hide, position, then unhide
     $children = []
-    for child in @mindMap.rightChildren
-      id = "child-#{@childId}"
-      $target.append _drawBox(child.getContent(), {id: id})
-      $child = $("#" + id)
+    @_drawChildren $root, children, $target
+
+    for child in children
+      $child = child.view
       moveRightOfRootNode $child
       $children.push $child
-      @childId++
 
     heightOfAllChildren = (@mindMap.rightChildren.length - 1) * verticalSpacer +  _.reduce($children, ((memo, child) -> memo + child.height()), 0)
     topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
