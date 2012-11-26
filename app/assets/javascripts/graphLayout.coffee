@@ -130,6 +130,7 @@ class MindMapDrawer
       currentTop
       $child.css("top", currentTop)
       currentTop += $children[indexInArray].height() + verticalSpacer
+      jsPlumb.connect({ source:$root, target:$child });
 
 
 
