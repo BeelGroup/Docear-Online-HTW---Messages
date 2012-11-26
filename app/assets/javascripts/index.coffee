@@ -15,8 +15,10 @@ $ ->
     mindMap.appendRight(new Node("<html><head></head><body><h1>ada</h1></body></html>"))
 
     simple = new MindMap("root")
-    simple.appendRight(new Node("right 1"))
-    simple.appendRight(new Node("right 2"))
-    simple.appendRight(new Node("right 3"))
+    right1 = new Node("right 1")
+    right1.children = [new Node("right 1.1"),new Node("right 1.2"),new Node("right 1.3")]
+    simple.appendRight(right1)
+    simple.appendRight(new Node("right 2<br><b>with HTML</b>"))
+    simple.appendRight(new Node("right 3<br><img src='/assets/images/docear/logo/main-logo.png' />"))
     drawer = new MindMapDrawer(simple, $mindmap)
     drawer.draw()

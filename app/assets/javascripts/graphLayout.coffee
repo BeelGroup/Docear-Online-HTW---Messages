@@ -105,8 +105,8 @@ class MindMapDrawer
   # @param [jQuery] mind map root node
   # @param [jQuery] $target selected field where to draw the mind map
   drawRight: ($root, $target) ->
-    horizontalSpacer = 50
-    verticalSpacer = 50
+    horizontalSpacer = 40
+    verticalSpacer = 40
     moveRightOfRootNode = ($child) ->
       left = $root.position().left + $root.width() + horizontalSpacer
       $child.css("left", left)
