@@ -28,6 +28,7 @@ class MindMap
   constructor: (@content = "") ->
     @leftChildren = []
     @rightChildren = []
+    @root = {}
 
   getContent: () -> @content
 
@@ -103,14 +104,24 @@ class MindMapDrawer
     $root = @drawRoot $target
     @drawRight $root, $target
 
-  _drawChildren: ($relativeRootNode, children, $target) ->
+  _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
     for child in children
       id = "child-#{@childId}"
       $target.append _drawBox(child.getContent(), {id: id})
       $child = $("#" + id)
       child.view = $child
       @childId++
-      @_drawChildren $child, child.children, $target
+      @_drawRecursiveChildren $child, child.children, $target
+
+  _getRecursiveHeight: (element, childrenOfElement) ->
+    self = this
+    heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) -> memo + self._getRecursiveHeight(child, child.children)), 0)
+    elementHeight = element.view.innerHeight()
+    console.log element.view.text() + " " + elementHeight
+    result = Math.max(elementHeight, heightOfAllChildren)
+    console.log "recSize(" + element.view.text() + ")=" + result
+    result
+
 
   # draws right children of mind map root node
   # @param [jQuery] mind map root node
@@ -125,21 +136,22 @@ class MindMapDrawer
 
     #TODO hide, position, then unhide
     $children = []
-    @_drawChildren $root, children, $target
+    @_drawRecursiveChildren $root, children, $target
 
     for child in children
       $child = child.view
       moveRightOfRootNode $child
       $children.push $child
 
-    heightOfAllChildren = (@mindMap.rightChildren.length - 1) * verticalSpacer +  _.reduce($children, ((memo, child) -> memo + child.height()), 0)
+    heightOfAllChildren = @_getRecursiveHeight @mindMap.root, @mindMap.rightChildren
     topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
-    console.log "children"
     currentTop = topPoisitionFirstChild
-    $.each $children, (indexInArray, $child) ->
-      currentTop
+
+    $.each children, (indexInArray, child) =>
+      console.log "currentTop=" + currentTop
+      $child = child.view
       $child.css("top", currentTop)
-      currentTop += $children[indexInArray].height() + verticalSpacer
+      currentTop += @_getRecursiveHeight child, child.children # $children[indexInArray].height() # + verticalSpacer
       jsPlumb.connect({ source:$root, target:$child });
 
 
@@ -154,6 +166,8 @@ class MindMapDrawer
     $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: ""}))
     $root = $("#" + rootNodeId)
     $root.docear().centerInBox $root.parent()
+    root.view = $root
+    @mindMap.root.view = $root
     $root
 
 #
