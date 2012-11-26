@@ -66,7 +66,6 @@ $.fn.extend
 
     coordinatesForHorizontalAlignmentInBox: ($box) -> $box.width() / 2 - $element.width()
     coordinatesForVerticalAlignmentInBox: ($box) -> $box.height() / 2 - $element.height()
-
     centerInBox: ($box) ->
       newX = @coordinatesForHorizontalAlignmentInBox $box
       newY = @coordinatesForVerticalAlignmentInBox $box
@@ -84,19 +83,67 @@ class MindMapDrawer
     @x = ""
 
   _drawBox = (content, attributes = {}) ->
-    attributesToString =
     "<div #{asXmlAttributes(attributes)} class='node'>#{content}</div>"
+
+
+  getCenterCoordinates = ($element) ->
+    left = $element.position().left + $element.width() / 2
+    top = $element.position().top + $element.height() / 2
+    top: top, left: left
 
   #
   # Draws the mind map into a jQuery selected field
-  # @param [object] jQUery selected field where to draw the mind map
+  # @param [jQuery] $target selected field where to draw the mind map
   #
   draw: ($target = @$target) ->
-    console.log "drawing"
+    console.log "drawing mind map"
+    console.log @mindMap
+    $root = @drawRoot $target
+    @drawRight $root, $target
+
+  # draws right children of mind map root node
+  # @param [jQuery] mind map root node
+  # @param [jQuery] $target selected field where to draw the mind map
+  drawRight: ($root, $target) ->
+    horizontalSpacer = 50
+    verticalSpacer = 50
+    moveRightOfRootNode = ($child) ->
+      left = $root.position().left + $root.width() + horizontalSpacer
+      $child.css("left", left)
+
+    #TODO hide, position, then unhide
+    childId = 1 #TODO use node id
+    $children = []
+    for child in @mindMap.rightChildren
+      id = "child-#{childId}"
+      $target.append _drawBox(child.getContent(), {id: "child-#{childId}"})
+      $child = $("#" + id)
+      moveRightOfRootNode $child
+      $children.push $child
+      childId++
+
+    heightOfAllChildren = (@mindMap.rightChildren.length - 1) * verticalSpacer +  _.reduce($children, ((memo, child) -> memo + child.height()), 0)
+    topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
+    console.log "children"
+    currentTop = topPoisitionFirstChild
+    $.each $children, (indexInArray, $child) ->
+      currentTop
+      $child.css("top", currentTop)
+      currentTop += $children[indexInArray].height() + verticalSpacer
+
+
+
+
+
+  # draws the root node and returns it
+  # @param [jQuery] target element where to draw the elements
+  # @return [jQuery] the root note
+  drawRoot: ($target) ->
     rootNodeId = "root" #TODO find better system for ids
     $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: ""}))
     $root = $("#" + rootNodeId)
     $root.docear().centerInBox $root.parent()
+    $root
 
 #
 #  Converts a flat object to a xml style list of attributes.
@@ -107,4 +154,4 @@ class MindMapDrawer
 asXmlAttributes = (attributeDocument) ->
   result = for key, value of attributeDocument
     "#{key}='#{value}'"
-  result.reduceRight (x, y) -> x + " " + y
+  result.reduceRight ((x, y) -> x + " " + y ), ""
