@@ -81,6 +81,7 @@ $.fn.extend
 class MindMapDrawer
   constructor: (@mindMap, @$target) ->
     @x = ""
+    @childId = 1 #TODO use node id
 
   _drawBox = (content, attributes = {}) ->
     "<div #{asXmlAttributes(attributes)} class='node'>#{content}</div>"
@@ -112,15 +113,14 @@ class MindMapDrawer
       $child.css("left", left)
 
     #TODO hide, position, then unhide
-    childId = 1 #TODO use node id
     $children = []
     for child in @mindMap.rightChildren
-      id = "child-#{childId}"
-      $target.append _drawBox(child.getContent(), {id: "child-#{childId}"})
+      id = "child-#{@childId}"
+      $target.append _drawBox(child.getContent(), {id: id})
       $child = $("#" + id)
       moveRightOfRootNode $child
       $children.push $child
-      childId++
+      @childId++
 
     heightOfAllChildren = (@mindMap.rightChildren.length - 1) * verticalSpacer +  _.reduce($children, ((memo, child) -> memo + child.height()), 0)
     topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
