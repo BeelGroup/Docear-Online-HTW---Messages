@@ -64,17 +64,20 @@ $.fn.extend
 
     dimension: -> width: $element.width(), height: $element.height()
 
+    coordinatesForHorizontalAlignmentInBox: ($box) -> $box.width() / 2 - $element.width()
+    coordinatesForVerticalAlignmentInBox: ($box) -> $box.height() / 2 - $element.height()
+
     centerInBox: ($box) ->
-      @centerVerticalInBox $box
-      @centerHorizontalInBox $box
+      newX = @coordinatesForHorizontalAlignmentInBox $box
+      newY = @coordinatesForVerticalAlignmentInBox $box
+      @move left: newX, top: newY
 
-    centerVerticalInBox: ($box) ->
-      newY = $box.height() / 2 - $element.height()
-      $element.css("top", newY)
-
-    centerHorizontalInBox: ($box) ->
-      newX = $box.width() / 2 - $element.width()
-      $element.css("left", newX)
+    #
+    # moves this element to new coordinates
+    # @param [Object] target coordinates like {left: 0, top: 0}
+    move: (coordinates = {left: 0, top: 0}) ->
+      if coordinates.left then $element.css("left", coordinates.left)
+      if coordinates.top then $element.css("top", coordinates.top)
 
 class MindMapDrawer
   constructor: (@mindMap, @$target) ->
