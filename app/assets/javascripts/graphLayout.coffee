@@ -20,7 +20,7 @@ initializeJsPlumb = ->
   $(window).resize ->
     jsPlumb.repaintEverything()
 
-_height = ($element) -> $element.height()  #correct to choose ,height(), innerHeight(), outerHeight()
+_height = ($element) -> $element.outerHeight()  #correct to choose ,height() <-- too small, innerHeight(), outerHeight()
 
 class MindMap
   #
@@ -134,20 +134,20 @@ class MindMapDrawer
 
     connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
 
+    #precondition: parent node has correct position
     positionFromTopRecursive = (parent, children) =>
-      heightOfAllChildren = @_getRecursiveHeight parent, children
-#      currentTop = parent.view.position().top - heightOfAllChildren / 2
-      currentTop = getCenterCoordinates(parent.view).top - heightOfAllChildren / 2
-      #Idee ggf. erst in Breite, dann in Tiefe
+      treeHeight = @_getRecursiveHeight parent, children
+      parentCenterTop = getCenterCoordinates(parent.view).top
+      newTop = parentCenterTop - 0.5 * treeHeight
+      currentTop = newTop
       $.each children, (indexInArray, child) =>
-        child.view.css("top", currentTop)
+        subTreeHeight = @_getRecursiveHeight child, child.children
+        top = currentTop + subTreeHeight / 2 - _height(child.view) / 2 #put node in the middle of the sub tree
+        child.view.css("top", top)
+        console.log "currentTop=#{currentTop}   subTreeHeight=#{subTreeHeight}"
         connectNodes parent, child
+        currentTop += subTreeHeight
         positionFromTopRecursive child, child.children
-        offset = @_getRecursiveHeight child, child.children
-        console.log "#{child.view.text()} offset #{offset}"
-        currentTop += offset
-
-
 
     positionRightFromParentRecursive = (parent, children) =>
       for child in children
