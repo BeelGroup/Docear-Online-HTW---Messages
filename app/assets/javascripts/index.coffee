@@ -4,8 +4,6 @@ $ ->
   $mindmap = $("#mindmap")
 
   if $mindmap.length > 0
-    $.getJSON "/rest/v1/user/xyz/mindmap/1.json", (data) ->
-      console.log data
 
     mindMap = new MindMap("foo2")
     mindMap.appendLeft(new Node("laaaaaaaaaaaaaaaaaa"))
