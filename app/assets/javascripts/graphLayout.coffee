@@ -99,8 +99,6 @@ class MindMapDrawer
   # @param [jQuery] $target selected field where to draw the mind map
   #
   draw: ($target = @$target) ->
-    console.log "drawing mind map"
-    console.log @mindMap
     $root = @drawRoot $target
     @drawRight $root, $target
 
@@ -117,9 +115,7 @@ class MindMapDrawer
     self = this
     heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) -> memo + self._getRecursiveHeight(child, child.children)), 0)
     elementHeight = element.view.innerHeight()
-    console.log element.view.text() + " " + elementHeight
     result = Math.max(elementHeight, heightOfAllChildren)
-    console.log "recSize(" + element.view.text() + ")=" + result
     result
 
 
@@ -148,7 +144,6 @@ class MindMapDrawer
     currentTop = topPoisitionFirstChild
 
     $.each children, (indexInArray, child) =>
-      console.log "currentTop=" + currentTop
       $child = child.view
       $child.css("top", currentTop)
       currentTop += @_getRecursiveHeight child, child.children # $children[indexInArray].height() # + verticalSpacer
