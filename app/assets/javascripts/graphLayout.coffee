@@ -86,6 +86,7 @@ class MindMapDrawer
   constructor: (@mindMap, @$target) ->
     @x = ""
     @childId = 1 #TODO use node id
+    @verticalSpacer = 10
 
   _drawBox = (content, attributes = {}) ->
     "<div #{asXmlAttributes(attributes)} class='node'><div class='inner-node'>#{content}</div></div>"
@@ -115,7 +116,7 @@ class MindMapDrawer
       @_drawRecursiveChildren $child, child.children, $target
 
   _getRecursiveHeight: (element, childrenOfElement) =>
-    heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) => memo + @_getRecursiveHeight(child, child.children)), 0)
+    heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) => memo + @_getRecursiveHeight(child, child.children)), 0) + (childrenOfElement.length - 1) * @verticalSpacer
     elementHeight = _height(element.view)
     result = Math.max(elementHeight, heightOfAllChildren)
     result
@@ -126,7 +127,6 @@ class MindMapDrawer
   # @param [jQuery] $target selected field where to draw the mind map
   drawRight: ($root, $target) ->
     horizontalSpacer = 40
-    verticalSpacer = 40
 
     moveRightOfParentNode = ($parent, $child) ->
       left = $parent.position().left + $parent.width() + horizontalSpacer
@@ -144,9 +144,8 @@ class MindMapDrawer
         subTreeHeight = @_getRecursiveHeight child, child.children
         top = currentTop + subTreeHeight / 2 - _height(child.view) / 2 #put node in the middle of the sub tree
         child.view.css("top", top)
-        console.log "currentTop=#{currentTop}   subTreeHeight=#{subTreeHeight}"
         connectNodes parent, child
-        currentTop += subTreeHeight
+        currentTop += subTreeHeight + @verticalSpacer
         positionFromTopRecursive child, child.children
 
     positionRightFromParentRecursive = (parent, children) =>
