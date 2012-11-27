@@ -20,6 +20,8 @@ initializeJsPlumb = ->
   $(window).resize ->
     jsPlumb.repaintEverything()
 
+_height = ($element) -> $element.height()  #correct to choose ,height(), innerHeight(), outerHeight()
+
 class MindMap
   #
   # Constructs a MindMap.
@@ -64,10 +66,10 @@ $.fn.extend
   docear: ->
     $element = this
 
-    dimension: -> width: $element.width(), height: $element.height()
+    dimension: -> width: $element.width(), height: _height($element)
 
     coordinatesForHorizontalAlignmentInBox: ($box) -> $box.width() / 2 - $element.width()
-    coordinatesForVerticalAlignmentInBox: ($box) -> $box.height() / 2 - $element.height()
+    coordinatesForVerticalAlignmentInBox: ($box) -> _height($box) / 2 - _height($element)
     centerInBox: ($box) ->
       newX = @coordinatesForHorizontalAlignmentInBox $box
       newY = @coordinatesForVerticalAlignmentInBox $box
@@ -86,12 +88,12 @@ class MindMapDrawer
     @childId = 1 #TODO use node id
 
   _drawBox = (content, attributes = {}) ->
-    "<div #{asXmlAttributes(attributes)} class='node'>#{content}</div>"
+    "<div #{asXmlAttributes(attributes)} class='node'><div class='inner-node'>#{content}</div></div>"
 
 
   getCenterCoordinates = ($element) ->
     left = $element.position().left + $element.width() / 2
-    top = $element.position().top + $element.height() / 2
+    top = $element.position().top + _height($element) / 2
     top: top, left: left
 
   #
@@ -112,10 +114,9 @@ class MindMapDrawer
       @childId++
       @_drawRecursiveChildren $child, child.children, $target
 
-  _getRecursiveHeight: (element, childrenOfElement) ->
-    self = this
-    heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) -> memo + self._getRecursiveHeight(child, child.children)), 0)
-    elementHeight = element.view.innerHeight()
+  _getRecursiveHeight: (element, childrenOfElement) =>
+    heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) => memo + @_getRecursiveHeight(child, child.children)), 0)
+    elementHeight = _height(element.view)
     result = Math.max(elementHeight, heightOfAllChildren)
     result
 
@@ -124,34 +125,41 @@ class MindMapDrawer
   # @param [jQuery] mind map root node
   # @param [jQuery] $target selected field where to draw the mind map
   drawRight: ($root, $target) ->
-    children = @mindMap.rightChildren
     horizontalSpacer = 40
     verticalSpacer = 40
+
     moveRightOfParentNode = ($parent, $child) ->
       left = $parent.position().left + $parent.width() + horizontalSpacer
       $child.css("left", left)
 
-    #TODO hide, position, then unhide
-    @_drawRecursiveChildren $root, children, $target
-
-    for child in children
-      moveRightOfParentNode $root, child.view
-
-    heightOfAllChildren = @_getRecursiveHeight @mindMap.root, @mindMap.rightChildren
-    topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
-    currentTop = topPoisitionFirstChild
-
     connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
 
-    parent = @mindMap.root
-    $.each children, (indexInArray, child) =>
-      $child = child.view
-      $parent = parent.view
-      $child.css("top", currentTop)
-      currentTop += @_getRecursiveHeight child, child.children
-      connectNodes parent, child
-      for subchild in child.children
-        moveRightOfParentNode $child, subchild.view
+    positionFromTopRecursive = (parent, children) =>
+      heightOfAllChildren = @_getRecursiveHeight parent, children
+#      currentTop = parent.view.position().top - heightOfAllChildren / 2
+      currentTop = getCenterCoordinates(parent.view).top - heightOfAllChildren / 2
+      #Idee ggf. erst in Breite, dann in Tiefe
+      $.each children, (indexInArray, child) =>
+        child.view.css("top", currentTop)
+        connectNodes parent, child
+        positionFromTopRecursive child, child.children
+        offset = @_getRecursiveHeight child, child.children
+        console.log "#{child.view.text()} offset #{offset}"
+        currentTop += offset
+
+
+
+    positionRightFromParentRecursive = (parent, children) =>
+      for child in children
+        moveRightOfParentNode parent.view, child.view
+        positionRightFromParentRecursive child, child.children
+
+    #TODO hide, position, then unhide
+    @_drawRecursiveChildren $root, @mindMap.rightChildren, $target
+
+    positionRightFromParentRecursive @mindMap.root, @mindMap.rightChildren
+    positionFromTopRecursive @mindMap.root, @mindMap.rightChildren
+
 
 
   # draws the root node and returns it
