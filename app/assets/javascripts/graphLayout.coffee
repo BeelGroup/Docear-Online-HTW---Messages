@@ -102,6 +102,7 @@ class MindMapDrawer
     $root = @drawRoot $target
     @drawRight $root, $target
 
+  #draws children without layouting for graph
   _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
     for child in children
       id = "child-#{@childId}"
@@ -126,31 +127,31 @@ class MindMapDrawer
     children = @mindMap.rightChildren
     horizontalSpacer = 40
     verticalSpacer = 40
-    moveRightOfRootNode = ($child) ->
-      left = $root.position().left + $root.width() + horizontalSpacer
+    moveRightOfParentNode = ($parent, $child) ->
+      left = $parent.position().left + $parent.width() + horizontalSpacer
       $child.css("left", left)
 
     #TODO hide, position, then unhide
-    $children = []
     @_drawRecursiveChildren $root, children, $target
 
     for child in children
-      $child = child.view
-      moveRightOfRootNode $child
-      $children.push $child
+      moveRightOfParentNode $root, child.view
 
     heightOfAllChildren = @_getRecursiveHeight @mindMap.root, @mindMap.rightChildren
     topPoisitionFirstChild = getCenterCoordinates($root).top - heightOfAllChildren / 2
     currentTop = topPoisitionFirstChild
 
+    connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
+
+    parent = @mindMap.root
     $.each children, (indexInArray, child) =>
       $child = child.view
+      $parent = parent.view
       $child.css("top", currentTop)
-      currentTop += @_getRecursiveHeight child, child.children # $children[indexInArray].height() # + verticalSpacer
-      jsPlumb.connect({ source:$root, target:$child });
-
-
-
+      currentTop += @_getRecursiveHeight child, child.children
+      connectNodes parent, child
+      for subchild in child.children
+        moveRightOfParentNode $child, subchild.view
 
 
   # draws the root node and returns it

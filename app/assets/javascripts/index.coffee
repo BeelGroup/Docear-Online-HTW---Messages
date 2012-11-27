@@ -16,7 +16,7 @@ $ ->
     right1 = new Node("right 1")
     right1_3 = new Node("right 1.3")
     right1_3.children = [new Node("right 1.3.1"), new Node("right 1.3.2")]
-    right1.children = [new Node("right 1.1"),new Node("right 1.2"),new Node("right 1.3")]
+    right1.children = [new Node("right 1.1"), new Node("right 1.2"), right1_3]
     simple.appendRight(right1)
     simple.appendRight(new Node("right 2<br><b>with HTML</b>"))
     simple.appendRight(new Node("right 3<br><img src='/assets/images/docear/logo/main-logo.png' />"))
