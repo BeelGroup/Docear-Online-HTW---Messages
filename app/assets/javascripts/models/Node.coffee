@@ -1,6 +1,8 @@
-require ['models/AbstractNode'],  (AbstractNode) ->  
+define ['models/AbstractNode'],  (AbstractNode) ->  
+  module = ->
+  module.create = (properties) ->
+    return new Node(properties)
 
-  console.log AbstractNode
 
   class Node extends AbstractNode
     constructor: (id, folded, nodeText, @children) ->

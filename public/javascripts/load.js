@@ -8,7 +8,7 @@
       'collections': './collections',
       'views': './views',
       'models': './models',
-      'templates': './templates'
+      'handlebars': './views/templates'
     }
   });
 
