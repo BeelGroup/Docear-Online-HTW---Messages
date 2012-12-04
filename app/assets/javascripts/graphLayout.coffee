@@ -103,7 +103,7 @@ class MindMapDrawer
   #
   draw: ($target = @$target) ->
     $root = @drawRoot $target
-    @drawRight $root, $target
+    @drawChildren $root, $target
 
   #draws children without layouting for graph
   _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
@@ -122,14 +122,18 @@ class MindMapDrawer
     result
 
 
-  # draws right children of mind map root node
+  # draws children of mind map root node
   # @param [jQuery] mind map root node
   # @param [jQuery] $target selected field where to draw the mind map
-  drawRight: ($root, $target) ->
+  drawChildren: ($root, $target) ->
     horizontalSpacer = 40
 
     moveRightOfParentNode = ($parent, $child) ->
       left = $parent.position().left + $parent.width() + horizontalSpacer
+      $child.css("left", left)
+
+    moveLeftOfParentNode = ($parent, $child) ->
+      left = $parent.position().left - horizontalSpacer - $child.width()
       $child.css("left", left)
 
     connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
@@ -153,11 +157,19 @@ class MindMapDrawer
         moveRightOfParentNode parent.view, child.view
         positionRightFromParentRecursive child, child.children
 
+    positionLeftFromParentRecursive = (parent, children) =>
+      for child in children
+        moveLeftOfParentNode parent.view, child.view
+        positionLeftFromParentRecursive child, child.children
+
     #TODO hide, position, then unhide
     @_drawRecursiveChildren $root, @mindMap.rightChildren, $target
+    @_drawRecursiveChildren $root, @mindMap.leftChildren, $target
 
     positionRightFromParentRecursive @mindMap.root, @mindMap.rightChildren
+    positionLeftFromParentRecursive @mindMap.root, @mindMap.leftChildren
     positionFromTopRecursive @mindMap.root, @mindMap.rightChildren
+    positionFromTopRecursive @mindMap.root, @mindMap.leftChildren
 
 
 
