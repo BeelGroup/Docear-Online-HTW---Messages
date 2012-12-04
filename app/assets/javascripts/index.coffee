@@ -22,7 +22,7 @@ $ ->
     left1= new Node("left 1")
     left1.children = [new Node("left 1.1"), new Node("left 1.2")]
     left2= new Node("left 2")
-    left2.children = [new Node("left 2.1"), new Node("left 2.2")]
+    left2.children = [new Node("left 2.1"), new Node("left 2.2"), new Node("left 2.3")]
     simple.appendLeft(left1)
     simple.appendLeft(left2)
     #TODO dom ignores height attribute of image

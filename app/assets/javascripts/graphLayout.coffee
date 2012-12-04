@@ -128,14 +128,6 @@ class MindMapDrawer
   drawChildren: ($root, $target) ->
     horizontalSpacer = 40
 
-    moveRightOfParentNode = ($parent, $child) ->
-      left = $parent.position().left + $parent.width() + horizontalSpacer
-      $child.css("left", left)
-
-    moveLeftOfParentNode = ($parent, $child) ->
-      left = $parent.position().left - horizontalSpacer - $child.width()
-      $child.css("left", left)
-
     connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
 
     #precondition: parent node has correct position
@@ -152,22 +144,21 @@ class MindMapDrawer
         currentTop += subTreeHeight + @verticalSpacer
         positionFromTopRecursive child, child.children
 
-    positionRightFromParentRecursive = (parent, children) =>
+    positionHorizontalFromParentRecursive = (parent, children, direction) =>
       for child in children
-        moveRightOfParentNode parent.view, child.view
-        positionRightFromParentRecursive child, child.children
-
-    positionLeftFromParentRecursive = (parent, children) =>
-      for child in children
-        moveLeftOfParentNode parent.view, child.view
-        positionLeftFromParentRecursive child, child.children
+        if direction == "left"
+          left = parent.view.position().left - horizontalSpacer - child.view.width()
+        else
+          left = parent.view.position().left + parent.view.width() + horizontalSpacer
+        child.view.css("left", left)
+        positionHorizontalFromParentRecursive child, child.children, direction
 
     #TODO hide, position, then unhide
     @_drawRecursiveChildren $root, @mindMap.rightChildren, $target
     @_drawRecursiveChildren $root, @mindMap.leftChildren, $target
 
-    positionRightFromParentRecursive @mindMap.root, @mindMap.rightChildren
-    positionLeftFromParentRecursive @mindMap.root, @mindMap.leftChildren
+    positionHorizontalFromParentRecursive @mindMap.root, @mindMap.rightChildren, "right"
+    positionHorizontalFromParentRecursive @mindMap.root, @mindMap.leftChildren, "left"
     positionFromTopRecursive @mindMap.root, @mindMap.rightChildren
     positionFromTopRecursive @mindMap.root, @mindMap.leftChildren
 
