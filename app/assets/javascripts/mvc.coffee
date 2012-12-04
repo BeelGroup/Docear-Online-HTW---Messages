@@ -1,7 +1,11 @@
-require ['views/NodeView'],  (NodeView) ->  
+require ['views/NodeView', 'models/Node'],  (NodeView, NodeModel) ->  
 
-  view = NodeView.create()
+  view = new NodeView()
+  model = new NodeModel('0','unfolded','My awesome node!','Da graph','1')
 
-  $("#mvc").append(view.render().el)
+  model.set 'id', 'bar'
 
+  console.log model.toJSON()
+
+  $("#mvc").append(view.render(model).el)
 
