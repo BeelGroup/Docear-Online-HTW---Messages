@@ -14,6 +14,7 @@ object ApplicationBuild extends Build {
       , "info.schleichardt" %% "play-2-basic-auth" % "0.1-SNAPSHOT"
       , "commons-io" % "commons-io" % "2.4"//heroku does not find it without the explicit dependency
       , "com.fasterxml.jackson.datatype" % "jackson-datatype-json-org" % "2.0.2"
+      , "commons-lang" % "commons-lang" % "2.6"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
