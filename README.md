@@ -30,6 +30,12 @@
 * don't use JavaScript directly, use [CoffeeScript](http://coffeescript.org/) in the folder app/assets/javascripts
 * [Debugging](https://github.com/Docear/HTW-Frontend/blob/master/dev-doc/debug.md)
 
+## Backend mock
+* default: it delivers static files to easy frontend development
+* `sbt "~run -Dbackend.mock=false"` starts with proxying localhost:8080, quotes are important
+* `sbt "~run -Dbackend.mock=false -Dbackend.url=http://localhost:8888"` starts with proxying localhost:8888
+* static files are currently in conf/rest/v1
+
 # API DOC
 ## CoffeeScript
 ### View and usage
