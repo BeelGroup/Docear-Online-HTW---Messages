@@ -70,6 +70,9 @@ public class Map extends Controller {
 
 	public static Result closeMap(String id) {
 		int hostingPort = mindmapServerMap.remove(id);
+		if(hostingPort == -1) {
+			return badRequest("Map is not open");
+		}
 		Response response = WS.url(createWebserviceUrl(hostingPort)+"/map/"+id).delete().get();
 		if(response.getStatus() == 200) {
 
