@@ -29,3 +29,40 @@ $ ->
     simple.appendRight(new Node("right 3<br><img src='/assets/images/docear/logo/main-logo.png' style='height: 68px; width: 350px' />"))
     drawer = new MindMapDrawer(simple, $mindmap)
     drawer.draw()
+  
+  getRecursiveChildren = (node, childrenData)->
+    children = []
+    if childrenData != undefined
+      for child in childrenData
+        if child.nodeText != ""
+          newChild = new Node(child.nodeText)
+          if child.children != undefined
+            newChild.children = getRecursiveChildren(newChild, child.children)
+          else 
+            newChild.children = []
+          children.push newChild
+    children
+  
+  $(".loadMap").click -> 
+    href = $(this).attr("href")
+    recall = (data)->
+      $("#mindmap").html("")
+      mm = new MindMap(data.root.nodeText)
+      
+      if data.root.leftChildren.nodeText != ""
+        leftNode = new Node(data.root.leftChildren.nodeText)
+        leftNode.children = getRecursiveChildren(leftNode, data.root.leftChildren)
+        mm.appendLeft(leftNode)
+      
+      if data.root.rightChildren.nodeText != ""
+        rightNode = new Node(data.root.rightChildren.nodeText)
+        if data.root.rightChildren.nodeText == undefined
+          console.log "UNDEFINED" 
+        rightNode.children = getRecursiveChildren(rightNode, data.root.rightChildren)
+        mm.appendRight(rightNode)
+      
+      drawer = new MindMapDrawer(mm, $("#mindmap"))
+      drawer.draw()
+      
+    $.get(href, recall, "json")
+    false
