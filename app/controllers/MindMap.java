@@ -104,7 +104,9 @@ public class MindMap extends Controller {
 		if(response.getStatus() == 200) {
 			return ok(response.asJson());
 		} else {
-			return badRequest(response.getBody());
+			mindmapServerMap.remove(id);
+			return map(id);
+			//return badRequest(response.getBody());
 		}
 	}
 
