@@ -1,11 +1,14 @@
 require ['views/NodeView', 'models/Node'],  (NodeView, NodeModel) ->  
 
-  view = new NodeView()
   model = new NodeModel('0','unfolded','My awesome node!','Da graph','1')
+  view = new NodeView(model)
+
+  
+  element = document.createElement("BUTTON");
 
   model.set 'id', 'bar'
+  model.set 'purehtml', element
 
-  console.log model.toJSON()
 
   $("#mvc").append(view.render(model).el)
 
