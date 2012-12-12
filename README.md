@@ -123,6 +123,9 @@ Nach jedem Push zu Github wird die App automatisch deployed.
 1. git remote add heroku git@heroku.com:desolate-wildwood-9229.git
 1. git push heroku # deploys into the cloud, may take a while
 
+### Restart
+* in HTW-Frontend folder: `heroku restart`
+
 ## Tomcat
 1. `sbt war`
 1. rename the war file to ROOT.war
