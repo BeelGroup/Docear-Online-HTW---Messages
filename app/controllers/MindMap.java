@@ -158,10 +158,11 @@ public class MindMap extends Controller {
 	 */
 	private static URL startDocearInstance() {
 		int nextFreePort = mindmapServerMap.getNextAvailablePort();
+		String docearPath = Play.application().configuration().getString("backend.docearDirectory");
 		ProcessBuilder builder =  new ProcessBuilder();
 		builder.environment().put("webservice_port", ""+nextFreePort);
-		builder.directory(new File(System.getProperty("user.dir")+"/docear"));
-		builder.command(new File(System.getProperty("user.dir")+"/docear/docear").getAbsolutePath());
+		builder.directory(new File(docearPath));
+		builder.command(new File(docearPath+"/docear").getAbsolutePath());
 
 		try {
 			Process p = builder.start();
