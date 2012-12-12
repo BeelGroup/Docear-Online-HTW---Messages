@@ -49,12 +49,12 @@ $ ->
       $("#mindmap").html("")
       mm = new MindMap(data.root.nodeText)
       
-      if data.root.leftChildren.nodeText != ""
+      if data.root.leftChildren != undefined && data.root.leftChildren.nodeText != ""
         leftNode = new Node(data.root.leftChildren.nodeText)
         leftNode.children = getRecursiveChildren(leftNode, data.root.leftChildren)
         mm.appendLeft(leftNode)
       
-      if data.root.rightChildren.nodeText != ""
+      if data.root.rightChildren != undefined && data.root.rightChildren.nodeText != ""
         rightNode = new Node(data.root.rightChildren.nodeText)
         if data.root.rightChildren.nodeText == undefined
           console.log "UNDEFINED" 
