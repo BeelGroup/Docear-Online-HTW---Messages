@@ -116,14 +116,15 @@ public class MindMap extends Controller {
 		}
 
 		//TODO get real map from file system
-		File f = new File(System.getProperty("user.dir")+"/app/files/mindmaps/"+mapId+".mm");
+		InputStream fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
+		//File f = new File(System.getProperty("user.dir")+"/app/files/mindmaps/"+mapId+".mm");
 
 		//send file to server and put in map
 		String wsUrl = serverUrl.toString();
 		WS.url(wsUrl+"/map")
 		.setHeader("Content-Type", "application/octet-stream")
 		.setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
-		.put(f).get();
+		.put(fileStream).get();
 		mindmapServerMap.put(serverUrl, mapId);
 
 		return serverUrl;
