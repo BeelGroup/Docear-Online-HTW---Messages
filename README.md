@@ -29,6 +29,7 @@
 * don't use CSS directly, use [less](http://lesscss.org/) in the folder app/assets/stylesheets
 * don't use JavaScript directly, use [CoffeeScript](http://coffeescript.org/) in the folder app/assets/javascripts
 * [Debugging](https://github.com/Docear/HTW-Frontend/blob/master/dev-doc/debug.md)
+* recover from hard build errors: `sbt clean`
 
 ## Backend mock
 * default: it delivers static files to easy frontend development
