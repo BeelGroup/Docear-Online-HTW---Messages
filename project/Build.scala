@@ -17,11 +17,35 @@ object ApplicationBuild extends Build {
       , "commons-lang" % "commons-lang" % "2.6"
     )
 
+    val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
+    val handlebarsEntryPoints = SettingKey[PathFinder]("ember-entry-points")
+
+    def HandlebarsPrecompileTask(handlebarsJsFilename: String) = {
+      val compiler = new sbt.handlebars.HandlebarsCompiler(handlebarsJsFilename)
+      AssetsCompiler("handlebars-precompile", (_ ** "*.handlebars"),
+      handlebarsEntryPoints,
+      { (name, min) => "" + name + ".pre" + (if (min) ".min.js" else ".js") },
+      { (handlebarsFile, options) =>
+        val (jsSource, dependencies) = compiler.compileDir(handlebarsFile, options)
+        // Any error here would be because of Handlebars, not the developer;
+        // so we don't want compilation to fail.
+        import scala.util.control.Exception._
+        val minified = catching(classOf[CompilationException])
+          .opt(play.core.jscompile.JavascriptCompiler.minify(jsSource, Some(handlebarsFile.getName())))
+        (jsSource, minified, dependencies)
+      },
+      handlebarsOptions
+      )
+    }
+
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
       , resolvers += "schleichardts Github" at "http://schleichardt.github.com/jvmrepo/"
       , Play2WarKeys.servletVersion := "3.0"
       , templatesImport += "views.TemplateUtil._"
+      , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates")
+      , handlebarsOptions := Seq.empty[String]
+      , resourceGenerators in Compile <+= HandlebarsPrecompileTask("handlebars-1.0.rc.1.js")
     ).settings(Play2WarPlugin.play2WarSettings: _*)
 
 }
