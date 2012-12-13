@@ -23,7 +23,13 @@
 <script src='@routes.Assets.at("javascripts/chai.js")'></script>
 
 *@
+
+@* TODO
+   maybe the runtime version is sufficient to load for the browser: http://handlebarsjs.com/precompilation.html
+   keep the full js to precompile with sbt/play
+*@
 <script src='@routes.Assets.at("javascripts/handlebars-1.0.rc.1.js")'></script>
+<script src='@routes.Assets.at("javascripts/views/templates.pre.min.js")'></script>
 <script src='@routes.Assets.at("javascripts/require.js")'></script>
 <script src='@routes.Assets.at("javascripts/load.js")'></script>
 
