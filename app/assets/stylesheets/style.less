@@ -2,11 +2,44 @@
 
 .docear-test {background: @docear-blue; color: white;}
 
-#mindmap {
-    width: 1024px;
-    height: 700px;
+#mindmap-container {
+    height: 600px;
     position: relative;
-    background: #fcfcfc
+    overflow: hidden;
+    cursor: move;
+    border: 1px solid #000000;
+}
+
+#mindmap-container #zoom-control {
+    width: 50px;
+    border: 1px dashed #000000;
+    background-color: #EBEBEB;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    cursor: default;
+    text-align: center;
+}
+
+.circle-button {
+    padding: 10px;
+    border: 5px solid #FFFFFF;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: #EEEEEE;
+    border-radius: 30px 30px 30px 30px;
+    cursor: pointer;
+}
+
+
+#mindmap {
+    width: 10000px;
+    height: 10000px;
+    top: -4850px;
+    left: -4488px;
+    position: relative;
+    background: #fcfcfc;
 }
 
 #mindmap .node {
@@ -15,6 +48,7 @@
     border-radius: 30px ;
     display: inline-block;
     position: absolute;
+    cursor: default;
 }
 
 #mindmap .node.selected {

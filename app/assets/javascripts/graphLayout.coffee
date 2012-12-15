@@ -97,6 +97,12 @@ class MindMapDrawer
     top = $element.position().top + _height($element) / 2
     top: top, left: left
 
+  fontSize = 14
+  # fontSize = parseInt($(".inner-node:first").css("font-size").replace("px", ""))
+  zoom = 1
+  setZoom: (zoomFactor) ->
+    zoom = zoomFactor
+  
   #
   # Draws the mind map into a jQuery selected field
   # @param [jQuery] $target selected field where to draw the mind map
@@ -109,7 +115,7 @@ class MindMapDrawer
   _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
     for child in children
       id = "child-#{@childId}"
-      $target.append _drawBox(child.getContent(), {id: id})
+      $target.append _drawBox(child.getContent(), {id: id, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"})
       $child = $("#" + id)
       child.view = $child
       @childId++
@@ -169,7 +175,7 @@ class MindMapDrawer
   # @return [jQuery] the root note
   drawRoot: ($target) ->
     rootNodeId = "root" #TODO find better system for ids
-    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: ""}))
+    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"}))
     $root = $("#" + rootNodeId)
     $root.docear().centerInBox $root.parent()
     root.view = $root

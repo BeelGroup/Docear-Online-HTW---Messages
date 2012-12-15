@@ -45,9 +45,9 @@
                         @menuItem("/", "Mind map demo")
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
-                        <li><a href="http://desolate-wildwood-9229.herokuapp.com/map/json/2" class="loadMap">Map2</a></li>
-                        <li><a href="http://desolate-wildwood-9229.herokuapp.com/map/json/3" class="loadMap">Map3</a></li>
-                        <li><a href="http://desolate-wildwood-9229.herokuapp.com/map/json/5" class="loadMap">Map5</a></li>
+                        <li><a href="http://localhost:9000/map/json/2" class="loadMap">Map2</a></li>
+                        <li><a href="http://localhost:9000/map/json/3" class="loadMap">Map3</a></li>
+                        <li><a href="http://localhost:9000/map/json/5" class="loadMap">Map5</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -55,7 +55,14 @@
     </div>
 
     <div class="container">
-        @content
+    	<div id="mindmap-container">
+    		<div id="zoom-control">
+    		    <div class="circle-button" id="zoom-in">+</div>
+    		    <div id="zoom-factor">0</div>
+    		    <div class="circle-button" id="zoom-out">-</div>
+    		</div>
+    		@content
+    	</div>
 
         <hr>
 
