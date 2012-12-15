@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 
@@ -89,7 +90,7 @@ public class MindMap extends Controller {
 	}
 
 
-	public static Result map(String id) {
+	public static Result map(final String id) {
 		//get hosting server
 		URL serverUrl = mindmapServerMap.getServerURLForMap(id);
 		if(serverUrl == null) { //if not hosted, send to a server
@@ -98,7 +99,7 @@ public class MindMap extends Controller {
 
 		//get response from server
 		String wsUrl = serverUrl.toString();
-		Response response = WS.url(wsUrl+"/map/json/"+id).get().get();
+		Response response = WS.url(wsUrl+"/map/json/"+id).get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
 
 		//send map or failure message
 		if(response.getStatus() == 200) {
@@ -126,7 +127,7 @@ public class MindMap extends Controller {
 		WS.url(wsUrl+"/map")
 		.setHeader("Content-Type", "application/octet-stream")
 		.setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
-		.put(fileStream).get();
+		.put(fileStream).getWrappedPromise().await(3,TimeUnit.MINUTES).get();
 		mindmapServerMap.put(serverUrl, mapId);
 
 		return serverUrl;
