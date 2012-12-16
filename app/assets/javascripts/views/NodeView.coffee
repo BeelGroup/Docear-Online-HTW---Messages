@@ -11,6 +11,7 @@ define ['models/Node'], (nodeModel) ->
     className: 'node'	
 
       ## template will be moved to /templates
+    
     temporarayTemplate = '<div class="entry">
     <h1>id: {{id}}</h1>
     <div>{{{mydiv}}}</div>
@@ -77,5 +78,5 @@ define ['models/Node'], (nodeModel) ->
       done()
 
 
-  # export da class instead of a da module, mtfckr
+
   module.exports = NodeView

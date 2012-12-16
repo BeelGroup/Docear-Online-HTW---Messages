@@ -3,7 +3,7 @@ abstract class
 ###
 
 define ->
-  module = () -> 
+  module = () ->
 
   class AbstractNode extends Backbone.Model 
     constructor: (id, folded, nodeText, graph) ->
@@ -13,5 +13,34 @@ define ->
       @set 'folded', folded
       @set 'nodeText', nodeText
       @set 'graph', graph
+      ## THROW events on all (also possible: save/update/change)
+      @on 'all', (event) -> console.log "Event: " + event
+      @sup = AbstractNode.__super__
+
+    # will be set to /map/json/id, when fetch() or update() will be called
+    urlRoot: '/map/json/'
+
+    # status messages for update
+    saveOptions:
+      success: (model) ->
+        console.log "Node with id '#{model.id}' was updated to the server."
+      error: (model, response) ->
+        console.log "Error while saving Node with id '#{model.id}': #{response.status} #{response.statusText} (path was #{model.urlRoot})"
+
+    fetchOptions:
+      success: (model) ->
+        console.log "Node with id '#{model.id}' was fetched from the server."
+      error: (model, response) ->
+        console.log "Error while fetching Node with id '#{model.id}': #{response.status} #{response.statusText} (path was #{model.urlRoot})"
+    
+    destroyOptions:
+      success: ->
+        editor.log "Your score has been deleted from your permanent record."
+      error: (model, response) ->
+        editor.log "Error: #{response.status} #{response.statusText}"
+
+    
+
+      
 
   module.exports = AbstractNode
