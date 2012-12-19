@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import play.Logger;
+
 import backend.User;
 
 public class Session {
@@ -33,8 +35,12 @@ public class Session {
 		User user = new User(username, accessToken);
 		
 		SESSION_MAP.put(sessionId, user);
-
+Logger.debug("sessionId: "+sessionId);
 		return sessionId;
+	}
+	
+	public static User getUserForSessionId(String sessionId) {
+		return SESSION_MAP.get(sessionId);
 	}
 
 }
