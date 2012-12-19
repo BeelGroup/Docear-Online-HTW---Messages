@@ -105,9 +105,9 @@ class HandlebarsCompiler(handlebarsJsFilename: String) {
     val dependencies = Seq.newBuilder[File]
 
     val output = new StringBuilder
-    output ++= "(function() {\n" +
-      "var template = Handlebars.template,\n" +
-      "    templates = {};\n\n"
+    output ++= """(function() {
++var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
++"""
 
     def addTemplateDir(dir: File, path: String) {
       for {
