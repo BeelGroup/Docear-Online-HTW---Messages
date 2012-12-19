@@ -16,6 +16,8 @@ GET     /qunit                      controllers.QUnit.testAll()
 
 # Mindmap
 GET		/map/json/:id				controllers.MindMap.map(id: String)
+GET		/maps/from/:user    			controllers.MindMap.mapListFromDB(user: String)
+GET		/map/from/:user/withId/:id	controllers.MindMap.mapFromDB(user: String, id: String)
 GET		/map/close/:id				controllers.MindMap.closeMap(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
