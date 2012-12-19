@@ -93,12 +93,21 @@ public class ServerMindmapMap {
 	 * @return server port or null if not hosted
 	 */
 	public URL getServerURLForMap(String mapId) {
-		if(mapIdServerMap.containsKey(mapId)) {
+		if(containsServerURLForMap(mapId)) {
 			return mapIdServerMap.get(mapId);
 		} else {
 			return null;
 		}
 	}
+
+    /**
+     *
+     * @param mapId
+     * @return boolean if contains mapId
+     */
+    public boolean containsServerURLForMap(String mapId) {
+        return mapIdServerMap.containsKey(mapId);
+    }
 	
 	public int getNextAvailablePort() {
 		int lowestPort = initialPort;
