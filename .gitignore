@@ -45,3 +45,4 @@ tmp
 !gradle-wrapper.jar
 !sbtwrapper/sbt-launch.jar
 /docear
+/nbproject/private/

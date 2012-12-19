@@ -35,7 +35,8 @@ public class MindMap extends Controller {
 
 		if(useSingleDocearInstance) {
 			try {
-				URL docear2 = new URL("http://docear2.f4.htw-berlin.de:8080/rest/v1");
+				//URL docear2 = new URL("http://docear2.f4.htw-berlin.de:8080/rest/v1");
+				URL docear2 = new URL("http://localhost:8080/rest/v1");
 				mindmapServerMap.put(docear2, "5");
 				mindmapServerMap.remove("5");
 			} catch (MalformedURLException e) {
