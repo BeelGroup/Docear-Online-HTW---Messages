@@ -45,9 +45,12 @@
                         @menuItem("/", "Mind map demo")
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
-                        <li><a href="http://localhost:9000/map/json/2" class="loadMap">Map2</a></li>
-                        <li><a href="http://localhost:9000/map/json/3" class="loadMap">Map3</a></li>
-                        <li><a href="http://localhost:9000/map/json/5" class="loadMap">Map5</a></li>
+                        <!-- @menuItem(controllers.routes.MindMap.map("2").toString, "Map2")
+                        @menuItem(controllers.routes.MindMap.map("3").toString, "Map3")
+                        @menuItem(controllers.routes.MindMap.map("5").toString, "Map5")-->
+                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/2" class="loadMap">Map2</a></li>
+                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/3" class="loadMap">Map3</a></li>
+                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/5" class="loadMap">Map5</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
