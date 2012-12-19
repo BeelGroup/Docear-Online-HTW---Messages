@@ -84,12 +84,13 @@ $.fn.extend
 
 class MindMapDrawer
   constructor: (@mindMap, @$target) ->
+    #jsPlumb.Defaults.Container = $target;
     @x = ""
     @childId = 1 #TODO use node id
     @verticalSpacer = 10
 
-  _drawBox = (content, attributes = {}) ->
-    "<div #{asXmlAttributes(attributes)} class='node'><div class='inner-node'>#{content}</div></div>"
+  _drawBox = (content, className, attributes = {}) ->
+    "<div #{asXmlAttributes(attributes)} class='node #{className}'><div class='inner-node'>#{content}</div><div class='children'></div><i class='icon-minus-sign fold'></i></div>"
 
 
   getCenterCoordinates = ($element) ->
@@ -115,11 +116,17 @@ class MindMapDrawer
   _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
     for child in children
       id = "child-#{@childId}"
-      $target.append _drawBox(child.getContent(), {id: id, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"})
+      
+      className = if child.folded then "folded" else ""
+      childNode = _drawBox(child.getContent(), className, {id: id, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"})
+      
+      $relativeRootNode.find('.children:first').append childNode
       $child = $("#" + id)
       child.view = $child
       @childId++
       @_drawRecursiveChildren $child, child.children, $target
+      
+      
 
   _getRecursiveHeight: (element, childrenOfElement) =>
     heightOfAllChildren = _.reduce(childrenOfElement, ((memo, child) => memo + @_getRecursiveHeight(child, child.children)), 0) + (childrenOfElement.length - 1) * @verticalSpacer
@@ -134,13 +141,15 @@ class MindMapDrawer
   drawChildren: ($root, $target) ->
     horizontalSpacer = 40
 
-    connectNodes = (source, target) -> jsPlumb.connect({ source:source.view, target:target.view })
+    connectNodes = (source, target) -> 
+      $container = $('#'+source.view.attr("id")+" .children:first")
+      jsPlumb.connect({ source:source.view, target:target.view, container:$container })
 
     #precondition: parent node has correct position
     positionFromTopRecursive = (parent, children) =>
       treeHeight = @_getRecursiveHeight parent, children
       parentCenterTop = getCenterCoordinates(parent.view).top
-      newTop = parentCenterTop - 0.5 * treeHeight
+      newTop = -parent.view.height()/2 - 0.5 * treeHeight
       currentTop = newTop
       $.each children, (indexInArray, child) =>
         subTreeHeight = @_getRecursiveHeight child, child.children
@@ -152,10 +161,20 @@ class MindMapDrawer
 
     positionHorizontalFromParentRecursive = (parent, children, direction) =>
       for child in children
+        $foldIcon = $(child.view).children('i.fold:first')
+        $foldIcon.css("top", child.view.height()/2)
         if direction == "left"
-          left = parent.view.position().left - horizontalSpacer - child.view.width()
+          left = - horizontalSpacer - child.view.width()
+          if child.children.length > 0
+            $foldIcon.css("left", -$foldIcon.width()/2)
+          else
+            $foldIcon.remove()
         else
-          left = parent.view.position().left + parent.view.width() + horizontalSpacer
+          left = parent.view.width() + horizontalSpacer
+          if child.children.length > 0
+            $foldIcon.css("right", -$foldIcon.width()/2)
+          else
+            $foldIcon.remove()
         child.view.css("left", left)
         positionHorizontalFromParentRecursive child, child.children, direction
 
@@ -175,7 +194,8 @@ class MindMapDrawer
   # @return [jQuery] the root note
   drawRoot: ($target) ->
     rootNodeId = "root" #TODO find better system for ids
-    $target.append(_drawBox(@mindMap.getContent(), {id:rootNodeId, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"}))
+    rootNode = _drawBox(@mindMap.getContent(), "root-node",{id:rootNodeId, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"})
+    $target.append(rootNode)
     $root = $("#" + rootNodeId)
     $root.docear().centerInBox $root.parent()
     root.view = $root

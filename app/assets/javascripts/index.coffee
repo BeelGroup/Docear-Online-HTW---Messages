@@ -8,14 +8,6 @@ $ ->
   zoomFactor = 0
 
   if $mindmap.length > 0
-
-    mindMap = new MindMap("foo2")
-    mindMap.appendLeft(new Node("laaaaaaaaaaaaaaaaaa"))
-    mindMap.appendRight(new Node("awfnawfn"))
-    mindMap.appendRight(new Node("test3"))
-    mindMap.appendRight(new Node("“I’m not a big fan of this area of research […]. I know it's in the call for papers, but I think that’s a mistake.”"))
-    mindMap.appendRight(new Node("<html><head></head><body><h1>ada</h1></body></html>"))
-
     current_mindmap = new MindMap("root")
     right1 = new Node("right 1")
     right1_3 = new Node("right 1.3")
@@ -33,6 +25,23 @@ $ ->
     current_mindmap.appendRight(new Node("right 3<br><img src='/assets/images/docear/logo/main-logo.png' style='height: 68px; width: 350px' />"))
     current_map_drawer = new MindMapDrawer(current_mindmap, $mindmap)
     current_map_drawer.draw()
+    
+    #connectionList = jsPlumb.getConnections("child-4");
+    #overlay = connectionList.getOverlay("child-4")
+    #connectionList.hide()
+    #jsPlumb.getInstance()
+    #jsPlumb.hide("child-4", false);
+    #jsPlumb.selectEndpoints($('#child-4')).hideOverlays
+    #jsPlumb.selectEndpoints($('#child-4'))
+    #jsPlumb.deleteEndpoint('child-4')
+    # connections
+    #conns = jsPlumb.getConnections({source:'child-4'})
+    #connections = jsPlumb.getConnections(source:$('#child-4'))
+    #for conn in connections
+    #  jsPlumb.removeAllEndpoints(conn)
+    #jsPlumb.removeAllEndpoints("child-4", "child-5");
+    #jsPlumb.selectEndpoints({source:$mindmap, source:$("child-4")}).hide
+    
   
   getRecursiveChildren = (childrenData)->
     children = []
@@ -53,6 +62,7 @@ $ ->
     href = $(this).attr("href")
     recall = (data)->
       $("#mindmap").html("")
+      jsPlumb.reset()
       current_mindmap = new MindMap(data.root.nodeText)
       
       if data.root.leftChildren != undefined
@@ -73,6 +83,11 @@ $ ->
       
       current_map_drawer = new MindMapDrawer(current_mindmap, $("#mindmap"))
       current_map_drawer.draw()
+      
+      foldedNodes = $('.node.folded')
+      $(foldedNodes).children('.children').hide()
+      $(foldedNodes).find("i.fold").toggleClass('icon-minus-sign')
+      $(foldedNodes).find("i.fold").toggleClass('icon-plus-sign')
       
     $.get(href, recall, "json")
     false
@@ -107,3 +122,25 @@ $ ->
   	
   $('#zoom-out').click ->
   	changeZoom(1)
+  
+  $('body').on("mouseenter", ".node", 
+    -> 
+      $(this).children('i.fold:first').show()
+      false
+  )
+  $('body').on("mouseleave", ".node",
+  	-> 
+      $(this).children('i.fold:first').hide()
+      false
+  )
+    
+  $('body').on("click", ".node i.fold", 
+  	->
+  	  if $(this).hasClass('icon-minus-sign')
+        $(this).parent().children('.children').fadeOut('fast')
+      else
+        $(this).parent().children('.children').fadeIn('fast')
+      $(this).toggleClass('icon-minus-sign')
+      $(this).toggleClass('icon-plus-sign')
+    )
+    
