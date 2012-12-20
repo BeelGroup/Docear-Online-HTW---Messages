@@ -6,7 +6,6 @@ import models.backend.UserMindmapInfo;
 import util.backend.ZipUtils;
 import models.backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
-import play.Configuration;
 import play.Logger;
 import play.Play;
 import play.libs.F;
@@ -27,30 +26,8 @@ import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static play.libs.Json.toJson;
 
 public class MindMap extends Controller {
-	private final static ServerMindmapMap mindmapServerMap;
 
-	static {
-        final Configuration conf = Play.application().configuration();
-        int mapsPerInstance = conf.getInt("backend.mapsPerInstance");
-		boolean useSingleDocearInstance = conf.getBoolean("backend.useSingleInstance");
-        final Integer port = conf.getInt("backend.port");
-        mindmapServerMap = new ServerMindmapMap(mapsPerInstance, port);
-
-		if(useSingleDocearInstance) {
-            try {
-                final String protocol = conf.getString("backend.scheme");
-                final String host = conf.getString("backend.host");
-                final String path = conf.getString("backend.v10.pathprefix");
-                URL docear2 = new URL(protocol, host, port, path);
-				mindmapServerMap.put(docear2, "5");//TODO what does that mean? #magicnumber
-				mindmapServerMap.remove("5");//TODO what does that mean? #magicnumber
-			} catch (MalformedURLException e) {
-                throw new RuntimeException("cannot read backend url, check your configuration", e);
-			}
-		}
-	}
-
-	public static Result index(final String path) {
+    public static Result index(final String path) {
 		final boolean proxyRequests = isFalse(Play.application().configuration().getBoolean("backend.mock"));
 		Result result;
 		if(proxyRequests) {
@@ -99,7 +76,7 @@ public class MindMap extends Controller {
 
 	public static Result map(final String id) {
 		//get hosting server
-		URL serverUrl = mindmapServerMap.getServerURLForMap(id);
+		URL serverUrl = ServerMindmapMap.getInstance().getServerURLForMap(id);
 		if(serverUrl == null) { //if not hosted, send to a server
 			try {
 				serverUrl = sendMapToDocearInstance(id);
@@ -116,7 +93,7 @@ public class MindMap extends Controller {
 		if(response.getStatus() == 200) {
 			return ok(response.asJson());
 		} else {
-			mindmapServerMap.remove(id);
+			ServerMindmapMap.getInstance().remove(id);
 			return map(id);
 			//return badRequest(response.getBody());
 		}
@@ -125,7 +102,7 @@ public class MindMap extends Controller {
     //TODO backend team: I don't understand the control flow in this method, and does this method two different things???
 	private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
 		//find server with capacity
-		URL serverUrl = mindmapServerMap.getServerWithFreeCapacity();
+		URL serverUrl = ServerMindmapMap.getInstance().getServerWithFreeCapacity();
 		if(serverUrl == null) { //or start a new instance
 			serverUrl = startDocearInstance();
 		}
@@ -154,13 +131,13 @@ public class MindMap extends Controller {
 		.setHeader("Content-Type", "application/octet-stream")
 		.setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
 		.put(fileStream).getWrappedPromise().await(10,TimeUnit.SECONDS).get();
-		mindmapServerMap.put(serverUrl, mapId);
+		ServerMindmapMap.getInstance().put(serverUrl, mapId);
 
 		return serverUrl;
 	}
 
 	public static Result closeMap(String id) {
-		URL serverUrl = mindmapServerMap.remove(id);
+		URL serverUrl = ServerMindmapMap.getInstance().remove(id);
 		if(serverUrl == null) {
 			return badRequest("Map is not open");
 		}
@@ -168,7 +145,7 @@ public class MindMap extends Controller {
 		Response response = WS.url(serverUrl.toString()+"/map/"+id).delete().get();
 		if(response.getStatus() == 200) {
 
-			if(!mindmapServerMap.hasOpenMaps(serverUrl)) {
+			if(!ServerMindmapMap.getInstance().hasOpenMaps(serverUrl)) {
 				closeDocearInstance(serverUrl);
 			}
 
@@ -264,7 +241,7 @@ public class MindMap extends Controller {
 	 * @return port of new server or -1 on failure
 	 */
 	private static URL startDocearInstance() {
-		int nextFreePort = mindmapServerMap.getNextAvailablePort();
+		int nextFreePort = ServerMindmapMap.getInstance().getNextAvailablePort();
 		String docearPath = Play.application().configuration().getString("backend.docearDirectory");
 		ProcessBuilder builder =  new ProcessBuilder();
 		builder.environment().put("webservice_port", ""+nextFreePort);
@@ -316,7 +293,7 @@ public class MindMap extends Controller {
 		String wsUrl = serverUrl.toString();
 		Promise<Response> promise = WS.url(wsUrl+"/close").get();
 		if(promise.get().getStatus() == 200) {
-			mindmapServerMap.remove(serverUrl);
+			ServerMindmapMap.getInstance().remove(serverUrl);
 			return true;
 		}
 		return false;

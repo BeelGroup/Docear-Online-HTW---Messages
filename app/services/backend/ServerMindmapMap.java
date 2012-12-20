@@ -1,5 +1,9 @@
 package services.backend;
 
+import play.Configuration;
+import play.Play;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,20 +13,52 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 //TODO backend team, what is the task of this class?
+//TODO Play Framework is stateless don't keep state there
+//TODO maybe bad code because of Singleton
 public class ServerMindmapMap {
 	private final Map<URL, Set<String>> serverMapIdMap;
 	private final Map<String, URL> mapIdServerMap;
 	private final int maxMapsPerServer;
 	private final int initialPort;
+    private static ServerMindmapMap INSTANCE;
 
-	public ServerMindmapMap(int maxMapsPerServer, int initialPort) {
+	private ServerMindmapMap(int maxMapsPerServer, int initialPort) {
 		serverMapIdMap = Collections.synchronizedMap(new HashMap<URL, Set<String>>());
 		mapIdServerMap = Collections.synchronizedMap(new HashMap<String, URL>());
 		this.maxMapsPerServer = maxMapsPerServer;
 		this.initialPort = initialPort;
 	}
 
-	public void put(URL serverAddress, String mapId) {
+    public static ServerMindmapMap getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = createInstance();
+        }
+        return INSTANCE;
+    }
+
+    private static ServerMindmapMap createInstance() {
+        final Configuration conf = Play.application().configuration();
+        int mapsPerInstance = conf.getInt("backend.mapsPerInstance");
+        boolean useSingleDocearInstance = conf.getBoolean("backend.useSingleInstance");
+        final Integer port = conf.getInt("backend.port");
+        final ServerMindmapMap mindmapServerMap = new ServerMindmapMap(mapsPerInstance, port);
+
+        if(useSingleDocearInstance) {
+            try {
+                final String protocol = conf.getString("backend.scheme");
+                final String host = conf.getString("backend.host");
+                final String path = conf.getString("backend.v10.pathprefix");
+                URL docear2 = new URL(protocol, host, port, path);
+                mindmapServerMap.put(docear2, "5");//TODO what does that mean? #magicnumber
+                mindmapServerMap.remove("5");//TODO what does that mean? #magicnumber
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("cannot read backend url, check your configuration", e);
+            }
+        }
+        return mindmapServerMap;
+    }
+
+    public void put(URL serverAddress, String mapId) {
 		//add to port map
 		if(!serverMapIdMap.containsKey(serverAddress)) {
 			serverMapIdMap.put(serverAddress, new HashSet<String>());
