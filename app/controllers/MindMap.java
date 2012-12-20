@@ -4,6 +4,7 @@ import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static play.libs.Json.toJson;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +20,8 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -48,8 +51,8 @@ public class MindMap extends Controller {
 
 		if(useSingleDocearInstance) {
 			try {
-				//URL docear2 = new URL("http://docear2.f4.htw-berlin.de:8080/rest/v1");
-				URL docear2 = new URL("http://localhost:8080/rest/v1");
+				URL docear2 = new URL("http://docear2.f4.htw-berlin.de:8080/rest/v1");
+				//URL docear2 = new URL("http://localhost:8080/rest/v1");
 				mindmapServerMap.put(docear2, "5");
 				mindmapServerMap.remove("5");
 			} catch (MalformedURLException e) {
@@ -265,8 +268,7 @@ public class MindMap extends Controller {
 
 	private static InputStream mapFromDB(final User user, final String id) {
 		String docearServerAPIURL = "https://api.docear.org/user";
-		
-		
+	
 		WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
 				.setHeader("accessToken", user.getAccesToken())
 				//.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")

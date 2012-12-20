@@ -74,6 +74,7 @@ public class Application extends Controller {
 	
 	public static User getCurrentUser() {
 		String sessionId = request().cookies().get(getSessionCookieName()).value();
+
 		return Session.getUserForSessionId(sessionId);
 	}
 }
