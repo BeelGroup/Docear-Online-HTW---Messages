@@ -99,7 +99,6 @@ public class MindMap extends Controller {
 		}
 	}
 
-    //TODO backend team: I don't understand the control flow in this method, and does this method two different things???
 	private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
 		//find server with capacity
 		URL serverUrl = ServerMindmapMap.getInstance().getServerWithFreeCapacity();
@@ -158,7 +157,7 @@ public class MindMap extends Controller {
 
 	private static File unZipIt(InputStream bodyStream) throws IOException {
 
-		File folder = new File("D:\\Temp\\dcr2");//TODO backend team, this is not platform independent
+		File folder = new File("D:\\Temp\\dcr2");
 
 		Logger.debug("unpacking zip");
 		ZipUtils.extractMindmap(bodyStream);

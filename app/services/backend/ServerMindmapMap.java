@@ -12,9 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-//TODO backend team, what is the task of this class?
-//TODO Play Framework is stateless don't keep state there
-//TODO maybe bad code because of Singleton
 public class ServerMindmapMap {
 	private final Map<URL, Set<String>> serverMapIdMap;
 	private final Map<String, URL> mapIdServerMap;
@@ -49,8 +46,8 @@ public class ServerMindmapMap {
                 final String host = conf.getString("backend.host");
                 final String path = conf.getString("backend.v10.pathprefix");
                 URL docear2 = new URL(protocol, host, port, path);
-                mindmapServerMap.put(docear2, "5");//TODO what does that mean? #magicnumber
-                mindmapServerMap.remove("5");//TODO what does that mean? #magicnumber
+                mindmapServerMap.put(docear2, "5");
+                mindmapServerMap.remove("5");
             } catch (MalformedURLException e) {
                 throw new RuntimeException("cannot read backend url, check your configuration", e);
             }
