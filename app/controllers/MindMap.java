@@ -1,17 +1,26 @@
 package controllers;
 
 import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static play.libs.Json.toJson;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import play.Logger;
@@ -23,6 +32,10 @@ import play.libs.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
 import backend.ServerMindmapMap;
+import backend.User;
+import backend.UserMindmapInfo;
+import backend.ZipUtils;
+import controllers.exceptions.NoUserLoggedInException;
 
 public class MindMap extends Controller {
 	private final static ServerMindmapMap mindmapServerMap;
@@ -95,7 +108,11 @@ public class MindMap extends Controller {
 		//get hosting server
 		URL serverUrl = mindmapServerMap.getServerURLForMap(id);
 		if(serverUrl == null) { //if not hosted, send to a server
-			serverUrl = sendMapToDocearInstance(id);
+			try {
+				serverUrl = sendMapToDocearInstance(id);
+			} catch (NoUserLoggedInException e) {
+				return unauthorized("no user is logged in");
+			}
 		}
 
 		//get response from server
@@ -112,16 +129,24 @@ public class MindMap extends Controller {
 		}
 	}
 
-	private static URL sendMapToDocearInstance(String mapId) {
+	private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
 		//find server with capacity
 		URL serverUrl = mindmapServerMap.getServerWithFreeCapacity();
 		if(serverUrl == null) { //or start a new instance
 			serverUrl = startDocearInstance();
 		}
 
-		//TODO get real map from file system
-		InputStream fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
-		//File f = new File(System.getProperty("user.dir")+"/app/files/mindmaps/"+mapId+".mm");
+
+		User user = Application.getCurrentUser();
+		if(user == null && mapId.length() > 1)
+			throw new NoUserLoggedInException();
+
+		InputStream fileStream = null;
+		if(mapId.length() == 1) {
+			fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
+		} else {
+			fileStream = mapFromDB(user, mapId);
+		}
 
 		//send file to server and put in map
 		String wsUrl = serverUrl.toString();
@@ -152,6 +177,151 @@ public class MindMap extends Controller {
 			return badRequest();
 		}
 
+	}
+
+	private static InputStream unZipIt(InputStream bodyStream){
+
+		File folder = new File("D:\\Temp\\dcr2");
+		
+		Logger.debug("unpacking zip");
+		ZipUtils.extract(bodyStream, folder);
+		
+		Logger.debug("scanning files");
+		File[] files = folder.listFiles();
+		File mindmapFile = null;
+		for(File file : files) {
+			if(file.getName().endsWith(".mm"))
+				mindmapFile = file;
+			else{
+				file.delete();
+			}
+		}
+		
+		Logger.debug("return file: "+mindmapFile.getName());
+		try {
+			return new FileInputStream(mindmapFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+//		byte[] buffer = new byte[1024];
+//		
+//		try{
+//			//get the zip file content
+//			ZipInputStream zis = new ZipInputStream(bodyStream);
+//			
+//			//get the zipped file list entry
+//			BufferedInputStream reader = new BufferedInputStream(zis);
+//			
+//			StringWriter writer = new StringWriter();
+//			IOUtils.copy(zis, writer);
+//			String content = writer.toString();
+//			FileUtils.writeStringToFile(new File("foo"), content);
+//			Logger.debug("");
+//			Logger.debug(content);
+//			
+//
+//			return writer.toString();
+//		} catch (Exception e) {
+//			Logger.debug("error:",e);
+//			return "exception";
+//		}
+		
+//			while(ze!=null){
+//
+//				String fileName = ze.getName();
+//				Logger.debug("fileName: " + fileName);
+//				if (fileName.endsWith("mm")){
+//					Logger.debug("FOUND MM.");
+//					ByteArrayOutputStream fos = new ByteArrayOutputStream();
+//
+//					int len;
+//					while ((len = zis.read(buffer)) > 0) {
+//						fos.write(buffer, 0, len);
+//					}
+//
+//					fos.close();
+//					zis.closeEntry();
+//					zis.close();
+//					return fos.toString();
+//				}
+//				ze = zis.getNextEntry();
+//			}
+//
+//			zis.closeEntry();
+//			zis.close();
+//
+//		}catch(IOException ex){
+//			ex.printStackTrace();
+//		}
+//		return "empty";
+	}
+	
+	public static Result mapTest() {
+		User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
+		InputStream stream = mapFromDB(user, "103805");
+		return ok();
+	}
+
+	private static InputStream mapFromDB(final User user, final String id) {
+		String docearServerAPIURL = "https://api.docear.org/user";
+		
+		
+		WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
+				.setHeader("accessToken", user.getAccesToken())
+				//.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")
+				//.setHeader("Accept-Charset","utf-8")
+				.get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
+		
+		
+		//Logger.debug("body: " + response.getBody());
+		
+		
+		InputStream mapXmlStream = unZipIt(IOUtils.toInputStream(response.getBody()));//new FileInputStream(new File("mindmap.zip")));
+		
+		Logger.debug("mapXmlStream null is "+(mapXmlStream == null));
+		
+		StringWriter writer = new StringWriter();
+		try {
+			IOUtils.copy(mapXmlStream, writer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String theString = writer.toString();
+		
+		Logger.debug(theString);
+		
+
+		//InputStream stream = IOUtils.toInputStream(mapXmlString);
+		return mapXmlStream;
+	}
+
+	public static Result mapListFromDB(final String user) {
+		String docearServerAPIURL = "https://api.docear.org/user";
+		Response response =  WS.url(docearServerAPIURL + "/" + user + "/mindmaps/")
+				.setHeader("accessToken", "").get()
+				.getWrappedPromise().await(3,TimeUnit.MINUTES).get();
+
+		BufferedReader br = new BufferedReader (new StringReader(response.getBody().toString()));
+
+		List<UserMindmapInfo> infos = new LinkedList<UserMindmapInfo>();
+		try {
+			for ( String line; (line = br.readLine()) != null; ){
+				String[] strings = line.split("\\|#\\|");
+				UserMindmapInfo info = new UserMindmapInfo(strings[0], strings[1], strings[2], strings[3], strings[4]);
+				infos.add(info);
+			}
+		} catch (IOException e) {
+			Logger.error(e.getMessage());
+			return badRequest("Error while parsing response.");
+		}
+
+		//send user map infos or failure message
+		if(response.getStatus() == 200) {
+			return ok(toJson(infos));
+		} else {
+			return badRequest(response.getBody());
+		}
 	}
 
 	/**

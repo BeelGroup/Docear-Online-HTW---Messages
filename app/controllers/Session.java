@@ -36,5 +36,9 @@ public class Session {
 
 		return sessionId;
 	}
+	
+	public static User getUserForSessionId(String sessionId) {
+		return SESSION_MAP.get(sessionId);
+	}
 
 }

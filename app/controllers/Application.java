@@ -4,11 +4,11 @@ import java.util.Map;
 
 import play.Logger;
 import play.Play;
-import play.libs.F.Function;
 import play.libs.WS;
 import play.libs.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
+import backend.User;
 
 public class Application extends Controller {
 
@@ -66,10 +66,14 @@ public class Application extends Controller {
 		} else {
 			return unauthorized("Authentication failed");
 		}
-
 	}
 
 	private static String getSessionCookieName() {
 		return Play.application().configuration().getString("backend.sessionIdName");
+	}
+	
+	public static User getCurrentUser() {
+		String sessionId = request().cookies().get(getSessionCookieName()).value();
+		return Session.getUserForSessionId(sessionId);
 	}
 }
