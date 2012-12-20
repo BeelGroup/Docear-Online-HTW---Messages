@@ -106,8 +106,8 @@ class HandlebarsCompiler(handlebarsJsFilename: String) {
 
     val output = new StringBuilder
     output ++= """(function() {
-+var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
-+"""
+var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+"""
 
     def addTemplateDir(dir: File, path: String) {
       for {
