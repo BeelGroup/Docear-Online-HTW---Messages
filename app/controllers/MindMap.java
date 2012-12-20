@@ -3,7 +3,7 @@ package controllers;
 import backend.ServerMindmapMap;
 import models.backend.User;
 import models.backend.UserMindmapInfo;
-import backend.ZipUtils;
+import util.ZipUtils;
 import backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
 import play.Configuration;
