@@ -1,40 +1,31 @@
 package play.altered;
 
+import com.ning.http.client.*;
+import com.ning.http.client.Realm.AuthScheme;
+import com.ning.http.client.Realm.RealmBuilder;
+import com.ning.http.util.AsyncHttpProviderUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
+import org.w3c.dom.Document;
+import play.libs.F.Promise;
+import play.libs.Json;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.w3c.dom.Document;
-
-import play.libs.Json;
-import play.libs.XML;
-import play.libs.F.Promise;
-
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.FluentCaseInsensitiveStringsMap;
-import com.ning.http.client.FluentStringsMap;
-import com.ning.http.client.PerRequestConfig;
-import com.ning.http.client.Realm.AuthScheme;
-import com.ning.http.client.Realm.RealmBuilder;
-import com.ning.http.client.RequestBuilderBase;
-import com.ning.http.util.AsyncHttpProviderUtils;
+import java.util.*;
 
 /**
  * Asynchronous API to to query web services, as an http client.
  *
  * The value returned is a Promise<Response>, and you should use Play's asynchronous mechanisms to use this response.
+ *
+ * @deprecated This class is temporary needed to receive binaries, since Play 2.0 doesn't support it with the Java API. Remove this class on portation to Play 2.1. DO NOT USE THIS CLASS FOR TEXT FILES.
  */
+@Deprecated
 public class WS {
 
     private static AsyncHttpClient client() {
