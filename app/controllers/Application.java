@@ -4,8 +4,8 @@ import java.util.Map;
 
 import play.Logger;
 import play.Play;
-import play.altered.WS;
-import play.altered.WS.Response;
+import util.backend.WS;
+import util.backend.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
 import models.backend.User;

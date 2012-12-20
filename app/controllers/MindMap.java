@@ -221,7 +221,7 @@ public class MindMap extends Controller {
 		//		play.api.libs.ws.WS.WSRequestHolder request = 
 		//				play.api.libs.ws.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id);
 
-		play.altered.WS.Response response =  play.altered.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
+		util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
 				.setHeader("accessToken", user.getAccesToken())
 				//.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")
 				//.setHeader("Accept-Charset","utf-8")
