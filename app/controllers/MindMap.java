@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static play.libs.Json.toJson;
 
 public class MindMap extends Controller {
@@ -34,7 +35,7 @@ public class MindMap extends Controller {
     /* TODO Michael: will be replaced with dependency management */
     static MindMapCrudService MIND_MAP_CRUD_SERVICE;
     static {
-        final boolean mock = isFalse(Play.application().configuration().getBoolean("backend.mock"));
+        final boolean mock = isTrue(Play.application().configuration().getBoolean("backend.mock"));
         if (mock) {
             MIND_MAP_CRUD_SERVICE = new MockMindMapCrudService();
         } else {
@@ -92,8 +93,9 @@ public class MindMap extends Controller {
             final JsonNode mindMap = MIND_MAP_CRUD_SERVICE.mindMapAsJson(id);
             return ok(mindMap);
         } catch (NoUserLoggedInException e) {
-            Logger.debug("use not logged in", e);
-            return unauthorized("no user is logged in");//TODO Michael replace with flash message and login page
+            final String message = "user not logged in";
+            Logger.debug(message, e);
+            return unauthorized(message);//TODO Michael replace with flash message and login page
         } catch (IOException e) {
             final String message = "can't load mind map";
             Logger.error(message, e);
