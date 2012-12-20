@@ -8,7 +8,7 @@ import play.altered.WS;
 import play.altered.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
-import backend.User;
+import models.backend.User;
 
 public class Application extends Controller {
 

@@ -1,4 +1,4 @@
-package backend;
+package models.backend;
 
 public class User {
 	private final String accesToken;

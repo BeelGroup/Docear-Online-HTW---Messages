@@ -7,7 +7,7 @@ import java.util.Map;
 
 import play.Logger;
 
-import backend.User;
+import models.backend.User;
 
 public class Session {
 

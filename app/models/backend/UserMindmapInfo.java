@@ -1,4 +1,4 @@
-package backend;
+package models.backend;
 
 /**
  * Created with IntelliJ IDEA.

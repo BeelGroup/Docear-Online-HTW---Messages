@@ -1,8 +1,8 @@
 package controllers;
 
 import backend.ServerMindmapMap;
-import backend.User;
-import backend.UserMindmapInfo;
+import models.backend.User;
+import models.backend.UserMindmapInfo;
 import backend.ZipUtils;
 import backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
