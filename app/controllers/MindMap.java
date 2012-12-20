@@ -1,6 +1,6 @@
 package controllers;
 
-import backend.ServerMindmapMap;
+import services.backend.ServerMindmapMap;
 import models.backend.User;
 import models.backend.UserMindmapInfo;
 import util.backend.ZipUtils;

@@ -1,4 +1,4 @@
-package backend;
+package services.backend;
 
 import java.net.URL;
 import java.util.Collections;
