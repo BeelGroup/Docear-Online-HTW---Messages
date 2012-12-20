@@ -3,6 +3,7 @@ $ ->
 
   $mindmap = $("#mindmap")
   current_mindmap = null
+  #current_map_drawer = null
   fontSize = 14
   zoom = 1
   zoomFactor = 0
@@ -111,7 +112,9 @@ $ ->
     $("#mindmap").html("")
     current_map_drawer = new MindMapDrawer(current_mindmap, $("#mindmap"))
     current_map_drawer.setZoom(zoom)
-    current_map_drawer.draw()	
+    current_map_drawer.draw()
+    
+    #current_map_drawer.refreshDom() 
     
   $('#mindmap').mousewheel (e, delta)-> 
     changeZoom(e.originalEvent.detail)
