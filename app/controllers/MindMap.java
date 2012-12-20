@@ -4,7 +4,6 @@ import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static play.libs.Json.toJson;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,10 +19,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import play.Logger;
@@ -148,7 +144,11 @@ public class MindMap extends Controller {
 		if(mapId.length() == 1) {
 			fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
 		} else {
-			fileStream = mapFromDB(user, mapId);
+			try {
+				fileStream = new FileInputStream(mapFromDB(user, mapId));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 
 		//send file to server and put in map
@@ -156,7 +156,7 @@ public class MindMap extends Controller {
 		WS.url(wsUrl+"/map")
 		.setHeader("Content-Type", "application/octet-stream")
 		.setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
-		.put(fileStream).getWrappedPromise().await(3,TimeUnit.MINUTES).get();
+		.put(fileStream).getWrappedPromise().await(10,TimeUnit.SECONDS).get();
 		mindmapServerMap.put(serverUrl, mapId);
 
 		return serverUrl;
@@ -182,13 +182,13 @@ public class MindMap extends Controller {
 
 	}
 
-	private static InputStream unZipIt(InputStream bodyStream){
+	private static File unZipIt(InputStream bodyStream){
 
 		File folder = new File("D:\\Temp\\dcr2");
-		
+
 		Logger.debug("unpacking zip");
-		ZipUtils.extract(bodyStream, folder);
-		
+		ZipUtils.extractMindmap(bodyStream);
+
 		Logger.debug("scanning files");
 		File[] files = folder.listFiles();
 		File mindmapFile = null;
@@ -199,103 +199,82 @@ public class MindMap extends Controller {
 				file.delete();
 			}
 		}
-		
+
 		Logger.debug("return file: "+mindmapFile.getName());
-		try {
-			return new FileInputStream(mindmapFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-//		byte[] buffer = new byte[1024];
-//		
-//		try{
-//			//get the zip file content
-//			ZipInputStream zis = new ZipInputStream(bodyStream);
-//			
-//			//get the zipped file list entry
-//			BufferedInputStream reader = new BufferedInputStream(zis);
-//			
-//			StringWriter writer = new StringWriter();
-//			IOUtils.copy(zis, writer);
-//			String content = writer.toString();
-//			FileUtils.writeStringToFile(new File("foo"), content);
-//			Logger.debug("");
-//			Logger.debug(content);
-//			
-//
-//			return writer.toString();
-//		} catch (Exception e) {
-//			Logger.debug("error:",e);
-//			return "exception";
-//		}
-		
-//			while(ze!=null){
-//
-//				String fileName = ze.getName();
-//				Logger.debug("fileName: " + fileName);
-//				if (fileName.endsWith("mm")){
-//					Logger.debug("FOUND MM.");
-//					ByteArrayOutputStream fos = new ByteArrayOutputStream();
-//
-//					int len;
-//					while ((len = zis.read(buffer)) > 0) {
-//						fos.write(buffer, 0, len);
-//					}
-//
-//					fos.close();
-//					zis.closeEntry();
-//					zis.close();
-//					return fos.toString();
-//				}
-//				ze = zis.getNextEntry();
-//			}
-//
-//			zis.closeEntry();
-//			zis.close();
-//
-//		}catch(IOException ex){
-//			ex.printStackTrace();
-//		}
-//		return "empty";
-	}
-	
-	public static Result mapTest() {
-		User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
-		InputStream stream = mapFromDB(user, "103805");
-		return ok();
+		return mindmapFile;
+		//		byte[] buffer = new byte[1024];
+		//		
+		//		try{
+		//			//get the zip file content
+		//			ZipInputStream zis = new ZipInputStream(bodyStream);
+		//			
+		//			//get the zipped file list entry
+		//			BufferedInputStream reader = new BufferedInputStream(zis);
+		//			
+		//			StringWriter writer = new StringWriter();
+		//			IOUtils.copy(zis, writer);
+		//			String content = writer.toString();
+		//			FileUtils.writeStringToFile(new File("foo"), content);
+		//			Logger.debug("");
+		//			Logger.debug(content);
+		//			
+		//
+		//			return writer.toString();
+		//		} catch (Exception e) {
+		//			Logger.debug("error:",e);
+		//			return "exception";
+		//		}
+
+		//			while(ze!=null){
+		//
+		//				String fileName = ze.getName();
+		//				Logger.debug("fileName: " + fileName);
+		//				if (fileName.endsWith("mm")){
+		//					Logger.debug("FOUND MM.");
+		//					ByteArrayOutputStream fos = new ByteArrayOutputStream();
+		//
+		//					int len;
+		//					while ((len = zis.read(buffer)) > 0) {
+		//						fos.write(buffer, 0, len);
+		//					}
+		//
+		//					fos.close();
+		//					zis.closeEntry();
+		//					zis.close();
+		//					return fos.toString();
+		//				}
+		//				ze = zis.getNextEntry();
+		//			}
+		//
+		//			zis.closeEntry();
+		//			zis.close();
+		//
+		//		}catch(IOException ex){
+		//			ex.printStackTrace();
+		//		}
+		//		return "empty";
 	}
 
-	private static InputStream mapFromDB(final User user, final String id) {
+	public static Result mapTest() {
+		User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
+		File mmFile = mapFromDB(user, "103805");
+		return ok(mmFile);
+	}
+
+	private static File mapFromDB(final User user, final String id) {
 		String docearServerAPIURL = "https://api.docear.org/user";
-	
-		WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
+
+		//		play.api.libs.ws.WS.WSRequestHolder request = 
+		//				play.api.libs.ws.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id);
+
+		play.altered.WS.Response response =  play.altered.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
 				.setHeader("accessToken", user.getAccesToken())
 				//.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")
 				//.setHeader("Accept-Charset","utf-8")
 				.get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
-		
-		
-		//Logger.debug("body: " + response.getBody());
-		
-		
-		InputStream mapXmlStream = unZipIt(IOUtils.toInputStream(response.getBody()));//new FileInputStream(new File("mindmap.zip")));
-		
-		Logger.debug("mapXmlStream null is "+(mapXmlStream == null));
-		
-		StringWriter writer = new StringWriter();
-		try {
-			IOUtils.copy(mapXmlStream, writer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String theString = writer.toString();
-		
-		Logger.debug(theString);
-		
 
-		//InputStream stream = IOUtils.toInputStream(mapXmlString);
-		return mapXmlStream;
+
+		return ZipUtils.extractMindmap(response.getBodyAsStream());
 	}
 
 	public static Result mapListFromDB(final String user) {
