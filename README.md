@@ -33,8 +33,7 @@
 
 ## Backend mock
 * default: it delivers static files to easy frontend development
-* `sbt "~run -Dbackend.mock=false"` starts with proxying localhost:8080, quotes are important
-* `sbt "~run -Dbackend.mock=false -Dbackend.url=http://localhost:8888"` starts with proxying localhost:8888
+* using docear2 in development `sbt -Dconfig.file=conf/backenddevdocear2.conf ~run`
 * static files are currently in conf/rest/v1
 
 # API DOC

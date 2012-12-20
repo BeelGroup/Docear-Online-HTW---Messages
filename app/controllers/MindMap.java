@@ -1,27 +1,12 @@
 package controllers;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static play.libs.Json.toJson;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import backend.ServerMindmapMap;
+import backend.User;
+import backend.UserMindmapInfo;
+import backend.ZipUtils;
+import controllers.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
-
+import play.Configuration;
 import play.Logger;
 import play.Play;
 import play.libs.F;
@@ -30,28 +15,37 @@ import play.libs.WS;
 import play.libs.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
-import backend.ServerMindmapMap;
-import backend.User;
-import backend.UserMindmapInfo;
-import backend.ZipUtils;
-import controllers.exceptions.NoUserLoggedInException;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static play.libs.Json.toJson;
 
 public class MindMap extends Controller {
 	private final static ServerMindmapMap mindmapServerMap;
 
 	static {
-		int mapsPerInstance = Play.application().configuration().getInt("backend.mapsPerInstance");
-		boolean useSingleDocearInstance = Play.application().configuration().getBoolean("backend.useSingleInstance");
-
-		mindmapServerMap = new ServerMindmapMap(mapsPerInstance,8080);
+        final Configuration conf = Play.application().configuration();
+        int mapsPerInstance = conf.getInt("backend.mapsPerInstance");
+		boolean useSingleDocearInstance = conf.getBoolean("backend.useSingleInstance");
+        final Integer port = conf.getInt("backend.port");
+        mindmapServerMap = new ServerMindmapMap(mapsPerInstance, port);
 
 		if(useSingleDocearInstance) {
-			try {
-				URL docear2 = new URL("http://docear2.f4.htw-berlin.de:8080/rest/v1");
-				//URL docear2 = new URL("http://localhost:8080/rest/v1");
-				mindmapServerMap.put(docear2, "5");
-				mindmapServerMap.remove("5");
+            try {
+                final String protocol = conf.getString("backend.scheme");
+                final String host = conf.getString("backend.host");
+                final String path = conf.getString("backend.v10.pathprefix");
+                URL docear2 = new URL(protocol, host, port, path);
+				mindmapServerMap.put(docear2, "5");//TODO what does that mean? #magicnumber
+				mindmapServerMap.remove("5");//TODO what does that mean? #magicnumber
 			} catch (MalformedURLException e) {
+                throw new RuntimeException("cannot read backend url, check your configuration", e);
 			}
 		}
 	}
