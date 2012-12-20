@@ -1,5 +1,7 @@
 //TODO this can be done in Java too
 
+import _root_.info.schleichardt.play2.basicauth._
+import java.net.{URISyntaxException, URI}
 import play.api.{Application, Logger, Play, GlobalSettings}
 import play.api.mvc.RequestHeader
 
