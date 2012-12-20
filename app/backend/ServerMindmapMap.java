@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+//TODO backend team, what is the task of this class?
 public class ServerMindmapMap {
 	private final Map<URL, Set<String>> serverMapIdMap;
 	private final Map<String, URL> mapIdServerMap;

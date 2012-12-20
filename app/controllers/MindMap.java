@@ -3,7 +3,7 @@ package controllers;
 import backend.ServerMindmapMap;
 import models.backend.User;
 import models.backend.UserMindmapInfo;
-import util.ZipUtils;
+import util.backend.ZipUtils;
 import backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
 import play.Configuration;
@@ -122,6 +122,7 @@ public class MindMap extends Controller {
 		}
 	}
 
+    //TODO backend team: I don't understand the control flow in this method, and does this method two different things???
 	private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
 		//find server with capacity
 		URL serverUrl = mindmapServerMap.getServerWithFreeCapacity();
@@ -141,9 +142,11 @@ public class MindMap extends Controller {
 			try {
 				fileStream = new FileInputStream(mapFromDB(user, mapId));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+				Logger.error("can't find mindmap file", e);
+			} catch (IOException e) {
+                Logger.error("can't open mindmap file", e);
+            }
+        }
 
 		//send file to server and put in map
 		String wsUrl = serverUrl.toString();
@@ -176,9 +179,9 @@ public class MindMap extends Controller {
 
 	}
 
-	private static File unZipIt(InputStream bodyStream){
+	private static File unZipIt(InputStream bodyStream) throws IOException {
 
-		File folder = new File("D:\\Temp\\dcr2");
+		File folder = new File("D:\\Temp\\dcr2");//TODO backend team, this is not platform independent
 
 		Logger.debug("unpacking zip");
 		ZipUtils.extractMindmap(bodyStream);
@@ -196,66 +199,23 @@ public class MindMap extends Controller {
 
 		Logger.debug("return file: "+mindmapFile.getName());
 		return mindmapFile;
-		//		byte[] buffer = new byte[1024];
-		//		
-		//		try{
-		//			//get the zip file content
-		//			ZipInputStream zis = new ZipInputStream(bodyStream);
-		//			
-		//			//get the zipped file list entry
-		//			BufferedInputStream reader = new BufferedInputStream(zis);
-		//			
-		//			StringWriter writer = new StringWriter();
-		//			IOUtils.copy(zis, writer);
-		//			String content = writer.toString();
-		//			FileUtils.writeStringToFile(new File("foo"), content);
-		//			Logger.debug("");
-		//			Logger.debug(content);
-		//			
-		//
-		//			return writer.toString();
-		//		} catch (Exception e) {
-		//			Logger.debug("error:",e);
-		//			return "exception";
-		//		}
-
-		//			while(ze!=null){
-		//
-		//				String fileName = ze.getName();
-		//				Logger.debug("fileName: " + fileName);
-		//				if (fileName.endsWith("mm")){
-		//					Logger.debug("FOUND MM.");
-		//					ByteArrayOutputStream fos = new ByteArrayOutputStream();
-		//
-		//					int len;
-		//					while ((len = zis.read(buffer)) > 0) {
-		//						fos.write(buffer, 0, len);
-		//					}
-		//
-		//					fos.close();
-		//					zis.closeEntry();
-		//					zis.close();
-		//					return fos.toString();
-		//				}
-		//				ze = zis.getNextEntry();
-		//			}
-		//
-		//			zis.closeEntry();
-		//			zis.close();
-		//
-		//		}catch(IOException ex){
-		//			ex.printStackTrace();
-		//		}
-		//		return "empty";
 	}
 
 	public static Result mapTest() {
-		User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
-		File mmFile = mapFromDB(user, "103805");
-		return ok(mmFile);
+        Result result;
+        try {
+            User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
+            File mmFile = mapFromDB(user, "103805");
+            result = ok(mmFile);
+        } catch (IOException e) {
+            final String message = "can't open mindmap";
+            Logger.error(message, e);
+            result = internalServerError(message);
+        }
+        return result;
 	}
 
-	private static File mapFromDB(final User user, final String id) {
+	private static File mapFromDB(final User user, final String id) throws IOException {
 		String docearServerAPIURL = "https://api.docear.org/user";
 
 		//		play.api.libs.ws.WS.WSRequestHolder request = 
