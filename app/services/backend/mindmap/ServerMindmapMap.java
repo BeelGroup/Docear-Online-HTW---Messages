@@ -1,4 +1,4 @@
-package services.backend;
+package services.backend.mindmap;
 
 import play.Configuration;
 import play.Play;
