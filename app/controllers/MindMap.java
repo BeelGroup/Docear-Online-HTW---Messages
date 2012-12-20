@@ -4,7 +4,7 @@ import backend.ServerMindmapMap;
 import backend.User;
 import backend.UserMindmapInfo;
 import backend.ZipUtils;
-import controllers.exceptions.NoUserLoggedInException;
+import backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
 import play.Configuration;
 import play.Logger;
