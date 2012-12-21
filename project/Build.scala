@@ -17,6 +17,9 @@ object ApplicationBuild extends Build {
       , "commons-lang" % "commons-lang" % "2.6"
       , "org.springframework" % "spring-context" % "3.1.2.RELEASE"
       , "cglib" % "cglib" % "2.2.2"
+      , "org.seleniumhq.selenium" % "selenium-firefox-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
+      , "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
+      , "com.novocode" % "junit-interface" % "0.9" % "test"
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
@@ -48,6 +51,9 @@ object ApplicationBuild extends Build {
       , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates")
       , handlebarsOptions := Seq.empty[String]
       , resourceGenerators in Compile <+= HandlebarsPrecompileTask("handlebars-1.0.rc.1.js")
+      , logBuffered in Test := false
+      , parallelExecution in Test := false
+      , testOptions in Test += Tests.Argument("sequential", "true")
     ).settings(Play2WarPlugin.play2WarSettings: _*)
 
 }

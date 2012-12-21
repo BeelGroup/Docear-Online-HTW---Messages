@@ -211,4 +211,5 @@ class MindMapDrawer
 asXmlAttributes = (attributeDocument) ->
   result = for key, value of attributeDocument
     "#{key}='#{value}'"
-  result.reduceRight ((x, y) -> x + " " + y ), ""
+  iterator = (x, y) -> x + " " + y
+  _.reduceRight(result,  iterator, "")
