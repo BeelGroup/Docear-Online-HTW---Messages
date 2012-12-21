@@ -94,9 +94,10 @@ $ ->
     false
   
   $( '#mindmap' ).draggable({
-    cancel: "a.ui-icon",
+    cancel: "a.ui-icon, .node",
     containment: "mindmap-container",
-    cursor: "move"
+    cursor: "move",
+    handle: "#mindmap"
   });
   
   changeZoom = (direction)->
@@ -128,12 +129,12 @@ $ ->
   
   $('body').on("mouseenter", ".node", 
     -> 
-      $(this).children('i.fold:first').show()
+      $(this).children('i.fold:first, .controls').show()
       false
   )
   $('body').on("mouseleave", ".node",
-  	-> 
-      $(this).children('i.fold:first').hide()
+    -> 
+      $(this).children('i.fold:first, .controls').hide()
       false
   )
     
@@ -146,4 +147,21 @@ $ ->
       $(this).toggleClass('icon-minus-sign')
       $(this).toggleClass('icon-plus-sign')
     )
-    
+
+  $('body').on("click", ".node .action-edit",
+    -> 
+      innerNode = $(this).closest('.node').children('.inner-node')  
+      if $(this).hasClass('action-save')
+        editArea = innerNode.find('textarea:first')
+        innerNode.html(editArea.text())
+      else
+        editArea = $('<textarea></textarea>')
+        editArea.css('width', (innerNode.width()+10)+'px')
+        editArea.css('height', (innerNode.height()+10)+'px')
+        editArea.text(innerNode.html())
+        innerNode.empty().append(editArea)
+      $(this).toggleClass('icon-ok')
+      $(this).toggleClass('icon-edit')
+      $(this).toggleClass('action-save')
+      false
+  )

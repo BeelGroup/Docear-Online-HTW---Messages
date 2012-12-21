@@ -96,7 +96,7 @@ class MindMapDrawer
     @verticalSpacer = 10
 
   _drawBox = (content, className, attributes = {}) ->
-    "<div #{asXmlAttributes(attributes)} class='node #{className}'><div class='inner-node'>#{content}</div><div class='children'></div><i class='icon-minus-sign fold'></i></div>"
+    "<div #{asXmlAttributes(attributes)} class='node #{className}'><div class='inner-node'>#{content}</div><div class='children'></div><i class='icon-minus-sign fold'></i><div class='controls'><i class='icon-edit action-edit'></i><i class='icon-file action-new-node'></i><i class='icon-globe action-share'></i></div></div>"
 
 
   getCenterCoordinates = ($element) ->
