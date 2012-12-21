@@ -15,6 +15,8 @@ object ApplicationBuild extends Build {
       , "commons-io" % "commons-io" % "2.4"//heroku does not find it without the explicit dependency
       , "com.fasterxml.jackson.datatype" % "jackson-datatype-json-org" % "2.0.2"
       , "commons-lang" % "commons-lang" % "2.6"
+      , "org.springframework" % "spring-context" % "3.1.2.RELEASE"
+      , "cglib" % "cglib" % "2.2.2"
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")

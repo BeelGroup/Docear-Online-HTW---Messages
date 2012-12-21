@@ -2,6 +2,7 @@
 
 import _root_.info.schleichardt.play2.basicauth._
 import java.net.{URISyntaxException, URI}
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import play.api.{Application, Logger, Play, GlobalSettings}
 import play.api.mvc.RequestHeader
 
@@ -31,6 +32,7 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     Logger.info("using configuration " + Play.configuration(app).getString("application.conf.name").get)
+    _root_.configuration.SpringConfiguration.setApplicationContext(new AnnotationConfigApplicationContext(classOf[_root_.configuration.SpringConfiguration]))
     super.onStart(app)
   }
 }
