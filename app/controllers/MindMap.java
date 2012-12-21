@@ -4,8 +4,6 @@ import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import services.backend.mindmap.MindMapCrudService;
-import services.backend.mindmap.MockMindMapCrudService;
-import services.backend.mindmap.ServerMindMapCrudService;
 import models.backend.exceptions.NoUserLoggedInException;
 import play.Logger;
 import play.Play;
@@ -17,7 +15,6 @@ import play.mvc.Result;
 import java.io.*;
 
 import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Component
 public class MindMap extends Controller {

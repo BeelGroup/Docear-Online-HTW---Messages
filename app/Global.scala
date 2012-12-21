@@ -32,7 +32,8 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     Logger.info("using configuration " + Play.configuration(app).getString("application.conf.name").get)
-    _root_.configuration.SpringConfiguration.setApplicationContext(new AnnotationConfigApplicationContext(classOf[_root_.configuration.SpringConfiguration]))
+    val context: AnnotationConfigApplicationContext = new AnnotationConfigApplicationContext()
+    _root_.configuration.SpringConfiguration.initializeContext(context)
     super.onStart(app)
   }
 }

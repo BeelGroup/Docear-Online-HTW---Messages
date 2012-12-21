@@ -4,6 +4,8 @@ import models.backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.lang.NotImplementedException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 import play.Play;
 
 import java.io.File;
@@ -12,6 +14,8 @@ import java.io.InputStream;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
+@Profile("backendMock")
+@Component
 public class MockMindMapCrudService implements MindMapCrudService {
     @Override
     public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException {

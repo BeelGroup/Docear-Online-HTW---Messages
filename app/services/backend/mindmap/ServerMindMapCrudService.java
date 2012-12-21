@@ -6,6 +6,8 @@ import models.backend.UserMindmapInfo;
 import models.backend.exceptions.NoUserLoggedInException;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 import play.Logger;
 import play.Play;
 import play.libs.F;
@@ -21,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import static play.libs.Json.toJson;
 
+@Profile("backendProd")
+@Component
 public class ServerMindMapCrudService implements MindMapCrudService {
     @Override
     public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException {

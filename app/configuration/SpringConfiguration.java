@@ -1,46 +1,42 @@
 package configuration;
 
+import controllers.MindMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import play.Logger;
 import play.Play;
-import services.backend.mindmap.MindMapCrudService;
-import services.backend.mindmap.MockMindMapCrudService;
-import services.backend.mindmap.ServerMindMapCrudService;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
-@Configuration
-@ComponentScan({"controllers", "services"})
+@ComponentScan({"controllers", "services", "services.backend.mindmap"})//add here packages containing @Component annotated classes
 public class SpringConfiguration {
 
-    private static AnnotationConfigApplicationContext APPLICATIONCONTEXT;
+
+    private static AnnotationConfigApplicationContext APPLICATION_CONTEXT;
 
     public static <T> T getBean(Class<T> beanClass) {
-        if (APPLICATIONCONTEXT == null) {
+        if (APPLICATION_CONTEXT == null) {
             throw new IllegalStateException("application context is not initialized");
         }
-        return APPLICATIONCONTEXT.getBean(beanClass);
+        return APPLICATION_CONTEXT.getBean(beanClass);
     }
 
-    public static AnnotationConfigApplicationContext getApplicationContext() {
-        return APPLICATIONCONTEXT;
-    }
-
-    public static void setApplicationContext(AnnotationConfigApplicationContext applicationContext) {
-        APPLICATIONCONTEXT = applicationContext;
+    public static void initializeContext(AnnotationConfigApplicationContext applicationContext) {
+        APPLICATION_CONTEXT = applicationContext;
+        APPLICATION_CONTEXT.register(SpringConfiguration.class);
+        final ConfigurableEnvironment environment = APPLICATION_CONTEXT.getEnvironment();
+        final boolean mockBackend = isTrue(Play.application().configuration().getBoolean("backend.mock"));
+        final String backendProfile = mockBackend ? "backendMock" : "backendProd";
+        environment.setActiveProfiles(backendProfile);//add here comma separated mode profile names
+        APPLICATION_CONTEXT.refresh();
+        Logger.info("active spring profiles: " + StringUtils.join(environment.getActiveProfiles(), ", "));
     }
 
     @Bean
-    public MindMapCrudService mindMapCrudService() {
-        MindMapCrudService mindMapCrudService;
-        final boolean mock = isTrue(Play.application().configuration().getBoolean("backend.mock"));
-        if (mock) {
-            mindMapCrudService = new MockMindMapCrudService();
-        } else {
-            mindMapCrudService = new ServerMindMapCrudService();
-        }
-        return mindMapCrudService;
+    public MindMap mindMap() {
+        return new MindMap();
     }
 }
