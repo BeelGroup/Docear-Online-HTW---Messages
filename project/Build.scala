@@ -19,6 +19,7 @@ object ApplicationBuild extends Build {
       , "cglib" % "cglib" % "2.2.2"
       , "org.seleniumhq.selenium" % "selenium-firefox-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
       , "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
+      , "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.25.0"
       , "com.novocode" % "junit-interface" % "0.9" % "test"
     )
 
