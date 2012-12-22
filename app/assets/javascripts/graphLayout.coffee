@@ -6,6 +6,12 @@ cssForClass = (className, property) ->
   $("#remove-tmp-element").remove()
   result
 
+isTest = $("body").hasClass("test-mode")
+
+connectWrapper = ->
+  if !isTest
+    jsPlumb.connect.apply(this, arguments)
+
 initializeJsPlumb = ->
   STROKE_COLOR = "#ff0000" #TODO style information should only be in style.less, idea $("#not-visible-example-element").css('color')
 
@@ -143,7 +149,7 @@ class MindMapDrawer
 
     connectNodes = (source, target) -> 
       $container = $('#'+source.view.attr("id")+" .children:first")
-      jsPlumb.connect({ source:source.view, target:target.view, container:$container })
+      connectWrapper({ source:source.view, target:target.view, container:$container })
 
     #precondition: parent node has correct position
     positionFromTopRecursive = (parent, children) =>
