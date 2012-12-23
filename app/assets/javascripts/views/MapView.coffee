@@ -1,4 +1,5 @@
-
+define [], () ->
+  module = ->
 
 class MapView extends Backbone.View
 
@@ -6,3 +7,5 @@ class MapView extends Backbone.View
 
   render:->
     console.log 'Mapview->render'
+
+  module.exports = MapView  

@@ -1,28 +1,12 @@
-#define ['models/Node', 'text!views/templates/Node.handlebars'], (nodeModel, nodeTemplate) ->
 define ['models/Node'], (nodeModel) ->
   module = ->
-  ## representing one node
-  ## example: 
-  ## view = new NodeView
-
+  
   class NodeView extends Backbone.View
 
     tagName: 'div',
     className: 'node'	
 
-      ## template will be moved to /templates
-    
-    temporarayTemplate = '<div class="entry">
-    <h1>id: {{id}}</h1>
-    <div>{{{mydiv}}}</div>
-    <div class="body">folded: {{folded}} nodeText: {{nodeText}} graph: {{graph}}
-    </div>
-    </div>'
-
-      ## just for debugging
-    innerStats = {title: "My New Post", body: "This is my first post!"}
-    
-    template: Handlebars.compile temporarayTemplate
+    template: Handlebars.templates['Node']
 
     # a.k.a. constructor
     initialize: (@model) ->
@@ -32,7 +16,7 @@ define ['models/Node'], (nodeModel) ->
     ##'click .element': alert 'click'
 
     subView: (view, autoRender = false) ->
-      # if model is set, use izs id OR a unique random id
+      # if model is set, use its id OR a unique random id
       viewId = view.model?.id or String(Math.random() * new Date().getTime())
       # add view to subviews
       _subViews[viewId] = view
@@ -46,14 +30,15 @@ define ['models/Node'], (nodeModel) ->
     # if the model is already set, parse it to json
       if @model?
         @model.toJSON()
-    # otherwise pass no informations to fill 
+    # otherwise pass an empty JSON
       else
         {}
 
 
-    # extend the view with the jsPlumb div (which was added to the model) here
+    # extend the view with the jsPlumb div
     afterRender: ->
       @$el.append(@model.get 'purehtml')
+
    
     render: ->
       @$el.html @template @getRenderData()
@@ -64,6 +49,7 @@ define ['models/Node'], (nodeModel) ->
       @afterRender()
       @
 
+
     destroy: ->
       @model?.off null, null, @
 
@@ -73,6 +59,7 @@ define ['models/Node'], (nodeModel) ->
 
       @$el.remove()
 
+    # pass a final funktion, if u want to
     leave: (done = ->) ->
       @destroy()
       done()
