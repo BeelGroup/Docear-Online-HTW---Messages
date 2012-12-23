@@ -119,18 +119,20 @@ class MindMapDrawer
     @drawChildren $root, $target
 
   #draws children without layouting for graph
-  _drawRecursiveChildren: ($relativeRootNode, children, $target) ->
+  _drawRecursiveChildren: ($relativeRootNode, children, $target, treeIdentifier) ->
     for child in children
       id = "child-#{@childId}"
       
-      className = if child.folded then "folded" else ""
+      className = treeIdentifier
+      className = if child.folded then className+", folded" else className
       childNode = _drawBox(child.getContent(), className, {id: id, style: "font-size: "+fontSize*zoom+"px; line-height: "+fontSize*zoom+"px;"})
+      $(childNode).addClass(treeIdentifier)
       
       $relativeRootNode.find('.children:first').append childNode
       $child = $("#" + id)
       child.view = $child
       @childId++
-      @_drawRecursiveChildren $child, child.children, $target
+      @_drawRecursiveChildren $child, child.children, $target, treeIdentifier
       
       
 
@@ -185,8 +187,8 @@ class MindMapDrawer
         positionHorizontalFromParentRecursive child, child.children, direction
 
     #TODO hide, position, then unhide
-    @_drawRecursiveChildren $root, @mindMap.rightChildren, $target
-    @_drawRecursiveChildren $root, @mindMap.leftChildren, $target
+    @_drawRecursiveChildren $root, @mindMap.rightChildren, $target, 'rightTree'
+    @_drawRecursiveChildren $root, @mindMap.leftChildren, $target, 'leftTree'
 
     positionHorizontalFromParentRecursive @mindMap.root, @mindMap.rightChildren, "right"
     positionHorizontalFromParentRecursive @mindMap.root, @mindMap.leftChildren, "left"

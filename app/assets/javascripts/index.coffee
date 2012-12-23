@@ -134,7 +134,8 @@ $ ->
   )
   $('body').on("mouseleave", ".node",
     -> 
-      $(this).children('i.fold:first, .controls').hide()
+      if not $(this).hasClass('selected')
+        $(this).children('i.fold:first, .controls').hide()
       false
   )
     
@@ -165,3 +166,41 @@ $ ->
       $(this).toggleClass('action-save')
       false
   )
+  
+  selectNextChild = (selectedNode, childClass = '')->
+    childNodes = $(selectedNode).children('.children:first').children('.node'+childClass+':first')
+    if $(childNodes).size() > 0
+      $(selectedNode).removeClass('selected')	
+      $(childNodes).addClass('selected')
+      
+  selectParent = (selectedNode)->
+    $(selectedNode).removeClass('selected')
+    parent = $(selectedNode).parent().closest('.node')
+    $(parent).addClass('selected')    
+    
+  
+  $("body").keypress (event)->
+    selectedNode = $('.node.selected')	
+    if $(selectedNode).size() > 0
+      switch event.keyCode
+        when 37 #LEFT
+          if $(selectedNode).hasClass('root-node')
+            selectNextChild selectedNode, '.leftTree'
+          else if $(selectedNode).hasClass('leftTree')
+            selectNextChild selectedNode
+          else
+            selectParent selectedNode
+        when 38 #TOP
+          alert "TOP"
+        when 39 #RIGHT
+          if $(selectedNode).hasClass('root-node')
+            selectNextChild selectedNode, '.rightTree'	
+          else if $(selectedNode).hasClass('rightTree')
+            selectNextChild selectedNode
+          else
+            selectParent selectedNode
+        when 40 #DOWN
+          alert "DOWN"
+    else if event.keyCode in [37,38,39,40]
+      $('#root').addClass('selected')
+  
