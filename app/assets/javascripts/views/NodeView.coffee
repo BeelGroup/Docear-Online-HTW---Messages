@@ -5,7 +5,7 @@ define ['models/Node'], (nodeModel) ->
 
     tagName: 'div',
     className: 'node'	
-
+    subViews: {}
     template: Handlebars.templates['Node']
 
     # a.k.a. constructor
@@ -19,11 +19,7 @@ define ['models/Node'], (nodeModel) ->
       # if model is set, use its id OR a unique random id
       viewId = view.model?.id or String(Math.random() * new Date().getTime())
       # add view to subviews
-      _subViews[viewId] = view
-      # render, when it was added
-      if autoRender is true
-        view.render()
-    
+      @subViews[viewId] = view
       view
 
     getRenderData: ->
@@ -39,12 +35,13 @@ define ['models/Node'], (nodeModel) ->
     afterRender: ->
       @$el.append(@model.get 'purehtml')
 
-   
+
     render: ->
       @$el.html @template @getRenderData()
       # render the subviews
-      for viewId, view of @_subViews
-        view.render()
+      for viewId, view of @subViews
+        html = view.render().el
+        $(html).appendTo(@$el)
       # extend the ready rendered htlm element
       @afterRender()
       @
@@ -54,7 +51,7 @@ define ['models/Node'], (nodeModel) ->
       @model?.off null, null, @
 
       # destroy all subviews
-      for viewId, view of @_subViews
+      for viewId, view of @subViews
         view.destroy()
 
       @$el.remove()

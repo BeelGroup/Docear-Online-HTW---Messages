@@ -7,7 +7,6 @@ define ->
 
   class AbstractNode extends Backbone.Model 
     constructor: (id, folded, nodeText, graph) ->
-      # call constructeor of the parent class ... it won't be call automatically... its not java... its the wildness, b
       super()
       @set 'id', id
       @set 'folded', folded
@@ -35,7 +34,7 @@ define ->
     
     destroyOptions:
       success: ->
-        editor.log "Your score has been deleted from your permanent record."
+        editor.log "Node has been deleted from the permanent record."
       error: (model, response) ->
         editor.log "Error: #{response.status} #{response.statusText}"
 
