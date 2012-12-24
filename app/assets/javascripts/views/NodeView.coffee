@@ -12,8 +12,15 @@ define ['models/Node'], (nodeModel) ->
     initialize: (@model) ->
 
     # define events -> here u can pass informations to the model
-    events: ->
-    ##'click .element': alert 'click'
+    events: =>
+      'click .changeable': 'fadeInButton'
+      'click .acceptChanges': 'update'
+
+    fadeInButton: -> 
+      console.log 'fade in "save changes" button'
+
+    update: -> 
+      console.log 'update values to the model'
 
     subView: (view, autoRender = false) ->
       # if model is set, use its id OR a unique random id

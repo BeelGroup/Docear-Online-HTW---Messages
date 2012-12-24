@@ -13,7 +13,7 @@ require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView
 <td>row 2, cell 1</td>
 <td>row 2, cell 2</td>
 </tr>
-</table>' 
+</table>'
 
   # create subview  
   myHtml = new HtmlView(new Backbone.Model pureHtml: theHtml)
@@ -22,4 +22,3 @@ require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView
 
   
   $("#mvc").append(view.render().el)
-
