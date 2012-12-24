@@ -13,7 +13,7 @@ define ->
       @set 'nodeText', nodeText
       @set 'graph', graph
       ## THROW events on all (also possible: save/update/change)
-      @on 'all', (event) -> console.log "Event: " + event
+      #@on 'all', (event) -> console.log "Event: " + event
       @sup = AbstractNode.__super__
 
     # will be set to /map/json/id, when fetch() or update() will be called

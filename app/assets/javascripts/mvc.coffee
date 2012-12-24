@@ -22,3 +22,5 @@ require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView
 
   
   $("#mvc").append(view.render().el)
+
+  model.set 'id', '4712'
