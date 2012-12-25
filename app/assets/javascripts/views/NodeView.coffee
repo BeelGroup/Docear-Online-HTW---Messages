@@ -10,7 +10,17 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
 
     fieldMap:
       '#nodeId': 'id'
+      '#text': 'nodeText'
+      '#body': 
+        field: "nodeText"
+        toModel: "testToModel"
+        toForm: "testToForm"
   
+    testToModel: ->
+      @$('#body').val()  
+
+    testToForm: ->
+      @model.get 'nodeText'    
 
     # a.k.a. constructor
     initialize: (@model) ->
@@ -21,7 +31,8 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
     # define events -> here u can pass informations to the model
     events: =>
       'click .changeable': 'fadeInButton'
-      'click .acceptChanges': 'updateModel'
+      'click .show': 'updateModel'
+      'click .change': 'test'
     
 
     fadeInButton: -> 
@@ -29,9 +40,14 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
 
     updateModel: ->      
       # update changed values to the model
-      @model.set 'id', $('.changeable').val() 
-      console.log @model
-      @model.set 'id', '4799'
+      #@model.set 'id', $('.changeable').val() 
+      console.log 'nodeText: ' + @model.get 'nodeText'
+      console.log 'Id: ' + @model.get 'id'
+
+    test: -> 
+      @model.set 'nodeText', Math.random()   
+      @model.set 'id', Math.random() 
+      
 
 
     subView: (view, autoRender = false) ->
