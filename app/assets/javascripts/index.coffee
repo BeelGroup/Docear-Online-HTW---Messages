@@ -176,7 +176,14 @@ $ ->
   selectParent = (selectedNode)->
     $(selectedNode).removeClass('selected')
     parent = $(selectedNode).parent().closest('.node')
-    $(parent).addClass('selected')    
+    $(parent).addClass('selected')
+  
+  selectBrother = (selectedNode, next = true)->
+    $(selectedNode).removeClass('selected')
+    if next
+      $(selectedNode).next('.node').addClass('selected')
+    else
+      $(selectedNode).prev('.node').addClass('selected')   
     
   
   $("body").keypress (event)->
@@ -191,7 +198,7 @@ $ ->
           else
             selectParent selectedNode
         when 38 #TOP
-          alert "TOP"
+          selectBrother selectedNode, false
         when 39 #RIGHT
           if $(selectedNode).hasClass('root-node')
             selectNextChild selectedNode, '.rightTree'	
@@ -200,7 +207,7 @@ $ ->
           else
             selectParent selectedNode
         when 40 #DOWN
-          alert "DOWN"
+          selectBrother selectedNode, true
     else if event.keyCode in [37,38,39,40]
       $('#root').addClass('selected')
   
