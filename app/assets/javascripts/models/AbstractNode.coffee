@@ -6,12 +6,14 @@ define ->
   module = () ->
 
   class AbstractNode extends Backbone.Model 
-    constructor: (id, folded, nodeText, graph) ->
+    constructor: (id, folded, nodeText, graph, xOffset, yOffset) ->
       super()
       @set 'id', id
       @set 'folded', folded
       @set 'nodeText', nodeText
       @set 'graph', graph
+      @set 'xOffset', xOffset
+      @set 'yOffset', yOffset
       ## THROW events on all (also possible: save/update/change)
       #@on 'all', (event) -> console.log "Event: " + event
       @sup = AbstractNode.__super__

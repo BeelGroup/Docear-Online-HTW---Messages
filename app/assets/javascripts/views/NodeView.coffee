@@ -11,28 +11,32 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
     fieldMap:
       '#nodeId': 'id'
       '#text': 'nodeText'
-      '#body': 
+      # example for an entry with his own methods
+      '#body':
         field: "nodeText"
         toModel: "testToModel"
         toForm: "testToForm"
   
+    # a.k.a. constructor
+    initialize: (@model) ->
+      super
+      id: @model.get 'id'
+      # render, when model was changed -> not in usage since sincedView was implemented
+      #@model.on 'change', @render, @
+
     testToModel: ->
       @$('#body').val()  
 
     testToForm: ->
       @model.get 'nodeText'    
 
-    # a.k.a. constructor
-    initialize: (@model) ->
-      super
-      # render, when model was changed
-      #@model.on 'change', @render, @
 
     # define events -> here u can pass informations to the model
     events: =>
       'click .changeable': 'fadeInButton'
       'click .show': 'updateModel'
       'click .change': 'test'
+      'click .save': (-> @model.save(@model.saveOptions))
     
 
     fadeInButton: -> 
@@ -70,6 +74,22 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
     afterRender: ->
       @$el.append(@model.get 'purehtml')
 
+    positioning: ->
+      #@$el.css 'border', '1px'
+     # @$el.css 'position', 'absolute'
+     # @$el.css 'top', '150px'
+     # @$el.css 'left', '150px'
+      @$el.css({
+      'position':'absolute', 
+      'top': @calcYPosition() + 'px',
+      'left': @calcXPosition() + 'px',
+      });
+
+    calcXPosition: ->
+      4550 + @model.get 'xOffset'
+
+    calcYPosition: ->
+      4850 + @model.get 'yOffset'
 
     render: ->
       @$el.html @template @getRenderData()
@@ -79,6 +99,7 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
         $(html).appendTo(@$el)
       # extend the ready rendered htlm element
       @afterRender()
+      @positioning()
       @
 
 

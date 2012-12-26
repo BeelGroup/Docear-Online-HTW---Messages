@@ -1,8 +1,11 @@
 require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView,NodeModel) ->  
   
-  model = new NodeModel('4711','0','My awesome node!','Da graph','1')
+  model = new NodeModel('4711','0','My awesome node!','Da graph','1', 0, 0)
   view = new NodeView(model)
-  
+ 
+  model = new NodeModel('23','12','My awesome second node!','The graph','0', 350, 150)
+  view1 = new NodeView(model) 
+
   # dummy html 
   theHtml = '<table border="1">
 <tr>
@@ -21,4 +24,5 @@ require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView
   view.subView(myHtml)
 
   
-  $("#mvc").append(view.render().el)
+  $('#mindmap').append(view.render().el)
+  $('#mindmap').append(view1.render().el)
