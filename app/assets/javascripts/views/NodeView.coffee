@@ -1,4 +1,4 @@
-define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
+define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, SyncedView, HtmlView) ->
   module = ->
   
   class NodeView extends SyncedView
@@ -9,8 +9,6 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
     template: Handlebars.templates['Node']
 
     fieldMap:
-      '#nodeId': 'id'
-      '#text': 'nodeText'
       # example for an entry with his own methods
       '#body':
         field: "nodeText"
@@ -25,7 +23,7 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
       #@model.on 'change', @render, @
 
     testToModel: ->
-      @$('#body').val()  
+      @$('#body').val()
 
     testToForm: ->
       @model.get 'nodeText'    
@@ -38,21 +36,20 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
       'click .change': 'test'
       'click .save': (-> @model.save(@model.saveOptions))
     
-
+    # TODO: implement
     fadeInButton: -> 
       console.log 'fade in "save changes" button'
 
+    # Testing
     updateModel: ->      
       # update changed values to the model
       #@model.set 'id', $('.changeable').val() 
-      console.log 'nodeText: ' + @model.get 'nodeText'
-      console.log 'Id: ' + @model.get 'id'
+      console.log @model.toJSON()
 
+    # Testing
     test: -> 
       @model.set 'nodeText', Math.random()   
-      @model.set 'id', Math.random() 
       
-
 
     subView: (view, autoRender = false) ->
       # if model is set, use its id OR a unique random id
@@ -64,6 +61,12 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
     getRenderData: ->
     # if the model is already set, parse it to json
       if @model?
+        if @model.get('isHTML') == true
+          # create subview  
+          model = new Backbone.Model pureHtml: @model.get 'nodeText'
+          myHtml = new HtmlView(model)
+          # add it to the node
+          @subView(myHtml)
         @model.toJSON()
     # otherwise pass an empty JSON
       else
@@ -86,10 +89,10 @@ define ['models/Node', 'views/SyncedView'], (nodeModel, SyncedView) ->
       });
 
     calcXPosition: ->
-      4550 + @model.get 'xOffset'
+      4550 + @model.get 'xPos'
 
     calcYPosition: ->
-      4850 + @model.get 'yOffset'
+      4850 + @model.get 'yPos'
 
     render: ->
       @$el.html @template @getRenderData()

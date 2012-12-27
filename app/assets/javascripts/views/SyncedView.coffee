@@ -36,10 +36,10 @@ define ->
         else
           value = @model.get field
         # !here is still work to do!
-        if @$(selector)[0].nodeName == 'INPUT'
-          @$(selector).val(value)
-        else  
-          @$(selector).html(value)
+        #if @$(selector)[0].nodeName == 'INPUT'
+        #  @$(selector).val(value)
+        #else  
+        @$(selector).val value
 
 
     syncFormToModel: (jqEvent, selector, field) ->

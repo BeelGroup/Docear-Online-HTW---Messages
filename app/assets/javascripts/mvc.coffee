@@ -1,28 +1,11 @@
 require ['views/NodeView', 'views/HtmlView', 'models/Node'],  (NodeView,HtmlView,NodeModel) ->  
-  
-  model = new NodeModel('4711','0','My awesome node!','Da graph','1', 0, 0)
-  view = new NodeView(model)
- 
-  model = new NodeModel('23','12','My awesome second node!','The graph','0', 350, 150)
-  view1 = new NodeView(model) 
 
-  # dummy html 
-  theHtml = '<table border="1">
-<tr>
-<td>row 1, cell 1</td>
-<td>row 1, cell 2</td>
-</tr>
-<tr>
-<td>row 2, cell 1</td>
-<td>row 2, cell 2</td>
-</tr>
-</table>'
+  # id, folded, nodeText, isHTML, xPos, yPos, hGap, shiftY, childs
+  nodeModel01 = new NodeModel('ID_396380598',false,  '... and hence enable you to benefit from Docear´s full functionality', false, 350, 150, 0, 0, null)
+  nodeModel02 = new NodeModel('ID_1443707089', false, '<html>\n  <head>\n    \n  </head>\n  <body>\n    <p>\n      That will make your work much more effective<br>and save you lots of time\n    </p>\n  </body>\n</html>', true, 0, 0, 0, 0, null)
 
-  # create subview  
-  myHtml = new HtmlView(new Backbone.Model pureHtml: theHtml)
-  # add it to the node
-  view.subView(myHtml)
+  view = new NodeView(nodeModel01)
+  view1 = new NodeView(nodeModel02) 
 
-  
   $('#mindmap').append(view.render().el)
   $('#mindmap').append(view1.render().el)

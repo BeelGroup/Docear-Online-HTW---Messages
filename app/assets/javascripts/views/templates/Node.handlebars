@@ -1,6 +1,9 @@
 <input type='submit' class='show' value='Model to console'></input>
 <input type='submit' class='save' value='Push to server'></input>
 <input type='submit' class='change' value='Change Model Values'></input>
-<h1><input id='nodeId' type='text' value='{{id}}' class='changeable'></input></h1>
-<div id='text'>{{{nodeText}}}</div>
-<input id='body' type='text' class='body' value='{{nodeText}}'>
+{{#unless isHTML}}
+</br>
+<textarea id='body' cols='35' rows='4' class='body'>
+{{nodeText}}
+</textarea>
+{{/unless}}
