@@ -3,6 +3,7 @@ import sbt.Keys._
 import sbt.PlayProject._
 import com.github.play2war.plugin._
 import com.github.play2war.plugin.Play2WarKeys._
+import scala.Some
 
 object ApplicationBuild extends Build {
 
@@ -55,6 +56,7 @@ object ApplicationBuild extends Build {
       , logBuffered in Test := false
       , parallelExecution in Test := false
       , testOptions in Test += Tests.Argument("sequential", "true")
+      , javacOptions ++= Seq("-source", "1.6", "-target", "1.6")//for compatibility with Debian Squeeze
     ).settings(Play2WarPlugin.play2WarSettings: _*)
 
 }
