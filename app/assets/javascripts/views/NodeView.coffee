@@ -8,13 +8,20 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     subViews: {}
     template: Handlebars.templates['Node']
 
+
+
     fieldMap:
       # example for an entry with his own methods
-      '#body':
-        field: "nodeText"
-        toModel: "testToModel"
-        toForm: "testToForm"
-  
+      '#body': "nodeText"
+      '.node' :
+        field: 'xPos'
+        toModel: 'PosToModel'
+        toForm: 'PosToForm'
+      '.node' :
+        field: 'yPos'
+        toModel: 'PosToModel'
+        toForm: 'PosToForm'
+
     # a.k.a. constructor
     initialize: (@model) ->
       super
@@ -22,11 +29,16 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       # render, when model was changed -> not in usage since sincedView was implemented
       #@model.on 'change', @render, @
 
-    testToModel: ->
-      @$('#body').val()
+    PosToModel: ->
+      # TODO: Event will not be called on change
+      @model.set 'xPos', @$el.css 'left'
+      @model.set 'yPos', @$el.css 'top'
 
-    testToForm: ->
-      @model.get 'nodeText'    
+    PosToForm: ->
+      @$el.animate({
+        left: @model.get 'xPos'
+        top: @model.get 'yPos'
+      }, 500 );
 
 
     # define events -> here u can pass informations to the model
@@ -38,7 +50,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     
     # TODO: implement
     fadeInButton: -> 
-      console.log 'fade in "save changes" button'
+      console.log 'fade in "save changes" button and lock node on server'
 
     # Testing
     updateModel: ->      
@@ -49,6 +61,8 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     # Testing
     test: -> 
       @model.set 'nodeText', Math.random()   
+      @model.set 'xPos', (@model.get 'xPos') + 20   
+      @model.set 'yPos', (@model.get 'yPos') + 20   
       
 
     subView: (view, autoRender = false) ->
@@ -89,10 +103,10 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       });
 
     calcXPosition: ->
-      4550 + @model.get 'xPos'
+      @model.get 'xPos'
 
     calcYPosition: ->
-      4850 + @model.get 'yPos'
+      @model.get 'yPos'
 
     render: ->
       @$el.html @template @getRenderData()
