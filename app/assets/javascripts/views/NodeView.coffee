@@ -23,8 +23,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
     # a.k.a. constructor
     initialize: (@model) ->
-      super
+      super()
       id: @model.get 'id'
+      
       #@model.on 'change', @render, @
 
     PosToModel: ->

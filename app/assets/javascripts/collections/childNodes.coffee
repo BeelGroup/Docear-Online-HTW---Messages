@@ -1,7 +1,7 @@
-define ['models/Node'] (Node) ->
+define ['models/Node'], (Node) ->
   module = () ->
 
-  class childNodes extends Backbone.Collection
+  class ChildNodes extends Backbone.Collection
 
     model: Node
 
@@ -9,5 +9,4 @@ define ['models/Node'] (Node) ->
       super()
 
 
-  module.export = childNodes
-
+  module.exports = ChildNodes
