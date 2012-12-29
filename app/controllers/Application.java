@@ -2,13 +2,14 @@ package controllers;
 
 import java.util.Map;
 
+import models.backend.User;
 import play.Logger;
 import play.Play;
-import util.backend.WS;
-import util.backend.WS.Response;
+import play.libs.WS;
+import play.libs.WS.Response;
 import play.mvc.Controller;
+import play.mvc.Http.Cookie;
 import play.mvc.Result;
-import models.backend.User;
 
 public class Application extends Controller {
 
@@ -71,10 +72,14 @@ public class Application extends Controller {
 	private static String getSessionCookieName() {
 		return Play.application().configuration().getString("backend.sessionIdName");
 	}
-	
-	public static User getCurrentUser() {
-		String sessionId = request().cookies().get(getSessionCookieName()).value();
 
-		return Session.getUserForSessionId(sessionId);
+	public static User getCurrentUser() {
+		Cookie cookie = request().cookies().get(getSessionCookieName());
+		if(cookie != null) {
+			String sessionId = cookie.value();
+			return Session.getUserForSessionId(sessionId);
+		} else {
+			return null;
+		}
 	}
 }

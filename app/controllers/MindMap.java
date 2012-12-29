@@ -1,29 +1,42 @@
 package controllers;
 
-import services.backend.ServerMindmapMap;
-import models.backend.User;
-import models.backend.UserMindmapInfo;
-import util.backend.ZipUtils;
-import models.backend.exceptions.NoUserLoggedInException;
-import org.apache.commons.io.IOUtils;
-import play.Logger;
-import play.Play;
-import play.libs.F;
-import play.libs.F.Promise;
-import play.libs.WS;
-import play.libs.WS.Response;
-import play.mvc.Controller;
-import play.mvc.Result;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static play.libs.Json.toJson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static play.libs.Json.toJson;
+import models.backend.User;
+import models.backend.UserMindmapInfo;
+import models.backend.exceptions.NoUserLoggedInException;
+
+import org.apache.commons.io.IOUtils;
+
+import play.Logger;
+import play.Play;
+import play.libs.Akka;
+import play.libs.F;
+import play.libs.F.Promise;
+import play.libs.WS;
+import play.libs.WS.Response;
+import play.mvc.Controller;
+import play.mvc.Result;
+import services.backend.ServerMindmapMap;
+import util.backend.ZipUtils;
+import akka.util.Duration;
 
 public class MindMap extends Controller {
 
@@ -251,13 +264,23 @@ public class MindMap extends Controller {
 			Process p = builder.start();
 
 			//Streams must be read, otherwise will the application pause to execute
-			Thread t = new Thread(new Transporter(p.getInputStream(), System.out));
-			t.setDaemon(true);
-			t.start();
+			Akka.system().scheduler()
+			.scheduleOnce(Duration.create(0, TimeUnit.SECONDS), 
+							new StreamLogger(p.getInputStream(), 
+									"docear in"));
+			
+			Akka.system().scheduler()
+			.scheduleOnce(Duration.create(0, TimeUnit.SECONDS), 
+							new StreamLogger(p.getErrorStream(), 
+									"docear in"));
 
-			t = new Thread(new Transporter(p.getErrorStream(), System.err));
-			t.setDaemon(true);
-			t.start();
+//			Thread t = new Thread(new Transporter(p.getInputStream(), System.out));
+//			t.setDaemon(true);
+//			t.start();
+
+//			t = new Thread(new Transporter(p.getErrorStream(), System.err));
+//			t.setDaemon(true);
+//			t.start();
 
 		} catch (IOException e) {
 			return null;
@@ -322,6 +345,30 @@ public class MindMap extends Controller {
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
+			}
+		}
+	}
+	
+	private static class StreamLogger implements Runnable {
+		private final BufferedReader in;
+		private final String prefix;
+
+		public StreamLogger(InputStream in, String prefix) {
+			this.in = new BufferedReader(new InputStreamReader(in));
+			this.prefix = prefix;
+		}
+
+		@Override
+		public void run() {
+			String line;
+			try {
+				while((line = in.readLine()) != null) {
+					Logger.info(prefix+": "+line);
+				}
+			} catch (Exception e) {
+				Logger.trace(prefix+": "+"Error!", e);
+			} finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 	}

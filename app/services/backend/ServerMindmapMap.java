@@ -37,16 +37,16 @@ public class ServerMindmapMap {
         final Configuration conf = Play.application().configuration();
         int mapsPerInstance = conf.getInt("backend.mapsPerInstance");
         boolean useSingleDocearInstance = conf.getBoolean("backend.useSingleInstance");
-        final Integer port = conf.getInt("backend.port");
+        final Integer port = conf.getInt("backend.firstPort");
         final ServerMindmapMap mindmapServerMap = new ServerMindmapMap(mapsPerInstance, port);
 
         if(useSingleDocearInstance) {
             try {
-                final String protocol = conf.getString("backend.scheme");
-                final String host = conf.getString("backend.host");
+            	final String hostUrl = conf.getString("backend.singleInstance.host");
                 final String path = conf.getString("backend.v10.pathprefix");
-                URL docear2 = new URL(protocol, host, port, path);
-                mindmapServerMap.put(docear2, "5");
+                
+                URL singleServer = new URL(hostUrl+path);
+                mindmapServerMap.put(singleServer, "5");
                 mindmapServerMap.remove("5");
             } catch (MalformedURLException e) {
                 throw new RuntimeException("cannot read backend url, check your configuration", e);
