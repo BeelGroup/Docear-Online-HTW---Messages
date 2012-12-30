@@ -8,6 +8,8 @@ define ->
       if @model?
         @fieldMap = @fieldMap or {}
         for selector, field of @fieldMap
+          console.log selector
+          console.log field
           # bind selector change to the model
           @delegateModelSync(selector, field)
           # bind form element change events to sync up to the model
@@ -32,7 +34,7 @@ define ->
     syncModelToForm: (selector, field) ->
         # check if toForm was defined (complex map entry)
         if field.toForm?
-          value = do @[field.toForm]
+          do @[field.toForm]
         else
           value = @model.get field
         # !here is still work to do!

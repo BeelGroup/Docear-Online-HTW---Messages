@@ -8,49 +8,58 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     subViews: {}
     template: Handlebars.templates['Node']
 
+
+
     fieldMap:
-      # example for an entry with his own methods
-      '#body':
-        field: "nodeText"
-        toModel: "testToModel"
-        toForm: "testToForm"
-  
+      '#nodeText': "nodeText"
+      '.node' :
+        field: 'xPos'
+        toModel: 'PosToModel'
+        toForm: 'PosToForm'
+      '.node' :
+        field: 'yPos'
+        toModel: 'PosToModel'
+        toForm: 'PosToForm'
+
     # a.k.a. constructor
     initialize: (@model) ->
-      super
+      super()
       id: @model.get 'id'
-      # render, when model was changed -> not in usage since sincedView was implemented
+      
       #@model.on 'change', @render, @
 
-    testToModel: ->
-      @$('#body').val()
+    PosToModel: ->
+      # TODO: Event will not be called on change
+      @model.set 'xPos', @$el.css 'left'
+      @model.set 'yPos', @$el.css 'top'
 
-    testToForm: ->
-      @model.get 'nodeText'    
-
+    PosToForm: ->
+      @$el.animate({
+        left: @model.get 'xPos'
+        top: @model.get 'yPos'
+      }, 500 );
 
     # define events -> here u can pass informations to the model
     events: =>
       'click .changeable': 'fadeInButton'
-      'click .show': 'updateModel'
-      'click .change': 'test'
+      'click .show': 'printModel'
+      'click .change': 'modificateModel'
       'click .save': (-> @model.save(@model.saveOptions))
     
     # TODO: implement
     fadeInButton: -> 
-      console.log 'fade in "save changes" button'
+      console.log 'fade in "save changes" button and lock node on server'
 
-    # Testing
-    updateModel: ->      
-      # update changed values to the model
-      #@model.set 'id', $('.changeable').val() 
+    # [Debugging] 
+    printModel: ->      
       console.log @model.toJSON()
 
-    # Testing
-    test: -> 
+    # [Debugging] model modification
+    modificateModel: -> 
       @model.set 'nodeText', Math.random()   
+      @model.set 'xPos', (@model.get 'xPos') + 20   
+      @model.set 'yPos', (@model.get 'yPos') + 20   
       
-
     subView: (view, autoRender = false) ->
       # if model is set, use its id OR a unique random id
       viewId = view.model?.id or String(Math.random() * new Date().getTime())
@@ -72,16 +81,10 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       else
         {}
 
-
-    # extend the view with the jsPlumb div
     afterRender: ->
       @$el.append(@model.get 'purehtml')
 
     positioning: ->
-      #@$el.css 'border', '1px'
-     # @$el.css 'position', 'absolute'
-     # @$el.css 'top', '150px'
-     # @$el.css 'left', '150px'
       @$el.css({
       'position':'absolute', 
       'top': @calcYPosition() + 'px',
@@ -89,10 +92,10 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       });
 
     calcXPosition: ->
-      4550 + @model.get 'xPos'
+      @model.get 'xPos'
 
     calcYPosition: ->
-      4850 + @model.get 'yPos'
+      @model.get 'yPos'
 
     render: ->
       @$el.html @template @getRenderData()
@@ -105,7 +108,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       @positioning()
       @
 
-
     destroy: ->
       @model?.off null, null, @
 
@@ -115,7 +117,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
       @$el.remove()
 
-    # pass a final funktion, if u want to
+    # pass a final function, if u want to
     leave: (done = ->) ->
       @destroy()
       done()
