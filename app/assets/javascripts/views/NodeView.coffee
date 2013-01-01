@@ -25,6 +25,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     initialize: (@model) ->
       super()
       id: @model.get 'id'
+      @model.bind "change:locked",@changeLockStatus , @ 
       
       #@model.on 'change', @render, @
 
@@ -41,11 +42,24 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
     # define events -> here u can pass informations to the model
     events: =>
-      'click .changeable': 'fadeInButton'
+      'click .changeable': 'lockModel'
       'click .show': 'printModel'
       'click .change': 'modificateModel'
       'click .save': (-> @model.save(@model.saveOptions))
     
+    lockModel: ->
+      # will be replaced by username
+      @model.set 'lockedBy', 'me'
+      @model.set 'locked', true
+      console.log 'locked'
+
+    changeLockStatus: ->
+      if @model.get 'locked' 
+        if (@model.get('lockedBy') != 'me')
+          @$('.changeable').attr('disabled', 'disabled')
+      else
+        @$('.changeable').removeAttr('disabled')
+
     # TODO: implement
     fadeInButton: -> 
       console.log 'fade in "save changes" button and lock node on server'
@@ -58,7 +72,13 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     modificateModel: -> 
       @model.set 'nodeText', Math.random()   
       @model.set 'xPos', (@model.get 'xPos') + 20   
-      @model.set 'yPos', (@model.get 'yPos') + 20   
+      @model.set 'yPos', (@model.get 'yPos') + 20
+      if(@model.get 'locked')   
+        @model.set 'locked', false
+      else
+        @model.set 'locked', true
+        @model.set 'lockedBy', 'Mr. P'
+
       
     subView: (view, autoRender = false) ->
       # if model is set, use its id OR a unique random id

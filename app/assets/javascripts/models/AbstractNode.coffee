@@ -7,7 +7,7 @@ define ['collections/ChildNodes'], (ChildNodes)->
 
   class AbstractNode extends Backbone.Model 
 
-    constructor: (id, folded, nodeText, isHTML, xPos, yPos, hGap, shiftY) ->
+    constructor: (id, folded, nodeText, isHTML, xPos, yPos, hGap, shiftY, locked) ->
       super()    
       @set 'id', id
       @set 'folded', folded
@@ -17,6 +17,7 @@ define ['collections/ChildNodes'], (ChildNodes)->
       @set 'yPos', yPos
       @set 'hGap', hGap
       @set 'shiftY', shiftY
+      @set 'locked', locked
       ## THROW events on all (also possible: save/update/change)
       #@on 'all', (event) -> console.log "Event: " + event
       @sup = AbstractNode.__super__
