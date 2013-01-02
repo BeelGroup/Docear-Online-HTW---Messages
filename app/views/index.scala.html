@@ -6,14 +6,16 @@
 }
 
 @main("Mind map demo", additionalBodyJavaScripts = additionalJavaScripts()) {
-<div id="login">
-	<form method="POST" action="/login">
-		<input type="text" name="username" placeholder="username"><br>
-		<input type="password" name="password" placeholder="password"><br>
-		<button type="submit">login</button>
-	</form>
-</div>
-<div id="mindmap">
+    @mindMapContainer {
+        <div id="login">
+            <form method="POST" action="/login">
+                <input type="text" name="username" placeholder="username"><br>
+                <input type="password" name="password" placeholder="password"><br>
+                <button type="submit">login</button>
+            </form>
+        </div>
+        <div id="mindmap">
 
-</div>
+        </div>
+    }
 }
