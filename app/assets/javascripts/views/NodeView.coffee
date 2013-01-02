@@ -43,9 +43,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     # define events -> here u can pass informations to the model
     events: =>
       'click .changeable': 'lockModel'
-      'click .show': 'printModel'
-      'click .change': 'modificateModel'
-      'click .save': (-> @model.save(@model.saveOptions))
+      'click .action-show': 'printModel'
+      'click .action-change': 'modificateModel'
+      'click .action-save': (-> @model.save(@model.saveOptions))
     
     lockModel: ->
       # will be replaced by username
@@ -88,12 +88,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     getRenderData: ->
     # if the model is already set, parse it to json
       if @model?
-        if @model.get('isHTML') == true
-          # create subview  
-          model = new Backbone.Model pureHtml: @model.get 'nodeText'
-          myHtml = new HtmlView(model)
-          # add it to the node
-          @subView(myHtml)
         @model.toJSON()
     # otherwise pass an empty JSON
       else
@@ -120,7 +114,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       # render the subviews
       for viewId, view of @subViews
         html = view.render().el
-        $(html).appendTo(@$el)
+        $(html).appendTo(@el)
       # extend the ready rendered htlm element
       @afterRender()
       @positioning()
