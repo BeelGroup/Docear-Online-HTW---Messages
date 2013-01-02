@@ -8,7 +8,7 @@ GET     /                           controllers.Application.index()
 GET     /mvc                        controllers.Application.mvc()
 GET     /small-solutions            controllers.Application.smallSolutions()
 GET     /rest/v1/user/xyz/mindmap/1.json    controllers.Assets.at(path="/public", file="mindmaps/example1.json")
-POST	/login						controllers.Application.login()
+
 
 
 GET     /qunit                      controllers.QUnit.testAll()
@@ -18,6 +18,9 @@ GET		/map/json/:id				controllers.ControllerFactory.mindMap.map(id: String)
 GET		/maps/from/:user    		controllers.ControllerFactory.mindMap.mapListFromDB(user: String)
 GET		/map/close/:id				controllers.ControllerFactory.mindMap.closeMap(id: String)
 GET		/map/test					controllers.ControllerFactory.mindMap.mapTest()
+
+# User
+POST	/login						controllers.ControllerFactory.user.login()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

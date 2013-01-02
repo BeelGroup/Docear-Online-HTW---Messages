@@ -1,10 +1,12 @@
 package services.backend.mindmap;
 
-import models.backend.exceptions.NoUserLoggedInException;
-import org.codehaus.jackson.JsonNode;
-
 import java.io.File;
 import java.io.IOException;
+
+import models.backend.User;
+import models.backend.exceptions.NoUserLoggedInException;
+
+import org.codehaus.jackson.JsonNode;
 
 public interface MindMapCrudService {
 

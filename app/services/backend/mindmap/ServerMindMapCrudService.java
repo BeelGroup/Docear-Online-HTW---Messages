@@ -45,7 +45,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
     @Override
     public File mapTest() throws IOException {
         User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
-        return mapFromDB(user, "103805");
+        return getMindMapFile(user, "103805");
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
             fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
         } else {
             try {
-                fileStream = new FileInputStream(mapFromDB(user, mapId));
+                fileStream = new FileInputStream(getMindMapFile(user, mapId));
             } catch (FileNotFoundException e) {
                 Logger.error("can't find mindmap file", e);
             } catch (IOException e) {
@@ -188,7 +188,6 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         return wsUrl;
     }
 
-
     private static boolean closeDocearInstance(URL serverUrl) {
         String wsUrl = serverUrl.toString();
         F.Promise<WS.Response> promise = WS.url(wsUrl+"/close").get();
@@ -199,36 +198,19 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         return false;
     }
 
-    private static File mapFromDB(final User user, final String id) throws IOException {
+    /**
+     * retrieves a mindmap from the server
+     * @param user 
+     * @param mapId
+     * @return .mm-file or null on failure
+     */
+    private static File getMindMapFile(final User user, final String id) throws IOException {
         String docearServerAPIURL = "https://api.docear.org/user";
 
         util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
                 .setHeader("accessToken", user.getAccesToken())
-                        //.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")
-                        //.setHeader("Accept-Charset","utf-8")
                 .get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
         return ZipUtils.extractMindmap(response.getBodyAsStream());
-    }
-
-    private static File unZipIt(InputStream bodyStream) throws IOException {
-        File folder = new File("D:\\Temp\\dcr2");//TODO backend team, this is not platform independent
-
-        Logger.debug("unpacking zip");
-        ZipUtils.extractMindmap(bodyStream);
-
-        Logger.debug("scanning files");
-        File[] files = folder.listFiles();
-        File mindmapFile = null;
-        for(File file : files) {
-            if(file.getName().endsWith(".mm"))
-                mindmapFile = file;
-            else{
-                file.delete();
-            }
-        }
-
-        Logger.debug("return file: "+mindmapFile.getName());
-        return mindmapFile;
     }
 
     private static class StreamLogger implements Runnable {
