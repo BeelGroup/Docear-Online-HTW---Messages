@@ -1,18 +1,22 @@
 package services.backend.mindmap;
 
-import models.backend.exceptions.NoUserLoggedInException;
-import org.apache.commons.lang.NotImplementedException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import play.Play;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
+import models.backend.User;
+import models.backend.UserMindmapInfo;
+import models.backend.exceptions.NoUserLoggedInException;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+import play.Play;
 
 @Profile("backendMock")
 @Component
@@ -45,7 +49,7 @@ public class MockMindMapCrudService implements MindMapCrudService {
     }
 
     @Override
-    public JsonNode listMaps(String user) throws IOException {
+    public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
         throw new NotImplementedException();
     }
 }

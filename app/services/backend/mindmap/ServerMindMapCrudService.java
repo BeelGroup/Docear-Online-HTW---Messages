@@ -1,29 +1,37 @@
 package services.backend.mindmap;
 
-import akka.util.Duration;
-import controllers.Application;
-import models.backend.User;
-import models.backend.UserMindmapInfo;
-import models.backend.exceptions.NoUserLoggedInException;
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonNode;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import play.Logger;
-import play.Play;
-import play.libs.Akka;
-import play.libs.F;
-import play.libs.WS;
-import util.backend.ZipUtils;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static play.libs.Json.toJson;
+import models.backend.User;
+import models.backend.UserMindmapInfo;
+import models.backend.exceptions.NoUserLoggedInException;
+
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
+import org.springframework.aop.ThrowsAdvice;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+import play.Logger;
+import play.Play;
+import play.libs.Akka;
+import play.libs.F;
+import play.libs.WS;
+import util.backend.ZipUtils;
+import akka.util.Duration;
+import controllers.Application;
 
 @Profile("backendProd")
 @Component
@@ -65,10 +73,14 @@ public class ServerMindMapCrudService implements MindMapCrudService {
     }
 
     @Override
-    public JsonNode listMaps(String user) throws IOException {
+    public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
+    	if(user == null) {
+    		throw new NullPointerException("user cannot be null");
+    	}
+    	
         String docearServerAPIURL = "https://api.docear.org/user";
-        WS.Response response =  WS.url(docearServerAPIURL + "/" + user + "/mindmaps/")
-                .setHeader("accessToken", "").get()
+        WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/")
+                .setHeader("accessToken", user.getAccesToken()).get()
                 .getWrappedPromise().await(3,TimeUnit.MINUTES).get();
 
         BufferedReader br = new BufferedReader (new StringReader(response.getBody().toString()));
@@ -76,10 +88,13 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         List<UserMindmapInfo> infos = new LinkedList<UserMindmapInfo>();
         for ( String line; (line = br.readLine()) != null; ){
             String[] strings = line.split("\\|#\\|");
+            Logger.debug(line);
             UserMindmapInfo info = new UserMindmapInfo(strings[0], strings[1], strings[2], strings[3], strings[4]);
             infos.add(info);
         }
-        return toJson(infos);
+        
+        return infos.toArray(new UserMindmapInfo[0]);
+        //return toJson(infos);
     }
 
 
@@ -92,7 +107,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         }
 
 
-        User user = Application.getCurrentUser();
+        User user = controllers.User.getCurrentUser();
         if(user == null && mapId.length() > 1)
             throw new NoUserLoggedInException();
 

@@ -39,14 +39,4 @@ public class Application extends Controller {
 	public static String getSessionCookieName() {
 		return Play.application().configuration().getString("backend.sessionIdName");
 	}
-
-    public static User getCurrentUser() {
-        Http.Cookie cookie = request().cookies().get(getSessionCookieName());
-        if(cookie != null) {
-            String sessionId = cookie.value();
-            return Session.getUserForSessionId(sessionId);
-        } else {
-            return null;
-        }
-    }
 }

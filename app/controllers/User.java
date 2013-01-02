@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import play.Logger;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import services.backend.user.UserService;
 
@@ -43,5 +44,19 @@ public class User extends Controller {
 
 		
 	}
+	
+	/**
+	 * 
+	 * @return User or null if non is logged-in
+	 */
+    public static models.backend.User getCurrentUser() {
+        Http.Cookie cookie = request().cookies().get(Application.getSessionCookieName());
+        if(cookie != null) {
+            String sessionId = cookie.value();
+            return Session.getUserForSessionId(sessionId);
+        } else {
+            return null;
+        }
+    }
 	
 }
