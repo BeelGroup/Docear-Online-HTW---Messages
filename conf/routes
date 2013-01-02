@@ -16,7 +16,7 @@ GET     /qunit                      controllers.QUnit.testAll()
 
 # Mindmap
 GET		/map/json/:id				controllers.ControllerFactory.mindMap.map(id: String)
-GET		/maps/from/:user    		controllers.ControllerFactory.mindMap.mapListFromDB(user: String)
+GET		/maps			    		controllers.ControllerFactory.mindMap.mapListFromDB()
 GET		/map/close/:id				controllers.ControllerFactory.mindMap.closeMap(id: String)
 GET		/map/test					controllers.ControllerFactory.mindMap.mapTest()
 
