@@ -6,6 +6,7 @@
 GET     /favicon.ico                controllers.Assets.at(path="/public", file="images/favicon.ico")
 GET     /                           controllers.Application.index()
 GET     /mvc                        controllers.Application.mvc()
+GET	    /help						controllers.Application.help()
 GET     /small-solutions            controllers.Application.smallSolutions()
 GET     /rest/v1/user/xyz/mindmap/1.json    controllers.Assets.at(path="/public", file="mindmaps/example1.json")
 POST	/login						controllers.Application.login()
