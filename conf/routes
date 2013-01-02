@@ -8,7 +8,6 @@ GET     /                           controllers.Application.index()
 GET     /mvc                        controllers.Application.mvc()
 GET     /small-solutions            controllers.Application.smallSolutions()
 GET     /rest/v1/user/xyz/mindmap/1.json    controllers.Assets.at(path="/public", file="mindmaps/example1.json")
-GET     $path</rest/v1/.*>            controllers.ControllerFactory.mindMap.index(path: String)
 POST	/login						controllers.Application.login()
 
 

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import play.Logger;
 import play.Play;
+import play.mvc.Http;
 import util.backend.WS;
 import util.backend.WS.Response;
 import play.mvc.Controller;
@@ -71,10 +72,14 @@ public class Application extends Controller {
 	private static String getSessionCookieName() {
 		return Play.application().configuration().getString("backend.sessionIdName");
 	}
-	
-	public static User getCurrentUser() {
-		String sessionId = request().cookies().get(getSessionCookieName()).value();
 
-		return Session.getUserForSessionId(sessionId);
-	}
+    public static User getCurrentUser() {
+        Http.Cookie cookie = request().cookies().get(getSessionCookieName());
+        if(cookie != null) {
+            String sessionId = cookie.value();
+            return Session.getUserForSessionId(sessionId);
+        } else {
+            return null;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package services.backend.mindmap;
 
+import akka.util.Duration;
 import controllers.Application;
 import models.backend.User;
 import models.backend.UserMindmapInfo;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import play.Logger;
 import play.Play;
+import play.libs.Akka;
 import play.libs.F;
 import play.libs.WS;
 import util.backend.ZipUtils;
@@ -139,13 +141,23 @@ public class ServerMindMapCrudService implements MindMapCrudService {
             Process p = builder.start();
 
             //Streams must be read, otherwise will the application pause to execute
-            Thread t = new Thread(new Transporter(p.getInputStream(), System.out));
-            t.setDaemon(true);
-            t.start();
+            Akka.system().scheduler()
+                    .scheduleOnce(Duration.create(0, TimeUnit.SECONDS),
+                            new StreamLogger(p.getInputStream(),
+                                    "docear in"));
 
-            t = new Thread(new Transporter(p.getErrorStream(), System.err));
-            t.setDaemon(true);
-            t.start();
+            Akka.system().scheduler()
+                    .scheduleOnce(Duration.create(0, TimeUnit.SECONDS),
+                            new StreamLogger(p.getErrorStream(),
+                                    "docear in"));
+
+//			Thread t = new Thread(new Transporter(p.getInputStream(), System.out));
+//			t.setDaemon(true);
+//			t.start();
+
+//			t = new Thread(new Transporter(p.getErrorStream(), System.err));
+//			t.setDaemon(true);
+//			t.start();
 
         } catch (IOException e) {
             return null;
@@ -156,16 +168,15 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         try {
             wsUrl = new URL(createWebserviceUrl(nextFreePort));
         } catch (MalformedURLException e1) {
-            throw new RuntimeException(e1);
+
         }
         boolean isOnline = false;
         while(!isOnline) {
             try {
                 Thread.sleep(1000);
                 isOnline = WS.url(wsUrl.toString()+"/status").get().get().getStatus() == 200;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            } catch (InterruptedException e) {
+            } catch (Exception e) {}
         }
         //give docear another 3 seconds to start completely
         //TODO better solution?!!
@@ -176,6 +187,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
 
         return wsUrl;
     }
+
 
     private static boolean closeDocearInstance(URL serverUrl) {
         String wsUrl = serverUrl.toString();
@@ -219,29 +231,26 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         return mindmapFile;
     }
 
-    private static class Transporter implements Runnable {
-        private final InputStreamReader in;
-        private final OutputStreamWriter out;
+    private static class StreamLogger implements Runnable {
+        private final BufferedReader in;
+        private final String prefix;
 
-        public Transporter(InputStream in, OutputStream out) {
-            this.in = new InputStreamReader(in);
-            this.out = new OutputStreamWriter(out);
-
+        public StreamLogger(InputStream in, String prefix) {
+            this.in = new BufferedReader(new InputStreamReader(in));
+            this.prefix = prefix;
         }
 
         @Override
         public void run() {
-            char[] buffer = new char[1024];
-            int length;
+            String line;
             try {
-                while((length = in.read(buffer, 0, buffer.length)) != -1) {
-                    out.write(buffer, 0, length);
+                while((line = in.readLine()) != null) {
+                    Logger.info(prefix+": "+line);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Logger.trace(prefix+": "+"Error!", e);
             } finally {
                 IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(out);
             }
         }
     }
