@@ -156,7 +156,7 @@ $ ->
         editArea = innerNode.find('textarea:first')
         innerNode.html(editArea.text())
       else
-        editArea = $('<textarea></textarea>')
+        editArea = $('<textarea class="changeable"></textarea>')
         editArea.css('width', (innerNode.width()+10)+'px')
         editArea.css('height', (innerNode.height()+10)+'px')
         editArea.text(innerNode.html())
