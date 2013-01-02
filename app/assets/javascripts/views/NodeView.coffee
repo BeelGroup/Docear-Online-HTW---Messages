@@ -49,8 +49,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     
     lockModel: ->
       # will be replaced by username
-      @model.set 'lockedBy', 'me'
-      @model.set 'locked', true
+      @model.lock 'me'
       console.log 'locked'
 
     changeLockStatus: ->
@@ -74,10 +73,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       @model.set 'xPos', (@model.get 'xPos') + 20   
       @model.set 'yPos', (@model.get 'yPos') + 20
       if(@model.get 'locked')   
-        @model.set 'locked', false
+        @model.unlock()
       else
-        @model.set 'locked', true
-        @model.set 'lockedBy', 'Mr. P'
+        @model.lock 'Mr. P'
 
       
     subView: (view, autoRender = false) ->

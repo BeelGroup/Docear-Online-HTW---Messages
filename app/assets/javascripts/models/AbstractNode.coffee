@@ -26,6 +26,14 @@ define ['collections/ChildNodes'], (ChildNodes)->
     # will be set to /map/json/id, when fetch() or update() will be called
     urlRoot: '/map/json/'
 
+    lock: (lockedBy) ->
+      @set 'lockedBy', lockedBy
+      @set 'locked', true
+ 
+
+    unlock: ->
+      @set 'locked', false
+
     # status messages for update
     saveOptions:
       success: (model) ->
