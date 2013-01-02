@@ -120,7 +120,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       # render the subviews
       for viewId, view of @subViews
         html = view.render().el
-        $(html).appendTo(@$el)
+        $('html').appendTo(@$el)
       # extend the ready rendered htlm element
       @afterRender()
       @positioning()
