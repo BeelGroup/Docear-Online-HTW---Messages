@@ -22,6 +22,11 @@ public class Application extends Controller {
 		return ok(views.html.index.render());
 	}
 
+    /** displays a feature list and help site */
+	public static Result help() {
+		return ok(views.html.help.render());
+	}
+
 	/** for evolving mvc structure on client side */
 	public static Result mvc() {
 		return ok(views.html.mvc.render());
