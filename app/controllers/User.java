@@ -43,8 +43,7 @@ public class User extends Controller {
     }
 
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
-        String sessionId = Session.createSession(credentials.getUsername(), accessToken);
-        response().setCookie(Application.getSessionCookieName(), sessionId);
+        session(Application.getSessionCookieName(), accessToken);
     }
 
     public Result loginForm() {
@@ -56,13 +55,8 @@ public class User extends Controller {
 	 * @return User or null if non is logged-in
 	 */
     public static models.backend.User getCurrentUser() {
-        Http.Cookie cookie = request().cookies().get(Application.getSessionCookieName());
-        if(cookie != null) {
-            String sessionId = cookie.value();
-            return Session.getUserForSessionId(sessionId);
-        } else {
-            return null;
-        }
+        final String authToken = session(Application.getSessionCookieName());
+        return Session.getUserForSessionId(authToken);
     }
 	
 }
