@@ -1,4 +1,4 @@
-@(title: String, additionalBodyJavaScripts: Html = Html.empty)(content: Html)
+@(title: String, additionalBodyJavaScripts: Html = Html.empty, additionalBodyClasses: String = "")(content: Html)
 
 @import play.api.Play
 @import play.api.Play.current
@@ -29,7 +29,7 @@
     <![endif]-->
 </head>
 
-<body class='@("test-mode".when(Play.isTest))'>
+<body class='@("test-mode".when(Play.isTest)) @additionalBodyClasses'>
 
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">

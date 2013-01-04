@@ -4,8 +4,8 @@
 @import helper.twitterBootstrap._
 @implicitField = @{ FieldConstructor(views.html.bootstrap.form.horizontalFieldConstructor.f) }
 
-@main("Login") {
-    @helper.form(action = routes.ControllerFactory.user.login) {
+@main("Login", additionalBodyClasses = "login-page") {
+    @helper.form(action = routes.ControllerFactory.user.login, args = 'id -> "login-form") {
         @helper.inputText(credentialsForm("username"), 'label -> "username")
         @helper.inputPassword(credentialsForm("password"),  'label -> "password")
 
