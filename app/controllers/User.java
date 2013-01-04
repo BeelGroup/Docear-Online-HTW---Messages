@@ -43,7 +43,8 @@ public class User extends Controller {
     }
 
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
-        session(Application.getSessionCookieName(), accessToken);
+        final String sessionId = Session.createSession(credentials.getUsername(), accessToken);
+        session(Application.getSessionCookieName(), sessionId);
         session("username", credentials.getUsername());
     }
 
