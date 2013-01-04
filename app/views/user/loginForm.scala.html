@@ -1,0 +1,20 @@
+@(credentialsForm: Form[models.frontend.Credentials])
+
+@import helper._
+@import helper.twitterBootstrap._
+@implicitField = @{ FieldConstructor(views.html.bootstrap.form.horizontalFieldConstructor.f) }
+
+@main("Login") {
+    @helper.form(action = routes.ControllerFactory.user.login) {
+        @helper.inputText(credentialsForm("username"), 'label -> "username")
+        @helper.inputPassword(credentialsForm("password"),  'label -> "password")
+
+        @credentialsForm.globalErrors.map { error =>
+            <div class="alert alert-error"><p>@error.message</p></div>
+        }
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+    }
+}

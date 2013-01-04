@@ -39,7 +39,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">@Play.configuration.getString("application.name")</a>
+                <a class="brand" href="/">@Play.configuration.getString("application.name")</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         @menuItem("/", "Mind map demo")
@@ -49,6 +49,7 @@
                         @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Map2", linkId="load-map-2", linkClass="loadMap")
                         @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Map3", linkId="load-map-3", linkClass="loadMap")
                         @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Map5", linkId="load-map-5", linkClass="loadMap")
+                        @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login")
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>

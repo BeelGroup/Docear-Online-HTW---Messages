@@ -22,6 +22,7 @@ GET		/map/test					controllers.ControllerFactory.mindMap.mapTest()
 
 # User
 POST	/login						controllers.ControllerFactory.user.login()
+GET 	/login						controllers.ControllerFactory.user.loginForm()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

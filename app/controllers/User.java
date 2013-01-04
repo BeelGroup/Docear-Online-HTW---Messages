@@ -2,10 +2,12 @@ package controllers;
 
 import java.util.Map;
 
+import models.frontend.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import play.Logger;
+import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -14,36 +16,41 @@ import services.backend.user.UserService;
 @Component
 public class User extends Controller {
 
+    private static final Form<Credentials> credentialsForm = form(Credentials.class);
+
 	@Autowired
     private UserService userService;
 	
 	public Result login() {
-		Map<String,String[]> postMap = request().body().asFormUrlEncoded();
+        final Form<Credentials> filledForm = credentialsForm.bindFromRequest();
+        Result result;
 
-		String[] userNameArray = postMap.get("username");
-		String[] pwArray = postMap.get("password");
+        if (filledForm.hasErrors()) {
+            result = badRequest(views.html.user.loginForm.render(filledForm));
+        } else {
+            final Credentials credentials = filledForm.get();
+            final String accessToken = userService.authenticate(credentials.getUsername(), credentials.getPassword());
+            final boolean authenticationSuccessful = accessToken != null;
+            if (authenticationSuccessful) {
+                setAuthenticatedSession(credentials, accessToken);
+                result = redirect(routes.Application.index());
+            } else {
+                filledForm.reject("The credentials doesn't match any user.");
+                Logger.debug(credentials.getUsername() + " is unauthorized");
+                result = unauthorized(views.html.user.loginForm.render(filledForm));
+            }
+        }
+        return result;
+    }
 
-		if(userNameArray == null || userNameArray[0].isEmpty() || pwArray == null || pwArray[0].isEmpty())
-			return badRequest("please define 'username' and 'password'");
+    private void setAuthenticatedSession(Credentials credentials, String accessToken) {
+        String sessionId = Session.createSession(credentials.getUsername(), accessToken);
+        response().setCookie(Application.getSessionCookieName(), sessionId);
+    }
 
-
-		final String username  = userNameArray[0];
-		final String password = pwArray[0];
-		Logger.debug(username +";"+password);
-
-		String accessToken = userService.authenticate(username, password);
-
-
-		if(accessToken != null) { //succesful authentication
-			String sessionId = Session.createSession(username, accessToken);
-			response().setCookie(Application.getSessionCookieName(), sessionId);
-			return redirect(routes.Application.index());
-		} else {
-			return unauthorized("Authentication failed");
-		}
-
-		
-	}
+    public Result loginForm() {
+        return ok(views.html.user.loginForm.render(credentialsForm));
+    }
 	
 	/**
 	 * 
