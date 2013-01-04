@@ -3,8 +3,8 @@
 @import play.api.Play
 @import play.api.Play.current
 
-@menuItem(relativeUrl:String, label: String) = {
-    <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl">@label</a></li>
+@menuItem(relativeUrl:String, label: String, linkId: String = "", linkClass: String = "") = {
+    <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl" id="@linkId" class="@linkClass">@label</a></li>
 }
 
 <!DOCTYPE html>
@@ -46,14 +46,9 @@
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
                         @menuItem(controllers.routes.Application.help().toString, "Help")
-                        @* @menuItem(controllers.routes.MindMap.map("2").toString, "Map2")
-                        @menuItem(controllers.routes.MindMap.map("3").toString, "Map3")
-                        @menuItem(controllers.routes.MindMap.map("5").toString, "Map5")
-                        TODO: Refactoring
-                        *@
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/2" class="loadMap" id="load-map-2">Map2</a></li>
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/3" class="loadMap" id="load-map-3">Map3</a></li>
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/5" class="loadMap" id="load-map-5">Map5</a></li>
+                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Map2", linkId="load-map-2", linkClass="loadMap")
+                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Map3", linkId="load-map-3", linkClass="loadMap")
+                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Map5", linkId="load-map-5", linkClass="loadMap")
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
