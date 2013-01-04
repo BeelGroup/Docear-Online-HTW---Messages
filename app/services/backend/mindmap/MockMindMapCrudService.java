@@ -50,6 +50,12 @@ public class MockMindMapCrudService implements MindMapCrudService {
 
     @Override
     public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
-        throw new NotImplementedException();
+    	return new UserMindmapInfo[] {
+    			new UserMindmapInfo("1", "1", "Dec 01, 2012 6:38:31 PM", "/not/available", "1.mm"),
+    			new UserMindmapInfo("2", "2", "Dec 02, 2012 6:38:31 PM", "/not/available", "2.mm"),
+    			new UserMindmapInfo("3", "3", "Dec 03, 2012 6:38:31 PM", "/not/available", "3.mm"),
+    			//new UserMindmapInfo("4", "4", "Dec 19, 2012 6:38:31 PM", "/not/available", "4.mm"),
+    			new UserMindmapInfo("5", "5", "Dec 05, 2012 6:38:31 PM", "/not/available", "5.mm")
+    	};
     }
 }
