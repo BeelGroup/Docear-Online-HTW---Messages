@@ -44,10 +44,16 @@ public class User extends Controller {
 
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
         session(Application.getSessionCookieName(), accessToken);
+        session("username", credentials.getUsername());
     }
 
     public Result loginForm() {
         return ok(views.html.user.loginForm.render(credentialsForm));
+    }
+
+    public Result logout() {
+        session().clear();
+        return redirect(routes.Application.index());
     }
 	
 	/**
