@@ -1,21 +1,10 @@
 package controllers;
 
-import java.util.Map;
-
-import play.Logger;
 import play.Play;
-import play.mvc.Http;
-import util.backend.WS;
-import util.backend.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
-import models.backend.User;
 
 public class Application extends Controller {
-
-
-
-
 
 	/** displays current mind map drawing */
 	public static Result index() {

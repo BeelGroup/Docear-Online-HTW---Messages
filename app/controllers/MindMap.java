@@ -1,23 +1,19 @@
 package controllers;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import services.backend.mindmap.MindMapCrudService;
+import java.io.IOException;
+
 import models.backend.UserMindmapInfo;
 import models.backend.exceptions.NoUserLoggedInException;
+
+import org.codehaus.jackson.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import play.Logger;
-import play.Play;
-import play.libs.F;
 import play.libs.Json;
-import play.libs.WS;
 import play.mvc.Controller;
 import play.mvc.Result;
-
-import java.io.*;
-
-import static org.apache.commons.lang.BooleanUtils.isFalse;
+import services.backend.mindmap.MindMapCrudService;
 
 @Component
 public class MindMap extends Controller {
