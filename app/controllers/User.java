@@ -55,6 +55,10 @@ public class User extends Controller {
         session().clear();
         return redirect(routes.Application.index());
     }
+
+    public Result profile() {
+        return redirect(routes.ControllerFactory.mindMap.mapListFromDB());
+    }
 	
 	/**
 	 * 

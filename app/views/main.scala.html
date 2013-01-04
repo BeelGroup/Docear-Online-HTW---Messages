@@ -3,9 +3,11 @@
 @import play.api.Play
 @import play.api.Play.current
 
-@menuItem(relativeUrl:String, label: String, linkId: String = "", linkClass: String = "", onlyIf: Boolean = true) = {
+@menuItem(relativeUrl:String, label: => String, linkId: String = "", linkClass: String = "", onlyIf: Boolean = true, glyphicon: String = "") = {
     @if(onlyIf) {
-        <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl" id="@linkId" class="@linkClass">@label</a></li>
+        <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl" id="@linkId" class="@linkClass">
+            @if(glyphicon != "") {<i class="@glyphicon icon-white"></i>}
+        @label</a></li>
     }
 }
 
@@ -54,6 +56,7 @@
                         @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Map3", linkId="load-map-3", linkClass="loadMap")
                         @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Map5", linkId="load-map-5", linkClass="loadMap")
                         @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", onlyIf = !isAuthenticated)
+                        @menuItem(controllers.routes.ControllerFactory.user.profile.toString, username, onlyIf = isAuthenticated, glyphicon = "icon-user")
                         @menuItem(controllers.routes.ControllerFactory.user.logout.toString, "Logout", onlyIf = isAuthenticated)
                     </ul>
                 </div><!--/.nav-collapse -->
