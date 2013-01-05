@@ -11,6 +11,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import services.backend.user.UserService;
 
+import static controllers.Secured.SESSION_KEY_USERNAME;
+
 @Component
 public class User extends Controller {
 
@@ -43,7 +45,7 @@ public class User extends Controller {
 
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
         Session.createSession(credentials.getUsername(), accessToken);
-        session("username", credentials.getUsername());
+        session(SESSION_KEY_USERNAME, credentials.getUsername());
     }
 
     public Result loginForm() {
@@ -64,7 +66,7 @@ public class User extends Controller {
 	 * @return User or null if non is logged-in
 	 */
     public static models.backend.User getCurrentUser() {
-        return Session.getUser(session("username"));
+        return Session.getUser(session(SESSION_KEY_USERNAME));
     }
 	
 }

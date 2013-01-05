@@ -13,6 +13,7 @@ import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import services.backend.mindmap.MindMapCrudService;
 
 @Component
@@ -62,10 +63,7 @@ public class MindMap extends Controller {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
+    @Security.Authenticated(Secured.class)
 	public Result mapListFromDB() {
 		try {
 			models.backend.User user = User.getCurrentUser();
