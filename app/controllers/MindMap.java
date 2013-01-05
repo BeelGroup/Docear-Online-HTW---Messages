@@ -3,8 +3,9 @@ package controllers;
 import java.io.IOException;
 
 import models.backend.UserMindmapInfo;
-import models.backend.exceptions.NoUserLoggedInException;
+import models.backend.exceptions.DocearServiceException;
 
+import models.backend.exceptions.NoUserLoggedInException;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,19 +23,9 @@ public class MindMap extends Controller {
 	@Autowired
 	private MindMapCrudService mindMapCrudService;
 
-	public Result map(final String id) {
-		try {
-			final JsonNode mindMap = mindMapCrudService.mindMapAsJson(id);
-			return ok(mindMap);
-		} catch (NoUserLoggedInException e) {
-			final String message = "user not logged in";
-			Logger.debug(message, e);
-			return unauthorized(message);//TODO Michael replace with flash message and login page
-		} catch (IOException e) {
-			final String message = "can't load mind map";
-			Logger.error(message, e);
-			return internalServerError(message);
-		}
+	public Result map(final String id) throws DocearServiceException, IOException {
+        final JsonNode mindMap = mindMapCrudService.mindMapAsJson(id);
+        return ok(mindMap);
 	}
 
 
@@ -64,19 +55,9 @@ public class MindMap extends Controller {
 	}
 
     @Security.Authenticated(Secured.class)
-	public Result mapListFromDB() {
-		try {
-			models.backend.User user = User.getCurrentUser();
-			if(user != null) {
-				final UserMindmapInfo[] maps = mindMapCrudService.getListOfMindMapsFromUser(user);
-				return ok(Json.toJson(maps));
-			} else {
-				return forbidden("You have to login before retrieving maps");
-			}
-		} catch (IOException e) {
-			final String message = "can't list mindmaps";
-			Logger.error(message, e);
-			return internalServerError(message);
-		}
-	}
+	public Result mapListFromDB() throws IOException, DocearServiceException {
+        models.backend.User user = User.getCurrentUser();
+        final UserMindmapInfo[] maps = mindMapCrudService.getListOfMindMapsFromUser(user);
+        return ok(Json.toJson(maps));
+    }
 }
