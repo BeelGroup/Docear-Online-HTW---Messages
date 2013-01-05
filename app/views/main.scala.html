@@ -11,6 +11,15 @@
     }
 }
 
+@simpleAlertFlash(divClass: String, flashKey: String) = {
+    @flash.asScala.get(flashKey).map { message =>
+        <div class="alert @divClass">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @message
+        </div>
+    }
+}
+
 @implicitSession = @{session} @* makes isAuthenticated, @username and @usernameOption possible *@
 
 <!DOCTYPE html>
@@ -65,7 +74,11 @@
     </div>
 
     <div class="container">
-    		@content
+        @simpleAlertFlash("alert-block", "warning")
+        @simpleAlertFlash("alert-error", "error")
+        @simpleAlertFlash("alert-success", "success")
+        @simpleAlertFlash("alert-info", "info")
+    	@content
 
         <hr>
 
