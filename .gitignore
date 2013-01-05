@@ -47,4 +47,4 @@ tmp
 /docear
 /nbproject/private/
 h2
-conf/evolutions/default/1.sql
+conf/evolutions/default/2.sql
