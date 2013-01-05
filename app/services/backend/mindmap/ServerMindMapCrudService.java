@@ -92,7 +92,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
     	
         String docearServerAPIURL = "https://api.docear.org/user";
         WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/")
-                .setHeader("accessToken", user.getAccesToken()).get()
+                .setHeader("accessToken", user.getAccessToken()).get()
                 .getWrappedPromise().await(3,TimeUnit.MINUTES).get();
 
         BufferedReader br = new BufferedReader (new StringReader(response.getBody().toString()));
@@ -243,7 +243,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         String docearServerAPIURL = "https://api.docear.org/user";
 
         util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + mmIdOnServer)
-                .setHeader("accessToken", user.getAccesToken())
+                .setHeader("accessToken", user.getAccessToken())
                 .get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
         
         if(response.getStatus() == 200) {

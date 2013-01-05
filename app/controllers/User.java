@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
 import services.backend.user.UserService;
 
@@ -43,8 +42,7 @@ public class User extends Controller {
     }
 
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
-        final String sessionId = Session.createSession(credentials.getUsername(), accessToken);
-        session(Application.getSessionCookieName(), sessionId);
+        Session.createSession(credentials.getUsername(), accessToken);
         session("username", credentials.getUsername());
     }
 
@@ -66,8 +64,7 @@ public class User extends Controller {
 	 * @return User or null if non is logged-in
 	 */
     public static models.backend.User getCurrentUser() {
-        final String authToken = session(Application.getSessionCookieName());
-        return Session.getUserForSessionId(authToken);
+        return Session.getUser(session("username"));
     }
 	
 }
