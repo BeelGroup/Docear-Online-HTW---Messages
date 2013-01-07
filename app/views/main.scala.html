@@ -61,12 +61,17 @@
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
                         @menuItem(controllers.routes.Application.help().toString, "Help")
-                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Map2", linkId="load-map-2", linkClass="loadMap")
-                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Map3", linkId="load-map-3", linkClass="loadMap")
-                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Map5", linkId="load-map-5", linkClass="loadMap")
                         @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", onlyIf = !isAuthenticated)
                         @menuItem(controllers.routes.ControllerFactory.user.profile.toString, username, onlyIf = isAuthenticated, glyphicon = "icon-user")
                         @menuItem(controllers.routes.ControllerFactory.user.logout.toString, "Logout", onlyIf = isAuthenticated)
+                        <li class="dropdown">
+	                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">Select MindMap <b class="caret"></b></a>
+	                      <ul class="dropdown-menu" id="selct-mindmap">
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Demo Map2", linkId="load-map-2", linkClass="loadMap")
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Demo Map3", linkId="load-map-3", linkClass="loadMap")
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Demo Map5", linkId="load-map-5", linkClass="loadMap")
+	                      </ul>
+	                    </li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>

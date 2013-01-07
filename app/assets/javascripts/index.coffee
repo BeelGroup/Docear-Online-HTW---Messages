@@ -1,4 +1,19 @@
 $ ->
+  
+    
+  
+  $.ajax({
+    type: 'GET',
+    url: '/maps',
+    dataType: 'json',
+    success: (data)->
+      $selectMinmap = $('#selct-mindmap')
+      $.each(data, (index,value)->
+        $selectMinmap.append '<li><a class="loadMap" href="/map/json/'+value.mmIdOnServer+'"> '+value.fileName+'</a></li>'
+      )
+      '/map/json/id'
+  })
+  
   initializeJsPlumb()
 
   $mindmap = $("#mindmap")
@@ -59,39 +74,41 @@ $ ->
           children.push newChild
     children
   
-  $(".loadMap").click -> 
-    href = $(this).attr("href")
-    recall = (data)->
-      $("#mindmap").html("")
-      jsPlumb.reset()
-      current_mindmap = new MindMap(data.root.nodeText)
-      
-      if data.root.leftChildren != undefined
-        leftNode = getRecursiveChildren(data.root.leftChildren)
-        for n in leftNode
-          current_mindmap.appendLeft(n)
-      
-      if data.root.rightChildren != undefined
-        rightNode = getRecursiveChildren(data.root.rightChildren)
-        for n in rightNode
-          current_mindmap.appendRight(n)
-      
-      #if data.root.rightChildren != undefined && data.root.rightChildren.nodeText != ""
-      #  rightNode = new Node(data.root.rightChildren.nodeText)
-      #  if data.root.rightChildren.nodeText == undefined
-      #    rightNode.children = getRecursiveChildren(rightNode, data.root.rightChildren)
-      #  current_mindmap.appendRight(rightNode)
-      
-      current_map_drawer = new MindMapDrawer(current_mindmap, $("#mindmap"))
-      current_map_drawer.draw()
-      
-      foldedNodes = $('.node.folded')
-      $(foldedNodes).children('.children').hide()
-      $(foldedNodes).find("i.fold").toggleClass('icon-minus-sign')
-      $(foldedNodes).find("i.fold").toggleClass('icon-plus-sign')
-      
-    $.get(href, recall, "json")
-    false
+  $("body").on("click", ".loadMap", 
+  	-> 
+      href = $(this).attr("href")
+      recall = (data)->
+        $("#mindmap").html("")
+        jsPlumb.reset()
+        current_mindmap = new MindMap(data.root.nodeText)
+        
+        if data.root.leftChildren != undefined
+          leftNode = getRecursiveChildren(data.root.leftChildren)
+          for n in leftNode
+            current_mindmap.appendLeft(n)
+        
+        if data.root.rightChildren != undefined
+          rightNode = getRecursiveChildren(data.root.rightChildren)
+          for n in rightNode
+            current_mindmap.appendRight(n)
+        
+        #if data.root.rightChildren != undefined && data.root.rightChildren.nodeText != ""
+        #  rightNode = new Node(data.root.rightChildren.nodeText)
+        #  if data.root.rightChildren.nodeText == undefined
+        #    rightNode.children = getRecursiveChildren(rightNode, data.root.rightChildren)
+        #  current_mindmap.appendRight(rightNode)
+        
+        current_map_drawer = new MindMapDrawer(current_mindmap, $("#mindmap"))
+        current_map_drawer.draw()
+        
+        foldedNodes = $('.node.folded')
+        $(foldedNodes).children('.children').hide()
+        $(foldedNodes).find("i.fold").toggleClass('icon-minus-sign')
+        $(foldedNodes).find("i.fold").toggleClass('icon-plus-sign')
+        
+      $.get(href, recall, "json")
+      false
+  )
   
   $( '#mindmap' ).draggable({
     cancel: "a.ui-icon, .node",
