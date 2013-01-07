@@ -64,7 +64,9 @@
                         @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", onlyIf = !isAuthenticated)
                         @menuItem(controllers.routes.ControllerFactory.user.profile.toString, username, onlyIf = isAuthenticated, glyphicon = "icon-user")
                         @menuItem(controllers.routes.ControllerFactory.user.logout.toString, "Logout", onlyIf = isAuthenticated)
-                        <li class="dropdown">
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li class="dropdown pull-right">
 	                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">Select MindMap <b class="caret"></b></a>
 	                      <ul class="dropdown-menu" id="selct-mindmap">
 	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Demo Map2", linkId="load-map-2", linkClass="loadMap")
