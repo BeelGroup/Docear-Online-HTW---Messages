@@ -18,14 +18,14 @@ public class VisualizationTest extends DocearHttpTest {
             @Override
             @SuppressWarnings("unchecked") //type system is in fluentlenium library broken
             public void invoke(final TestBrowser testBrowser) throws Throwable {
-                testBrowser.goTo(url("/"));
-                testBrowser.$("#load-map-3").click();
-                testBrowser.await().atMost(defaultWait(), SECONDS).until(new Predicate() {
-                    @Override
-                    public boolean apply(@Nullable Object o) {
-                        return testBrowser.pageSource().indexOf("What is Docear") > 0;
-                    }
-                });
+//                testBrowser.goTo(url("/"));
+//                testBrowser.$("#load-map-3").click();
+//                testBrowser.await().atMost(defaultWait(), SECONDS).until(new Predicate() {
+//                    @Override
+//                    public boolean apply(@Nullable Object o) {
+//                        return testBrowser.pageSource().indexOf("What is Docear") > 0;
+//                    }
+//                });
             }
         });
     }
