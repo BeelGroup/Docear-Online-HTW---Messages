@@ -9,7 +9,7 @@ $ ->
     success: (data)->
       $selectMinmap = $('#selct-mindmap')
       $.each(data, (index,value)->
-        $selectMinmap.append '<li><a class="loadMap" href="/map/json/'+value.mmIdOnServer+'"> '+value.fileName+'</a></li>'
+        $selectMinmap.append '<li><a class="loadMap dropdown-toggle" href="/map/json/'+value.mmIdOnServer+'"> '+value.fileName+'</a></li>'
       )
       '/map/json/id'
   })
