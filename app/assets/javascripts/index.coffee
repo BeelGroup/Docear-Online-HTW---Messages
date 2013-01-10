@@ -77,6 +77,7 @@ $ ->
   $("body").on("click", ".loadMap", 
   	-> 
       href = $(this).attr("href")
+      $(this).closest(".dropdown").children(".dropdown-toggle").click()
       recall = (data)->
         $("#mindmap").html("")
         jsPlumb.reset()
