@@ -7,7 +7,7 @@ $ ->
     url: '/maps',
     dataType: 'json',
     success: (data)->
-      $selectMinmap = $('#selct-mindmap')
+      $selectMinmap = $('#select-mindmap')
       $.each(data, (index,value)->
         $selectMinmap.append '<li><a class="loadMap dropdown-toggle" href="/map/json/'+value.mmIdOnServer+'"> '+value.fileName+'</a></li>'
       )
