@@ -11,4 +11,8 @@ public class ControllerFactory {
     public static MindMap mindMap() {
         return SpringConfiguration.getBean(MindMap.class);
     }
+    
+    public static User user() {
+    	return SpringConfiguration.getBean(User.class);
+    }
 }

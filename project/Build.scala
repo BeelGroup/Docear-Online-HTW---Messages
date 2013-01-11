@@ -22,6 +22,7 @@ object ApplicationBuild extends Build {
       , "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
       , "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.25.0"
       , "com.novocode" % "junit-interface" % "0.9" % "test"
+      , "org.reflections" % "reflections" % "0.9.8"//fix for error: NoSuchMethodError: com.google.common.cache.CacheBuilder.maximumSize(I)Lcom/google/common/cache/CacheBuilder;
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
@@ -57,6 +58,7 @@ object ApplicationBuild extends Build {
       , parallelExecution in Test := false
       , testOptions in Test += Tests.Argument("sequential", "true")
       , javacOptions ++= Seq("-source", "1.6", "-target", "1.6")//for compatibility with Debian Squeeze
+      , cleanFiles <+= baseDirectory {base => base / "h2"} //clean up h2 data files
     ).settings(Play2WarPlugin.play2WarSettings: _*)
 
 }

@@ -1,21 +1,22 @@
 package controllers;
 
-import java.util.Map;
-
+import models.backend.exceptions.DocearServiceException;
+import models.backend.exceptions.NoUserLoggedInException;
+import models.frontend.LoggedError;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import play.Logger;
 import play.Play;
-import play.mvc.Http;
-import util.backend.WS;
-import util.backend.WS.Response;
+import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.Result;
-import models.backend.User;
+
+import java.io.IOException;
+import java.util.List;
 
 public class Application extends Controller {
-
-
-
-
+    public static final String LOGGED_ERROR_CACHE_PREFIX = "logged.error.";
 
 	/** displays current mind map drawing */
 	public static Result index() {
@@ -32,59 +33,66 @@ public class Application extends Controller {
 		return ok(views.html.mvc.render());
 	}
 
-	public static Result smallSolutions() {
+	/** global error page for 500 Internal Server Error */
+	public static Result error(String errorId) {
+        final LoggedError loggedError = (LoggedError) Cache.get(LOGGED_ERROR_CACHE_PREFIX + errorId);
+        boolean isJson = false;
+
+        String message = "An error has occurred.";
+        if (loggedError != null) {
+            isJson = isRequestForJson(loggedError);
+            try {
+                Throwable t = loggedError.getThrowable();
+                while (t.getCause() != null) {
+                    t = t.getCause();
+                }
+                throw t;
+            } catch (NoUserLoggedInException e) {
+                message = "You need to be logged in to perform this action.";
+            } catch (DocearServiceException e) {
+                message = "An error has occurred.";
+            } catch (IOException e) {
+                message = "Can't connect to backend.";
+            } catch (Throwable throwable) {
+                message = "System error.";
+            }
+        }
+
+        Result result;
+        if (isJson) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode jNode = mapper.createObjectNode();
+            jNode.put("message", message);
+            result =  internalServerError(jNode);
+        } else {
+            flash("error", message);
+            result =  internalServerError(views.html.error.render());
+        }
+        return result;
+    }
+
+    private static boolean isRequestForJson(LoggedError loggedError) {
+        boolean isJson = false;
+        boolean found = false;
+        final List<String> list = loggedError.getRequestHeader().accept();
+        for (int i = 0; i < list.size() && !found; i++) {
+            final String element = list.get(i);
+            if ("text/html".equals(element)) {
+                isJson = false;
+                found = true;
+            } else if("application/json".equals(element)) {
+                isJson = true;
+                found = true;
+            }
+        }
+        return isJson;
+    }
+
+    public static Result smallSolutions() {
 		return ok(views.html.smallSolutions.render("Solutions"));
 	}
 
-	public static Result login() {
-
-		Map<String,String[]> postMap = request().body().asFormUrlEncoded();
-
-		String[] userNameArray = postMap.get("username");
-		String[] pwArray = postMap.get("password");
-
-		if(userNameArray == null || userNameArray[0].isEmpty() || pwArray == null || pwArray[0].isEmpty())
-			return badRequest("please define 'username' and 'password'");
-
-
-		final String username  = userNameArray[0];
-		final String password = pwArray[0];
-		Logger.debug(username +";"+password);
-
-		//		MultipartEntity me =  new MultipartEntity();
-		//		me.addPart("password", new StringBody(password));
-		//		
-		//		final Map<String,String> map = new HashMap<String, String>();
-		//		map.put("password", password);
-		//		
-		//		BufferedOutputStream out = new BufferedOutputStream(new ByteOutputStream());
-		//		me.writeTo(out);
-
-		Response response = WS.url("https://api.docear.org/authenticate/"+username)
-				.post("password="+password).get();
-
-
-		if(response.getStatus() == 200) { //succesful authentication
-			String accessToken = response.getHeader("accessToken");
-			String sessionId = Session.createSession(username, accessToken);
-			response().setCookie(getSessionCookieName(), sessionId);
-			return redirect(routes.Application.index());
-		} else {
-			return unauthorized("Authentication failed");
-		}
-	}
-
-	private static String getSessionCookieName() {
+	public static String getSessionCookieName() {
 		return Play.application().configuration().getString("backend.sessionIdName");
 	}
-
-    public static User getCurrentUser() {
-        Http.Cookie cookie = request().cookies().get(getSessionCookieName());
-        if(cookie != null) {
-            String sessionId = cookie.value();
-            return Session.getUserForSessionId(sessionId);
-        } else {
-            return null;
-        }
-    }
 }

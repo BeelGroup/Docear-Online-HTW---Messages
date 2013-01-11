@@ -1,18 +1,22 @@
 package services.backend.mindmap;
 
-import models.backend.exceptions.NoUserLoggedInException;
-import org.apache.commons.lang.NotImplementedException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import play.Play;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
+import models.backend.User;
+import models.backend.UserMindmapInfo;
+import models.backend.exceptions.NoUserLoggedInException;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+import play.Play;
 
 @Profile("backendMock")
 @Component
@@ -45,7 +49,13 @@ public class MockMindMapCrudService implements MindMapCrudService {
     }
 
     @Override
-    public JsonNode listMaps(String user) throws IOException {
-        throw new NotImplementedException();
+    public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
+    	return new UserMindmapInfo[] {
+    			new UserMindmapInfo("1", "1", "Dec 01, 2012 6:38:31 PM", "/not/available", "1.mm"),
+    			new UserMindmapInfo("2", "2", "Dec 02, 2012 6:38:31 PM", "/not/available", "2.mm"),
+    			new UserMindmapInfo("3", "3", "Dec 03, 2012 6:38:31 PM", "/not/available", "3.mm"),
+    			//new UserMindmapInfo("4", "4", "Dec 19, 2012 6:38:31 PM", "/not/available", "4.mm"),
+    			new UserMindmapInfo("5", "5", "Dec 05, 2012 6:38:31 PM", "/not/available", "5.mm")
+    	};
     }
 }

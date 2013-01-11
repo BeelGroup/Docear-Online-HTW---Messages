@@ -1,41 +1,61 @@
 package services.backend.mindmap;
 
-import akka.util.Duration;
-import controllers.Application;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import models.backend.User;
 import models.backend.UserMindmapInfo;
 import models.backend.exceptions.NoUserLoggedInException;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+
 import play.Logger;
 import play.Play;
 import play.libs.Akka;
 import play.libs.F;
 import play.libs.WS;
 import util.backend.ZipUtils;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static play.libs.Json.toJson;
+import akka.util.Duration;
 
 @Profile("backendProd")
 @Component
 public class ServerMindMapCrudService implements MindMapCrudService {
+	private static Map<String, String> serverIdToMapIdMap = new HashMap<String, String>();
+	
     @Override
     public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException {
-        URL serverUrl = ServerMindmapMap.getInstance().getServerURLForMap(id);
-        if(serverUrl == null) { //if not hosted, send to a server
+    	String mindmapId = serverIdToMapIdMap.get(id);
+        URL serverUrl = null;
+        if(mindmapId == null) { //if not hosted, send to a server
+        	Logger.debug("No map for server id " + id + ". Sending to server...");
             serverUrl = sendMapToDocearInstance(id);
+            mindmapId = serverIdToMapIdMap.get(id);
+        } else {
+        	serverUrl = ServerMindmapMap.getInstance().getServerURLForMap(mindmapId);
+        	Logger.debug("ServerId: " + id + "; MapId: " + mindmapId + "; url: " +serverUrl.toString());
         }
         String wsUrl = serverUrl.toString();
-        WS.Response response = WS.url(wsUrl+"/map/json/"+id).get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
+        WS.Response response = WS.url(wsUrl+"/map/json/"+mindmapId).get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
         if(response.getStatus() != 200) {
             throw new IOException("couldn't obtain mind map from server. Response code: " + response.getStatus());
         }
@@ -45,7 +65,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
     @Override
     public File mapTest() throws IOException {
         User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
-        return mapFromDB(user, "103805");
+        return getMindMapFileFromDocearServer(user, "103805");
     }
 
     @Override
@@ -65,10 +85,14 @@ public class ServerMindMapCrudService implements MindMapCrudService {
     }
 
     @Override
-    public JsonNode listMaps(String user) throws IOException {
+    public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
+    	if(user == null) {
+    		throw new NullPointerException("user cannot be null");
+    	}
+    	
         String docearServerAPIURL = "https://api.docear.org/user";
-        WS.Response response =  WS.url(docearServerAPIURL + "/" + user + "/mindmaps/")
-                .setHeader("accessToken", "").get()
+        WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/")
+                .setHeader("accessToken", user.getAccessToken()).get()
                 .getWrappedPromise().await(3,TimeUnit.MINUTES).get();
 
         BufferedReader br = new BufferedReader (new StringReader(response.getBody().toString()));
@@ -76,14 +100,15 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         List<UserMindmapInfo> infos = new LinkedList<UserMindmapInfo>();
         for ( String line; (line = br.readLine()) != null; ){
             String[] strings = line.split("\\|#\\|");
+            Logger.debug(line);
             UserMindmapInfo info = new UserMindmapInfo(strings[0], strings[1], strings[2], strings[3], strings[4]);
             infos.add(info);
         }
-        return toJson(infos);
+        
+        return infos.toArray(new UserMindmapInfo[0]);
+        //return toJson(infos);
     }
 
-
-    //TODO backend team: I don't understand the control flow in this method, and does this method two different things???
     private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
         //find server with capacity
         URL serverUrl = ServerMindmapMap.getInstance().getServerWithFreeCapacity();
@@ -91,17 +116,25 @@ public class ServerMindMapCrudService implements MindMapCrudService {
             serverUrl = startDocearInstance();
         }
 
-
-        User user = Application.getCurrentUser();
-        if(user == null && mapId.length() > 1)
-            throw new NoUserLoggedInException();
-
+        
         InputStream fileStream = null;
-        if(mapId.length() == 1) {
+        String mmId = null;
+        if(mapId.length() == 1) { //test map
+        	mmId = mapId;
             fileStream = Play.application().resourceAsStream("mindmaps/"+mapId+".mm");
-        } else {
+        } else { //map from user account
             try {
-                fileStream = new FileInputStream(mapFromDB(user, mapId));
+                User user = controllers.User.getCurrentUser();
+                if(user == null)
+                    throw new NoUserLoggedInException();
+                
+            	File mmFile = getMindMapFileFromDocearServer(user, mapId);
+            	if(mmFile == null)
+            		return null;
+            	
+            	//TODO just a hack, because we are currently using different ids for retrieval then supposed
+            	mmId = getMapIdFromFile(mmFile);
+                fileStream = new FileInputStream(mmFile);
             } catch (FileNotFoundException e) {
                 Logger.error("can't find mindmap file", e);
             } catch (IOException e) {
@@ -109,14 +142,16 @@ public class ServerMindMapCrudService implements MindMapCrudService {
             }
         }
 
+        serverIdToMapIdMap.put(mapId, mmId);
+
         //send file to server and put in map
         String wsUrl = serverUrl.toString();
         WS.url(wsUrl+"/map")
                 .setHeader("Content-Type", "application/octet-stream")
                 .setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
                 .put(fileStream).getWrappedPromise().await(10,TimeUnit.SECONDS).get();
-        ServerMindmapMap.getInstance().put(serverUrl, mapId);
-
+        ServerMindmapMap.getInstance().put(serverUrl, mmId);
+        
         return serverUrl;
     }
 
@@ -188,7 +223,6 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         return wsUrl;
     }
 
-
     private static boolean closeDocearInstance(URL serverUrl) {
         String wsUrl = serverUrl.toString();
         F.Promise<WS.Response> promise = WS.url(wsUrl+"/close").get();
@@ -199,36 +233,25 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         return false;
     }
 
-    private static File mapFromDB(final User user, final String id) throws IOException {
+    /**
+     * retrieves a mindmap from the server
+     * @param user 
+     * @param mapId
+     * @return .mm-file or null on failure
+     */
+    private static File getMindMapFileFromDocearServer(final User user, final String mmIdOnServer) throws IOException {
         String docearServerAPIURL = "https://api.docear.org/user";
 
-        util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + id)
-                .setHeader("accessToken", user.getAccesToken())
-                        //.setHeader("Content-Disposition", "attachment; filename=test_5.mm.zip")
-                        //.setHeader("Accept-Charset","utf-8")
+        util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + mmIdOnServer)
+                .setHeader("accessToken", user.getAccessToken())
                 .get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
-        return ZipUtils.extractMindmap(response.getBodyAsStream());
-    }
-
-    private static File unZipIt(InputStream bodyStream) throws IOException {
-        File folder = new File("D:\\Temp\\dcr2");//TODO backend team, this is not platform independent
-
-        Logger.debug("unpacking zip");
-        ZipUtils.extractMindmap(bodyStream);
-
-        Logger.debug("scanning files");
-        File[] files = folder.listFiles();
-        File mindmapFile = null;
-        for(File file : files) {
-            if(file.getName().endsWith(".mm"))
-                mindmapFile = file;
-            else{
-                file.delete();
-            }
+        
+        if(response.getStatus() == 200) {
+        	return ZipUtils.extractMindmap(response.getBodyAsStream());
+        } else {
+        	return null;
         }
-
-        Logger.debug("return file: "+mindmapFile.getName());
-        return mindmapFile;
+        	
     }
 
     private static class StreamLogger implements Runnable {
@@ -254,4 +277,20 @@ public class ServerMindMapCrudService implements MindMapCrudService {
             }
         }
     }
+    
+    private static String getMapIdFromFile(File mindmapFile) {
+		try {
+			DocumentBuilderFactory dbFactory =  DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(mindmapFile);
+
+			doc.getDocumentElement().normalize();
+
+			return doc.getDocumentElement().getAttribute("dcr_id");
+
+		} catch (Exception e) {}
+
+
+		return null;
+	}
 }

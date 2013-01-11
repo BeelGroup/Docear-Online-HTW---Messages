@@ -6,19 +6,27 @@
 GET     /favicon.ico                controllers.Assets.at(path="/public", file="images/favicon.ico")
 GET     /                           controllers.Application.index()
 GET     /mvc                        controllers.Application.mvc()
+GET     /error/:errorId             controllers.Application.error(errorId: String)
 GET	    /help						controllers.Application.help()
 GET     /small-solutions            controllers.Application.smallSolutions()
 GET     /rest/v1/user/xyz/mindmap/1.json    controllers.Assets.at(path="/public", file="mindmaps/example1.json")
-POST	/login						controllers.Application.login()
+
 
 
 GET     /qunit                      controllers.QUnit.testAll()
 
 # Mindmap
 GET		/map/json/:id				controllers.ControllerFactory.mindMap.map(id: String)
-GET		/maps/from/:user    		controllers.ControllerFactory.mindMap.mapListFromDB(user: String)
+GET		/maps			    		controllers.ControllerFactory.mindMap.mapListFromDB()
 GET		/map/close/:id				controllers.ControllerFactory.mindMap.closeMap(id: String)
 GET		/map/test					controllers.ControllerFactory.mindMap.mapTest()
+
+# User
+POST	/login						controllers.ControllerFactory.user.login()
+GET 	/login						controllers.ControllerFactory.user.loginForm()
+#TODO should be POST: http://de.wikipedia.org/wiki/Cross-Site_Request_Forgery
+GET 	/logout						controllers.ControllerFactory.user.logout()
+GET 	/profile					controllers.ControllerFactory.user.profile()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

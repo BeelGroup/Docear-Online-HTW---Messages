@@ -1,11 +1,26 @@
-@(title: String, additionalBodyJavaScripts: Html = Html.empty)(content: Html)
+@(title: String, additionalBodyJavaScripts: Html = Html.empty, additionalBodyClasses: String = "")(content: Html)
 
 @import play.api.Play
 @import play.api.Play.current
 
-@menuItem(relativeUrl:String, label: String) = {
-    <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl">@label</a></li>
+@menuItem(relativeUrl:String, label: => String, linkId: String = "", linkClass: String = "", onlyIf: Boolean = true, glyphicon: String = "") = {
+    @if(onlyIf) {
+        <li @if(relativeUrl == request.uri ) {class="active"}><a href="@relativeUrl" id="@linkId" class="@linkClass">
+            @if(glyphicon != "") {<i class="@glyphicon icon-white"></i>}
+        @label</a></li>
+    }
 }
+
+@simpleAlertFlash(divClass: String, flashKey: String) = {
+    @flash.asScala.get(flashKey).map { message =>
+        <div class="alert @divClass">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @message
+        </div>
+    }
+}
+
+@implicitSession = @{session} @* makes isAuthenticated, @username and @usernameOption possible *@
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,31 +44,36 @@
     <![endif]-->
 </head>
 
-<body class='@("test-mode".when(Play.isTest))'>
+<body class='@("test-mode".when(Play.isTest)) @additionalBodyClasses'>
 
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse" id="toggle-main-navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">@Play.configuration.getString("application.name")</a>
+                <a class="brand" href="/">@Play.configuration.getString("application.name")</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         @menuItem("/", "Mind map demo")
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
                         @menuItem(controllers.routes.Application.help().toString, "Help")
-                        @* @menuItem(controllers.routes.MindMap.map("2").toString, "Map2")
-                        @menuItem(controllers.routes.MindMap.map("3").toString, "Map3")
-                        @menuItem(controllers.routes.MindMap.map("5").toString, "Map5")
-                        TODO: Refactoring
-                        *@
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/2" class="loadMap" id="load-map-2">Map2</a></li>
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/3" class="loadMap" id="load-map-3">Map3</a></li>
-                        <li><a href="@Play.configuration.getString("application.baseUrl")/map/json/5" class="loadMap" id="load-map-5">Map5</a></li>
+                        @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", linkClass="loginButton", onlyIf = !isAuthenticated)
+                        @menuItem(controllers.routes.ControllerFactory.user.profile.toString, username, onlyIf = isAuthenticated, glyphicon = "icon-user")
+                        @menuItem(controllers.routes.ControllerFactory.user.logout.toString, "Logout", onlyIf = isAuthenticated)
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li class="dropdown pull-right">
+	                      <a data-toggle="dropdown" class="dropdown-toggle" href="#" id="toggle-mindmap-select">Select MindMap <b class="caret"></b></a>
+	                      <ul class="dropdown-menu" id="select-mindmap">
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Demo Map2", linkId="load-map-2", linkClass="loadMap")
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Demo Map3", linkId="load-map-3", linkClass="loadMap")
+	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Demo Map5", linkId="load-map-5", linkClass="loadMap")
+	                      </ul>
+	                    </li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -61,12 +81,16 @@
     </div>
 
     <div class="container">
-    		@content
+        @simpleAlertFlash("alert-block", "warning")
+        @simpleAlertFlash("alert-error", "error")
+        @simpleAlertFlash("alert-success", "success")
+        @simpleAlertFlash("alert-info", "info")
+    	@content
 
         <hr>
 
         <footer>
-            <p>&copy; Company 2012</p>
+            <p>&copy; @Play.configuration.getString("application.organization") 2013</p>
         </footer>
 
     </div> <!-- /container -->

@@ -8,9 +8,14 @@ import play.test.TestBrowser;
 
 import javax.annotation.Nullable;
 
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
+import static org.fest.assertions.Assertions.assertThat;
 
 public class VisualizationTest extends DocearHttpTest {
+
+    public static final String LOAD_MAP_3 = "#load-map-3";
 
     @Test
     public void testText() throws Exception {
@@ -19,7 +24,7 @@ public class VisualizationTest extends DocearHttpTest {
             @SuppressWarnings("unchecked") //type system is in fluentlenium library broken
             public void invoke(final TestBrowser testBrowser) throws Throwable {
                 testBrowser.goTo(url("/"));
-                testBrowser.$("#load-map-3").click();
+                testBrowser.executeScript(format("$('%s').click()", LOAD_MAP_3));//@hack
                 testBrowser.await().atMost(defaultWait(), SECONDS).until(new Predicate() {
                     @Override
                     public boolean apply(@Nullable Object o) {

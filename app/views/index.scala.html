@@ -1,19 +1,15 @@
 @()
 
 @additionalJavaScripts() = {
+<script src='@routes.Assets.at("javascripts/main.js")'></script>
 <script src='@routes.Assets.at("javascripts/graphLayout.js")'></script>
+<script src='@routes.Assets.at("javascripts/jsPlumbHandler.js")'></script>
 <script src='@routes.Assets.at("javascripts/index.js")'></script>
+<script src='@routes.Assets.at("javascripts/mindMapControls.js")'></script>
 }
 
 @main("Mind map demo", additionalBodyJavaScripts = additionalJavaScripts()) {
     @mindMapContainer {
-        <div id="login">
-            <form method="POST" action="/login">
-                <input type="text" name="username" placeholder="username"><br>
-                <input type="password" name="password" placeholder="password"><br>
-                <button type="submit">login</button>
-            </form>
-        </div>
         <div id="mindmap">
 
         </div>

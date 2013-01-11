@@ -1,46 +1,31 @@
 package controllers;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
-
-import play.Logger;
-
 import models.backend.User;
+import org.apache.commons.lang.Validate;
+import play.Logger;
+import play.cache.Cache;
+
+import javax.annotation.Nullable;
 
 public class Session {
 
-	private final static Map<String, User> SESSION_MAP;
-	private final static SecureRandom RANDOM;
+    private static final String CACHE_KEY = "user-obj.";
 
-	static {
-		SESSION_MAP = new HashMap<String, User>();
-		RANDOM = new SecureRandom();
+	public static void createSession(String username, String accessToken) {
+        Validate.notEmpty(username);
+        Validate.notEmpty(accessToken);
+        User user = new User(username, accessToken);
+        Cache.set(CACHE_KEY + username, user);
+        User.upsert(user);
 	}
 	
-	
-
-	public static String createSession(String username, String accessToken) {
-		String sessionId;
-		
-		do{
-		StringBuilder builder = new StringBuilder();
-		builder.append(username.hashCode());
-		builder.append(new BigInteger(130, RANDOM).toString(32));
-		
-		sessionId = builder.toString();
-		} while (SESSION_MAP.containsKey(sessionId));
-		
-		User user = new User(username, accessToken);
-		
-		SESSION_MAP.put(sessionId, user);
-Logger.debug("sessionId: "+sessionId);
-		return sessionId;
-	}
-	
-	public static User getUserForSessionId(String sessionId) {
-		return SESSION_MAP.get(sessionId);
-	}
+	public static User getUser(@Nullable String username) {
+        User user = (User) Cache.get(CACHE_KEY + username);
+        if (user == null && username != null) {
+            Logger.debug("user '" + username + "' not in Cache, obtaining from database");
+            user = User.findByName(username);
+        }
+        return user;
+    }
 
 }
