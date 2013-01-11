@@ -61,7 +61,7 @@
                         @menuItem(controllers.routes.Application.smallSolutions().toString, "Small solutions")
                         @menuItem(controllers.routes.Application.mvc().toString, "MVC")
                         @menuItem(controllers.routes.Application.help().toString, "Help")
-                        @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", onlyIf = !isAuthenticated)
+                        @menuItem(controllers.routes.ControllerFactory.user.loginForm().toString, "Login", linkClass="loginButton", onlyIf = !isAuthenticated)
                         @menuItem(controllers.routes.ControllerFactory.user.profile.toString, username, onlyIf = isAuthenticated, glyphicon = "icon-user")
                         @menuItem(controllers.routes.ControllerFactory.user.logout.toString, "Logout", onlyIf = isAuthenticated)
                     </ul>
