@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 import models.backend.User;
 import models.backend.UserMindmapInfo;
+import models.backend.exceptions.DocearServiceException;
 import models.backend.exceptions.NoUserLoggedInException;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -20,9 +21,10 @@ import play.Play;
 
 @Profile("backendMock")
 @Component
-public class MockMindMapCrudService implements MindMapCrudService {
+public class MockMindMapCrudService extends MindMapCrudServiceBase implements MindMapCrudService {
     @Override
-    public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException {
+    public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException, DocearServiceException {
+    	super.mindMapAsJson(id);
         InputStream stream = null;
         JsonNode jsonNode;
         try {

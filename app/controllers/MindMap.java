@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import models.backend.UserMindmapInfo;
 import models.backend.exceptions.DocearServiceException;
@@ -10,7 +11,11 @@ import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import akka.actor.Cancellable;
+import akka.util.Duration;
+
 import play.Logger;
+import play.libs.Akka;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -19,7 +24,7 @@ import services.backend.mindmap.MindMapCrudService;
 
 @Component
 public class MindMap extends Controller {
-
+	
 	@Autowired
 	private MindMapCrudService mindMapCrudService;
 
@@ -60,4 +65,17 @@ public class MindMap extends Controller {
         final UserMindmapInfo[] maps = mindMapCrudService.getListOfMindMapsFromUser(user);
         return ok(Json.toJson(maps));
     }
+    
+    public Result createNode() {
+    	return TODO;
+    }
+    
+    public Result changeNode() {
+    	return TODO;
+    }
+    
+    public Result deleteNode() {
+    	return TODO;
+    }   
+
 }
