@@ -30,7 +30,7 @@ public class Global extends GlobalSettings {
         logConfiguration(conf);
         initializeSpring();
         initializeBasicAuthPlugin();
-        loggedErrorExpirationInSeconds = conf.getInt("logger.error.expirationInSeconds");
+        loggedErrorExpirationInSeconds = conf.getInt("application.logged.error.expirationInSeconds");
         super.onStart(application);
     }
 
