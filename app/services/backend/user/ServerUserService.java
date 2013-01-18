@@ -8,7 +8,7 @@ import play.libs.WS.Response;
 
 
 
-@Profile("backendProd")
+@Profile("DocearWebserviceUserService")
 @Component
 public class ServerUserService implements UserService {
 

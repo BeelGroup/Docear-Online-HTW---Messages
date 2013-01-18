@@ -24,7 +24,7 @@ define ['collections/ChildNodes'], (ChildNodes)->
       @children = new ChildNodes()
 
     # will be set to /map/json/id, when fetch() or update() will be called
-    urlRoot: '/map/json/'
+    urlRoot: '/map/json/' #TODO replace with jsRoutes command
 
     lock: (lockedBy) ->
       @set 'lockedBy', lockedBy

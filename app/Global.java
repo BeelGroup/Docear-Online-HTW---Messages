@@ -2,6 +2,7 @@ import controllers.routes;
 import info.schleichardt.play2.basicauth.CredentialsFromConfChecker;
 import info.schleichardt.play2.basicauth.JAuthenticator;
 import models.frontend.LoggedError;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import play.*;
 import play.cache.Cache;
@@ -14,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static play.mvc.Results.redirect;
 import static controllers.Application.LOGGED_ERROR_CACHE_PREFIX;
 
@@ -25,10 +27,10 @@ public class Global extends GlobalSettings {
     @Override
     public void onStart(Application application) {
         final Configuration conf = Play.application().configuration();
-        Logger.info("using configuration " + conf.getString("application.conf.name"));
+        logConfiguration(conf);
         initializeSpring();
         initializeBasicAuthPlugin();
-        loggedErrorExpirationInSeconds = conf.getInt("logged.error.expirationInSeconds");
+        loggedErrorExpirationInSeconds = conf.getInt("application.logged.error.expirationInSeconds");
         super.onStart(application);
     }
 
@@ -58,6 +60,12 @@ public class Global extends GlobalSettings {
         final String errorId = UUID.randomUUID().toString();
         Cache.set(LOGGED_ERROR_CACHE_PREFIX + errorId, new LoggedError(requestHeader, throwable), loggedErrorExpirationInSeconds);
         return redirect(routes.Application.error(errorId));
+    }
+
+    private void logConfiguration(Configuration conf) {
+        final String configFilename = defaultString(conf.getString("config.file"), "conf/application.conf");
+        Logger.info("using configuration " + configFilename);
+        Logger.info("using configuration " + conf.getString("application.secret"));
     }
 
     private void logRequest(Http.Request request, Method method) {

@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import models.backend.User;
 import models.backend.UserMindmapInfo;
+import models.backend.exceptions.DocearServiceException;
 import models.backend.exceptions.NoUserLoggedInException;
 
 import org.apache.commons.io.IOUtils;
@@ -39,11 +40,12 @@ import akka.util.Duration;
 
 @Profile("backendProd")
 @Component
-public class ServerMindMapCrudService implements MindMapCrudService {
+public class ServerMindMapCrudService extends MindMapCrudServiceBase implements MindMapCrudService {
 	private static Map<String, String> serverIdToMapIdMap = new HashMap<String, String>();
 	
     @Override
-    public JsonNode mindMapAsJson(String id) throws NoUserLoggedInException, IOException {
+    public JsonNode mindMapAsJson(String id) throws DocearServiceException, IOException {
+    	super.mindMapAsJson(id);
     	String mindmapId = serverIdToMapIdMap.get(id);
         URL serverUrl = null;
         if(mindmapId == null) { //if not hosted, send to a server
@@ -55,7 +57,7 @@ public class ServerMindMapCrudService implements MindMapCrudService {
         	Logger.debug("ServerId: " + id + "; MapId: " + mindmapId + "; url: " +serverUrl.toString());
         }
         String wsUrl = serverUrl.toString();
-        WS.Response response = WS.url(wsUrl+"/map/json/"+mindmapId).get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
+        WS.Response response = WS.url(wsUrl+"/map/"+mindmapId+"/json").get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
         if(response.getStatus() != 200) {
             throw new IOException("couldn't obtain mind map from server. Response code: " + response.getStatus());
         }

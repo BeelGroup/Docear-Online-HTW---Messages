@@ -44,7 +44,7 @@
     <![endif]-->
 </head>
 
-<body class='@("test-mode".when(Play.isTest)) @additionalBodyClasses'>
+<body class='@("test-mode".when(Play.isTest)) @if(isAuthenticated){is-authenticated} else {is-not-authenticated} @additionalBodyClasses'>
 
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">

@@ -4,11 +4,14 @@ import org.apache.commons.lang.NotImplementedException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import play.libs.WS;
+import play.libs.WS.Response;
+
 import java.util.Arrays;
 import java.util.UUID;
 
 
-@Profile("backendMock")
+@Profile("userServiceMock")
 @Component
 public class MockUserService implements UserService{
 

@@ -23,4 +23,7 @@ public interface MindMapCrudService {
     void closeMap(String id) throws IOException;
 
     
+    public void startLockCheckThread();
+    public void startMindmapAccessCheck();
+    
 }
