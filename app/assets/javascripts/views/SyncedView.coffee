@@ -24,11 +24,9 @@ define ->
     delegateModelSync: (selector, field) ->
       delegateMethod = () ->
         @syncModelToForm(selector, field)
-
-      if field.field?
-        @model.bind "change:#{ field.field }",delegateMethod , @ 
-      else
-        @model.bind "change:#{ field }", delegateMethod, @ 
+      
+        @model.bind "change:#{field.field or field}",delegateMethod , @ 
+      
 
 
     syncModelToForm: (selector, field) ->

@@ -21,7 +21,7 @@ define ['collections/ChildNodes'], (ChildNodes)->
       ## THROW events on all (also possible: save/update/change)
       #@on 'all', (event) -> console.log "Event: " + event
       @sup = AbstractNode.__super__
-      children = new ChildNodes()
+      @children = new ChildNodes()
 
     # will be set to /map/json/id, when fetch() or update() will be called
     urlRoot: '/map/json/'
