@@ -3,12 +3,12 @@ package controllers;
 import models.backend.exceptions.DocearServiceException;
 import models.backend.exceptions.NoUserLoggedInException;
 import models.frontend.LoggedError;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import play.Logger;
 import play.Play;
+import play.Routes;
 import play.cache.Cache;
+import play.cache.Cached;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -33,7 +33,20 @@ public class Application extends Controller {
 		return ok(views.html.mvc.render());
 	}
 
-	/** global error page for 500 Internal Server Error */
+    /** makes some play routes in JavaScript avaiable */
+    @Cached(key = "js-routes-file")
+    public static Result javascriptRoutes() {
+        response().setContentType("text/javascript");
+        return ok(
+            Routes.javascriptRouter("jsRoutes",
+                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().map(),
+                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().mapListFromDB(),
+                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().closeMap()
+            )
+        );
+    }
+
+    /** global error page for 500 Internal Server Error */
 	public static Result error(String errorId) {
         final LoggedError loggedError = (LoggedError) Cache.get(LOGGED_ERROR_CACHE_PREFIX + errorId);
         boolean isJson = false;
