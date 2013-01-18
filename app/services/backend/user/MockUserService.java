@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 
-@Profile("backendMock")
+@Profile("userServiceMock")
 @Component
 public class MockUserService implements UserService{
 
