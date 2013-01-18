@@ -6,6 +6,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.ConfigurableEnvironment;
+import play.Configuration;
 import play.Logger;
 import play.Play;
 
@@ -28,9 +29,11 @@ public class SpringConfiguration {
         APPLICATION_CONTEXT = applicationContext;
         APPLICATION_CONTEXT.register(SpringConfiguration.class);
         final ConfigurableEnvironment environment = APPLICATION_CONTEXT.getEnvironment();
-        final boolean mockBackend = isTrue(Play.application().configuration().getBoolean("backend.mock"));
-        final String backendProfile = mockBackend ? "backendMock" : "backendProd";
-        environment.setActiveProfiles(backendProfile);//add here comma separated mode profile names
+        final Configuration conf = Play.application().configuration();
+        final Configuration profileConfiguration = conf.getConfig("spring.activeProfiles");
+        for (String key : profileConfiguration.keys()) {
+            environment.addActiveProfile(profileConfiguration.getString(key));
+        }
         APPLICATION_CONTEXT.refresh();
         Logger.info("active spring profiles: " + StringUtils.join(environment.getActiveProfiles(), ", "));
     }
