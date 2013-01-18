@@ -2,16 +2,21 @@ package controllers;
 
 import models.frontend.Credentials;
 
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.backend.user.UserService;
 
+import static controllers.Secured.SESSION_KEY_TIMEOUT;
 import static controllers.Secured.SESSION_KEY_USERNAME;
+import static controllers.Secured.createTimeoutTimestamp;
 
 @Component
 public class User extends Controller {
@@ -46,6 +51,7 @@ public class User extends Controller {
     private void setAuthenticatedSession(Credentials credentials, String accessToken) {
         Session.createSession(credentials.getUsername(), accessToken);
         session(SESSION_KEY_USERNAME, credentials.getUsername());
+        session(SESSION_KEY_TIMEOUT, createTimeoutTimestamp().toString());
     }
 
     public Result loginForm() {

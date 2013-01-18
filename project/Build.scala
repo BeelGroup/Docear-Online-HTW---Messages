@@ -23,6 +23,7 @@ object ApplicationBuild extends Build {
       , "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.25.0"
       , "com.novocode" % "junit-interface" % "0.9" % "test"
       , "org.reflections" % "reflections" % "0.9.8"//fix for error: NoSuchMethodError: com.google.common.cache.CacheBuilder.maximumSize(I)Lcom/google/common/cache/CacheBuilder;
+      , "joda-time" % "joda-time" % "2.1"
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
