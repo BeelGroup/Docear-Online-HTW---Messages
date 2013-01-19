@@ -6,6 +6,22 @@ define ['views/NodeView'], (NodeView) ->
     initialize: (model) ->
       super model
 
+
+    renderChilds: () -> 
+      @verticalSpacer = 10
+      
+      childrenRight = @model.get 'rightChildren'
+      childrenLeft = @model.get 'leftChildren'
+      
+      @adjustNodeHierarchy(@model, childrenRight, 'rightTree')
+      @adjustNodeHierarchy(@model, childrenLeft, 'leftTree')
+      
+      $root = $('#'+@model.get 'id')
+      $root.addClass('root')
+      @centerNodeInContainer($('#mindmap'), $root)
+      
+      @refreshDom()
+
     render: ->
       @$el.html @template @getRenderData()
       @recursiveRender @, @model.get 'rightChildren'

@@ -1,4 +1,4 @@
-define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node', 'models/RootNode', 'MindMapPositioner'],  (RootNodeView, NodeView,HtmlView,NodeModel,RootNodeModel,Positioner) ->  
+define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node', 'models/RootNode'],  (RootNodeView, NodeView,HtmlView,NodeModel,RootNodeModel) ->  
    
     module = ->
 
@@ -12,8 +12,10 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
         rootView = new RootNodeView @rootNode
         $rootHtml = $(rootView.render().el).html()
         $("#mindmap").append($rootHtml)
+        rootView.renderChilds()
+        jsPlumb.repaintEverything()
         
-        mindMapPositioner = new Positioner($('#mindmap'), @rootNode)
+        ##mindMapPositioner = new Positioner($('#mindmap'), @rootNode)
 
 
       ## ############################################## 
@@ -23,10 +25,11 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
         @rootNode = new RootNodeModel("ID_0", false, "root")
 
         right1 = new NodeModel('ID_1',false,  'right 1')
+
         right1_1 = new NodeModel('ID_5',false,  'right 1.1')
-        right1_2 = new NodeModel('ID_6',false,  'right 1.2')
-        
+        right1_2 = new NodeModel('ID_6',false,  'right 1.2')       
         right1_3 = new NodeModel('ID_2',false,  'right 1.3')
+
         right1_3_1 = new NodeModel('ID_3',false,  'right 1.3.1')
         right1_3_2 = new NodeModel('ID_4',false,  'right 1.3.2')
         

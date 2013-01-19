@@ -11,8 +11,6 @@ define ->
       if @model?
         @fieldMap = @fieldMap or {}
         for selector, field of @fieldMap
-          console.log selector
-          console.log field
           # bind selector change to the model
           @delegateModelSync(selector, field)
           # bind form element change events to sync up to the model

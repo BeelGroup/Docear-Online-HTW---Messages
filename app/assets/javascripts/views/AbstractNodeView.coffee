@@ -65,7 +65,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
     # [Debugging] 
     printModel: ->      
-      console.log @model.toJSON()
+      ##console.log @model.toJSON()
 
     # [Debugging] model modification
     modificateModel: -> 
