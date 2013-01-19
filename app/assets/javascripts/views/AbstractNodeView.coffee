@@ -6,25 +6,21 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     tagName: 'div',
     className: 'node'	
     subViews: {}
-    template: Handlebars.templates['Node']
-
-
+    
 
     fieldMap:
       '#nodeText': "nodeText"
       '.node' :
-        field: 'xPos'
+        field: 'Pos'
         toModel: 'PosToModel'
         toForm: 'PosToForm'
-      '.node' :
-        field: 'yPos'
-        toModel: 'PosToModel'
-        toForm: 'PosToForm'
+
 
     # a.k.a. constructor
     initialize: (@model) ->
       super()
       id: @model.get 'id'
+
       @model.bind "change:locked",@changeLockStatus , @ 
       
       #@model.on 'change', @render, @
@@ -35,10 +31,16 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       @model.set 'yPos', @$el.css 'top'
 
     PosToForm: ->
-      @$el.animate({
-        left: @model.get 'xPos'
-        top: @model.get 'yPos'
-      }, 500 );
+      x = (@model.get 'Pos').x
+      y = (@model.get 'Pos').y
+      node = $('#'+@model.get 'id')
+
+      node.css({
+        'position':'absolute', 
+        'top': x + 'px',
+        'left': y+ 'px',
+      })
+
 
     # define events -> here u can pass informations to the model
     events: =>
@@ -117,7 +119,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
         $(html).appendTo(@el)
       # extend the ready rendered htlm element
       @afterRender()
-      @positioning()
       @
 
 

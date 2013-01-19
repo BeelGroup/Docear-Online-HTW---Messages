@@ -3,6 +3,8 @@ define ['views/NodeView'], (NodeView) ->
   
   class RootNodeView extends NodeView
 
+    template: Handlebars.templates['RootNode']
+
     initialize: (model) ->
       super model
 
@@ -15,12 +17,26 @@ define ['views/NodeView'], (NodeView) ->
       
       @adjustNodeHierarchy(@model, childrenRight, 'rightTree')
       @adjustNodeHierarchy(@model, childrenLeft, 'leftTree')
-      
-      $root = $('#'+@model.get 'id')
-      $root.addClass('root')
-      @centerNodeInContainer($('#mindmap'), $root)
-      
+      jsPlumb.repaintEverything()
+      @centerRootNodeInContainer()
       @refreshDom()
+
+    centerRootNodeInContainer: ->
+      container = $('#'+@model.get 'containerID')
+      node = $('#'+@model.get 'id')
+
+      halfContainerWidth = $(container).width()/2
+      halfContainerHeight = $(container).height()/2
+      halfNodeWidth = $(node).width()/2
+      halfNodeHeight = $(node).height()/2
+
+      pos = 
+        x: halfContainerWidth - halfNodeWidth
+        y: halfContainerHeight - halfNodeHeight
+
+      @model.set 'Pos', pos
+        
+
 
     render: ->
       @$el.html @template @getRenderData()
@@ -32,7 +48,6 @@ define ['views/NodeView'], (NodeView) ->
         $(html).appendTo(@el)
       # extend the ready rendered htlm element
       @afterRender()
-      @positioning()
       @    
 
 

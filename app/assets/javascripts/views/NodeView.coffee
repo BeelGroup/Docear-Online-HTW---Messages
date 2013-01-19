@@ -3,8 +3,11 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
   
   class NodeView extends AbstractNodeView
 
+    template: Handlebars.templates['Node']
+
     initialize: (model) ->
       super model
+
 
 
     recursiveRender: (parent, nodes)->
@@ -21,9 +24,6 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
     adjustNodeHierarchy: (parent, children, treeIdentifier)->
       parentId = parent.get 'id'
       $parent = $('#'+parentId)
-      
-      console.log parent
-      console.log children
 
       $.each(children, (index, node)=>
         childId = node.get 'id' 
@@ -37,13 +37,7 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
       )
       
         
-    centerNodeInContainer: (container, node)->
-      containerWidth = $(container).width();
-      containerHeight = $(container).width();
-      nodeWidth = $(node).width()
-      nodeHeight = $(node).width()
-      $(node).css('left', containerWidth/2-nodeWidth/2)
-      $(node).css('top', containerHeight/2-nodeHeight/2)
+
       
     getCenterCoordinates: ($element) ->
       left = $element.position().left + $element.width() / 2
@@ -94,12 +88,6 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
         currentTop = Math.max(currentRightTop, currentLeftTop) + heightOfChildren[$(lastChild).attr('id')]
         $(element).children('.children:first').css('top', -currentTop/2 + elementHeight/2)
       Math.max(currentTop, elementHeight)
-
-
-
-
-
-
 
 
     destroy: ->

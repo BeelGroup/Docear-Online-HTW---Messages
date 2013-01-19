@@ -13,7 +13,6 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
         $rootHtml = $(rootView.render().el).html()
         $("#mindmap").append($rootHtml)
         rootView.renderChilds()
-        jsPlumb.repaintEverything()
         
         ##mindMapPositioner = new Positioner($('#mindmap'), @rootNode)
 
@@ -22,7 +21,7 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
       ## replace this with json parser            ##!!!
       ## ##############################################
       importNodes:->
-        @rootNode = new RootNodeModel("ID_0", false, "root")
+        @rootNode = new RootNodeModel("ID_0", false, "root", 'mindmap')
 
         right1 = new NodeModel('ID_1',false,  'right 1')
 
