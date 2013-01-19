@@ -69,9 +69,9 @@
                         <li class="dropdown pull-right">
 	                      <a data-toggle="dropdown" class="dropdown-toggle" href="#" id="toggle-mindmap-select">Select MindMap <b class="caret"></b></a>
 	                      <ul class="dropdown-menu" id="select-mindmap">
-	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("2").toString, "Demo Map2", linkId="load-map-2", linkClass="loadMap")
-	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("3").toString, "Demo Map3", linkId="load-map-3", linkClass="loadMap")
-	                        @menuItem(controllers.routes.ControllerFactory.mindMap.map("5").toString, "Demo Map5", linkId="load-map-5", linkClass="loadMap")
+	                        @menuItem("#/loadMap/2", "Demo Map2", linkId="load-map-2", linkClass="loadMapXX")
+	                        @menuItem("#/loadMap/3", "Demo Map3", linkId="load-map-3", linkClass="loadMap")
+	                        @menuItem("#/loadMap/5", "Demo Map5", linkId="load-map-5", linkClass="loadMap")
 	                      </ul>
 	                    </li>
                     </ul>
