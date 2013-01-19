@@ -6,7 +6,8 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     tagName: 'div',
     className: 'node'	
     subViews: {}
-    
+    horizontalSpacer: 20
+    verticalSpacer: 10
 
     fieldMap:
       '#nodeText': "nodeText"
@@ -21,9 +22,8 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       super()
       id: @model.get 'id'
 
-      @model.bind "change:locked",@changeLockStatus , @ 
-      
-      #@model.on 'change', @render, @
+      @model.bind "change:locked",@changeLockStatus , @       
+
 
     PosToModel: ->
       # TODO: Event will not be called on change
@@ -61,10 +61,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       else
         @$('.changeable').removeAttr('disabled')
 
-    # TODO: implement
-    fadeInButton: -> 
-      console.log 'fade in "save changes" button and lock node on server'
-
     # [Debugging] 
     printModel: ->      
       ##console.log @model.toJSON()
@@ -78,8 +74,7 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
         @model.unlock()
       else
         @model.lock 'Mr. P'
-
-      
+     
     subView: (view, autoRender = false) ->
       # if model is set, use its id OR a unique random id
       viewId = view.model?.id or String(Math.random() * new Date().getTime())
@@ -98,18 +93,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     afterRender: ->
       @$el.append(@model.get 'purehtml')
 
-    positioning: ->
-      @$el.css({
-      'position':'absolute', 
-      'top': @calcYPosition() + 'px',
-      'left': @calcXPosition() + 'px',
-      });
-
-    calcXPosition: ->
-      @model.get 'xPos'
-
-    calcYPosition: ->
-      @model.get 'yPos'
 
     render: ->
       @$el.html @template @getRenderData()
@@ -122,19 +105,6 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       @
 
 
-    destroy: ->
-      @model?.off null, null, @
-
-      # destroy all subviews
-      for viewId, view of @subViews
-        view.destroy()
-
-      @$el.remove()
-
-    # pass a final function, if u want to
-    leave: (done = ->) ->
-      @destroy()
-      done()
 
 
   module.exports = AbstractNodeView

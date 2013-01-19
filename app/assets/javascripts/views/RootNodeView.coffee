@@ -18,10 +18,18 @@ define ['views/NodeView'], (NodeView) ->
       @adjustNodeHierarchy(@model, childrenRight, 'rightTree')
       @adjustNodeHierarchy(@model, childrenLeft, 'leftTree')
       jsPlumb.repaintEverything()
-      @centerRootNodeInContainer()
+      @centerInContainer()
       @refreshDom()
 
-    centerRootNodeInContainer: ->
+    #
+    # Refresh the mind map an reposition the dom elements
+    #
+    refreshDom: () ->
+      height = @alignChildrenofElementWithID(@model.get 'id')
+      jsPlumb.repaintEverything()
+      height
+
+    centerInContainer: ->
       container = $('#'+@model.get 'containerID')
       node = $('#'+@model.get 'id')
 
@@ -36,8 +44,6 @@ define ['views/NodeView'], (NodeView) ->
 
       @model.set 'Pos', pos
         
-
-
     render: ->
       @$el.html @template @getRenderData()
       @recursiveRender @, @model.get 'rightChildren'
