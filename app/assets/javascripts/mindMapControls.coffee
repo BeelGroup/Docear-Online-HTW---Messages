@@ -7,6 +7,8 @@ $ ->
   });
   
   changeZoom = (direction)->
+    ## global variable?? :P
+    zoomFactor = 0;
     if direction > 0
       zoom = zoom / 1.5
       zoomFactor--

@@ -3,6 +3,9 @@ define ->
 
   class SyncedView extends Backbone.View
       
+    initialize: () ->
+      super()
+
     delegateEvents: (events) ->
       super
       if @model?
