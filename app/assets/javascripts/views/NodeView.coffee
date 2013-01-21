@@ -9,12 +9,11 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
       super model
 
 
-
     recursiveRender: (parent, nodes)->
       $.each(nodes, (index, node)=>
         nodeView = new NodeView(node)
         $nodeHtml = $($(nodeView.render().el).html())
-        $('#mindmap').append($nodeHtml)
+        $('#'+@model.get 'containerID').append($nodeHtml)
         children = node.get 'children'
         if children != undefined
           @recursiveRender(nodeView, children)
@@ -36,57 +35,45 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
         connectNodes $parent, $child
       )
       
-        
-
       
-    getCenterCoordinates: ($element) ->
+    getCenterCoordinates: (id) ->
+      $element = $('#'+id)
       left = $element.position().left + $element.width() / 2
       top = $element.position().top + $element.height() / 2
       top: top, left: left
-  
 
     
-    #
-    # Refresh the mind map an reposition the dom elements
-    #
-    refreshDom: () ->
-      root = $('.root:first')
-      height = @_alignChildren root
-      jsPlumb.repaintEverything()
-      height
-    
-    _alignChildren: (element) ->
-      horizontalSpacer = 20
+    alignChildrenofElementWithID:(id) ->
+      element = $('#'+id)
       $children = $(element).children('.children').children('.node')
       elementHeight = $(element).outerHeight()
       elementWidth = $(element).outerWidth()
       heightOfChildren = {}
-      parentCenterTop = @getCenterCoordinates($(element)).top
-      totalChildrenHeight = 0
-      
-      currentLeftTop = 0
-      currentRightTop = 0
-      currentTop = 0
+      parentCenterTop = @getCenterCoordinates(id).top
+
+      currentLeftTop = currentRightTop = currentTop = 0
+
       if $children.length > 0
         for child in $children
-          childHeight = @_alignChildren(child) 
-          heightOfChildren[$(child).attr('id')] = childHeight
-          totalChildrenHeight = totalChildrenHeight + childHeight + @verticalSpacer
+          childHeight = @alignChildrenofElementWithID(child.id) 
+          heightOfChildren[$(child).attr('id')] = childHeight + @verticalSpacer
         
         lastChild = null
         for child in $children
-          $(child).css('border', "3px dotted #0000FF")
+          ##$(child).css('border', '3px dotted #0000FF')
           if $(child).hasClass('leftTree')
-            $(child).css("left", -$(child).outerWidth() - horizontalSpacer)
-            $(child).css("top", currentLeftTop)
+            $(child).css('left', -$(child).outerWidth() - @horizontalSpacer)
+            $(child).css('top', currentLeftTop)
             currentLeftTop = currentLeftTop + heightOfChildren[$(child).attr('id')]
           else
-            $(child).css("left", elementWidth + horizontalSpacer) 
-            $(child).css("top", currentRightTop)
+            $(child).css('left', elementWidth + @horizontalSpacer) 
+            $(child).css('top', currentRightTop)
             currentRightTop = currentRightTop + heightOfChildren[$(child).attr('id')]
           lastChild = child
+
         currentTop = Math.max(currentRightTop, currentLeftTop) + heightOfChildren[$(lastChild).attr('id')]
         $(element).children('.children:first').css('top', -currentTop/2 + elementHeight/2)
+      
       Math.max(currentTop, elementHeight)
 
 

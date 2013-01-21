@@ -27,13 +27,16 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
 
         right1_1 = new NodeModel('ID_5',false,  'right 1.1')
         right1_2 = new NodeModel('ID_6',false,  'right 1.2')       
-        right1_3 = new NodeModel('ID_2',false,  'right 1.3')
+        right1_3 = new NodeModel('ID_2',false,  'right 1.3')        
+        right1_4 = new NodeModel('ID_55',false,  'right 1.4')
+        right1_5 = new NodeModel('ID_56',false,  'right 1.5')       
+        right1_6 = new NodeModel('ID_57',false,  'right 1.6')
 
         right1_3_1 = new NodeModel('ID_3',false,  'right 1.3.1')
         right1_3_2 = new NodeModel('ID_4',false,  'right 1.3.2')
         
         right1_3.set 'children', [right1_3_1, right1_3_2], silent: true
-        right1.set 'children', [right1_1, right1_2, right1_3], silent: true
+        right1.set 'children', [right1_1, right1_2, right1_3, right1_4, right1_5, right1_6], silent: true
                 
         right2 = new NodeModel('ID_7',false,  'right 2')
         right3 = new NodeModel('ID_8',false, "right 3<br><img src='/assets/images/docear/logo/main-logo.png' style='height: 68px; width: 350px' />", true)
