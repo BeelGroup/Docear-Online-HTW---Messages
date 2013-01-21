@@ -65,7 +65,6 @@ public class Global extends GlobalSettings {
     private void logConfiguration(Configuration conf) {
         final String configFilename = defaultString(conf.getString("config.file"), "conf/application.conf");
         Logger.info("using configuration " + configFilename);
-        Logger.info("using configuration " + conf.getString("application.secret"));
     }
 
     private void logRequest(Http.Request request, Method method) {
