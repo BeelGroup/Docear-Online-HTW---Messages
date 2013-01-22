@@ -15,7 +15,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class VisualizationTest extends DocearHttpTest {
 
-    public static final String LOAD_MAP_3 = "#load-map-3";
+    public static final String LOAD_MAP_3 = "#load-map-2";
 
     @Test
     public void testText() throws Exception {
