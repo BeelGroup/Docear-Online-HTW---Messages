@@ -126,12 +126,6 @@ Nach jedem Push zu Github wird die App automatisch deployed.
 ### Restart
 * in HTW-Frontend folder: `heroku restart`
 
-## Tomcat
-1. `sbt war`
-1. rename the war file to ROOT.war
-1. put ROOT.war in tomcat/webapps
-1. start Tomcat
-
 # Play Benefits
 * Hot deployment changed Java classes and CoffeeScript, JavaScript, HTML files
 * Play compiles CoffeeScript
