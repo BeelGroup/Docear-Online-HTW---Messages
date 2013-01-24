@@ -11,7 +11,7 @@ require [],  () ->
       success: (data)->
         $selectMinmap = $('#select-mindmap')
         $.each(data, (index,value)->
-          $selectMinmap.append """<li><a class="loadMap dropdown-toggle" href="#{jsRoutes.controllers.ControllerFactory.mindMap.map(value.mmIdOnServer).url}"> #{value.fileName}</a></li>"""
+          $selectMinmap.append """<li><a class="dropdown-toggle" href="#loadMap/#{value.mmIdOnServer}"> #{value.fileName}</a></li>"""
         )
         '/map/json/id'
     })
@@ -32,14 +32,13 @@ require [],  () ->
             newChild.children = getRecursiveChildren(child.children)
           children.push newChild
     children
-  
-  ContactsRouter = Backbone.Router.extend({
+
+  DocearRouter = Backbone.Router.extend({
     routes: {
       "loadMap/:mapId": "loadMap"
     },
    loadMap: (mapId)->
-      href = "http://localhost:9000/map/json/"+mapId
-      $(this).closest(".dropdown").children(".dropdown-toggle").click()
+      href = jsRoutes.controllers.ControllerFactory.mindMap.map(mapId).url
       recall = (data)->
         $("#mindmap").html("")
         jsPlumb.reset()
@@ -73,6 +72,19 @@ require [],  () ->
       false
   })
 
-  contactsRouter = new ContactsRouter();
+  ApplicationView = Backbone.View.extend(
+    el: $("body")
+    events:
+      """click  a[href^="#"]""": "gotToRoute" #catch all links starting with a hash
 
-  Backbone.history.start();
+    initialize: ->
+      @router = new  DocearRouter()
+      Backbone.history.start()
+
+    gotToRoute: (event)->
+      hashRoute = event.target.attributes.href.value
+      @router.navigate hashRoute, {trigger: true, replace: true} #TODO until "Uncaught Error: Backbone.history has already been started" replace:true must stay
+  )
+
+  new ApplicationView()
+
