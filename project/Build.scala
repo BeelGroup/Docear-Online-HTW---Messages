@@ -21,6 +21,10 @@ object ApplicationBuild extends Build {
       , "com.novocode" % "junit-interface" % "0.9" % "test"
       , "org.reflections" % "reflections" % "0.9.8"//fix for error: NoSuchMethodError: com.google.common.cache.CacheBuilder.maximumSize(I)Lcom/google/common/cache/CacheBuilder;
       , "joda-time" % "joda-time" % "2.1"
+      , jdbc
+      , javaCore
+      , javaJdbc
+      , javaEbean
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
@@ -44,7 +48,7 @@ object ApplicationBuild extends Build {
       )
     }
 
-    val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
+    val main = play.Project(appName, appVersion, appDependencies).settings(
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
       , resolvers += "schleichardts Github" at "http://schleichardt.github.com/jvmrepo/"
       , templatesImport += "views.TemplateUtil._"
