@@ -6,6 +6,7 @@ package sbt.handlebars
 
 import java.io._
 import play.api._
+import scalax.file.ImplicitConversions
 
 class HandlebarsCompiler(handlebarsJsFilename: String) {
 
@@ -89,14 +90,14 @@ class HandlebarsCompiler(handlebarsJsFilename: String) {
 
     // load ember
     val emberFile = findFile(handlebarsJsFilename).getOrElse(throw new Exception("handlebars: could not find " + handlebarsJsFilename))
-    ctx.evaluateString(scope, Path(emberFile).slurpString, handlebarsJsFilename, 1, null)
+    ctx.evaluateString(scope, Path(emberFile).string, handlebarsJsFilename, 1, null)
 
     val precompileFunction = scope.get("precompile", scope).asInstanceOf[Function]
 
     Context.exit
 
     (source: File) => {
-      val handlebarsCode = Path(source).slurpString.replace("\r", "")
+      val handlebarsCode = Path(source).string.replace("\r", "")
       Context.call(null, precompileFunction, scope, scope, Array(handlebarsCode)).asInstanceOf[String]
     }
   }
