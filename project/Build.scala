@@ -1,9 +1,6 @@
 import sbt._
 import sbt.Keys._
 import sbt.PlayProject._
-import com.github.play2war.plugin._
-import com.github.play2war.plugin.Play2WarKeys._
-import scala.Some
 
 object ApplicationBuild extends Build {
 
@@ -50,7 +47,6 @@ object ApplicationBuild extends Build {
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
       , resolvers += "schleichardts Github" at "http://schleichardt.github.com/jvmrepo/"
-      , Play2WarKeys.servletVersion := "3.0"
       , templatesImport += "views.TemplateUtil._"
       , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates")
       , handlebarsOptions := Seq.empty[String]
@@ -60,6 +56,6 @@ object ApplicationBuild extends Build {
       , testOptions in Test += Tests.Argument("sequential", "true")
       , javacOptions ++= Seq("-source", "1.6", "-target", "1.6")//for compatibility with Debian Squeeze
       , cleanFiles <+= baseDirectory {base => base / "h2"} //clean up h2 data files
-    ).settings(Play2WarPlugin.play2WarSettings: _*)
+    )
 
 }
