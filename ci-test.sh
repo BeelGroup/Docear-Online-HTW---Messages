@@ -1,5 +1,4 @@
 set -x
 
-export xsbt="$(pwd)/sbt -Dsbt.log.noformat=true"
-chmod a+x sbt sbtwrapper/sbt-launch.jar
+export xsbt="java -Xms128M -Xmx256M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M  -jar sbtwrapper/sbt-launch.jar -Dsbt.log.noformat=true"
 $xsbt clean test
