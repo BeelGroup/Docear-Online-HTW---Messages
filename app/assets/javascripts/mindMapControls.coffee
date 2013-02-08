@@ -8,6 +8,7 @@ $ ->
   
   changeZoom = (direction)->
     ## global variable?? :P
+    ###
     zoomFactor = 0;
     if direction > 0
       zoom = zoom / 1.5
@@ -22,7 +23,7 @@ $ ->
     current_map_drawer = new MindMapDrawer(current_mindmap, $("#mindmap"))
     current_map_drawer.setZoom(zoom)
     current_map_drawer.draw()
-    
+    ###
     #current_map_drawer.refreshDom() 
     
   $('#mindmap').mousewheel (e, delta)-> 
