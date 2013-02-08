@@ -84,7 +84,6 @@ require [],  () ->
       Backbone.history.start()
 
     gotToRoute: (event)->
-      console.log 'goTo'
       hashRoute = event.target.attributes.href.value
       @router.navigate hashRoute, {trigger: true, replace: true} #TODO until "Uncaught Error: Backbone.history has already been started" replace:true must stay
   )

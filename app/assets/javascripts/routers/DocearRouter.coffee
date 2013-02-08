@@ -9,7 +9,7 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
     routes:
       'loadMap/:mapId': 'loadMap'
       'doSomathingWithMap/:id/*action':  'resource'
-      '*path': 'notFound'
+      #'*path': 'notFound'
 
 
     doIt:(id, action) -> console.log "do #{action} with map #{id}"  
@@ -19,8 +19,8 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
       Backbone.history.stop()
       Backbone.history.start()
 
-    notFound:()->
-      console.log 'Route not found'
+    #notFound:()->
+    #  console.log 'Route not found'
 
     loadMap: (mapId) ->
       console.log "call: loadMap #{mapId} (DocearRouter)"
