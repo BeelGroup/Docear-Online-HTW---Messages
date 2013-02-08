@@ -1,40 +1,41 @@
 define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node', 'models/RootNode'],  (DocearRouter, RootNodeView, NodeView,HtmlView,NodeModel,RootNodeModel) ->  
+   
   module = ->
 
-  class MapView extends Backbone.View
+  class MapStarter extends Backbone.View
 
 
     el: $("body")
-
     events:
-      """click  a[href^="#"]""": "goToRoute" #catch all links starting with a hash
+      """click  a[href^="#"]""": "gotToRoute" #catch all links starting with a hash
 
     initialize: ->
       @router = new  DocearRouter()
-      ##Backbone.history.stop()
       Backbone.history.start()
 
-    goToRoute: (event)->
+    gotToRoute: (event)->
       hashRoute = event.target.attributes.href.value
       @router.navigate hashRoute, {trigger: true, replace: true} #TODO until "Uncaught Error: Backbone.history has already been started" replace:true must stay
 
 
+
     constructor:(@json)->
-      
+      @importNodes()
 
 
     positionNodes:->
-      @importNodes()
       rootView = new RootNodeView @rootNode
       $rootHtml = $(rootView.render().el).html()
       $("#mindmap").append($rootHtml)
       rootView.renderChilds()
+      
+      ##mindMapPositioner = new Positioner($('#mindmap'), @rootNode)
 
 
     ## ############################################## 
     ## replace this with json parser            ##!!!
     ## ##############################################
-    importNodes: ->
+    importNodes:->
       @rootNode = new RootNodeModel("ID_0", false, "root", 'mindmap')
 
       right1 = new NodeModel('ID_1',false,  'right 1')
@@ -71,23 +72,5 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       @rootNode.set 'leftChildren', [left1]
 
 
-    loadUserMaps: ->
-      $.ajax({
-        type: 'GET',
-        url: jsRoutes.controllers.ControllerFactory.mindMap.mapListFromDB().url,
-        dataType: 'json',
-        success: (data)->
-          $selectMinmap = $('#select-mindmap')
-          $.each(data, (index,value)->
-            $selectMinmap.append """<li><a class="dropdown-toggle" href="#loadMap/#{value.mmIdOnServer}"> #{value.fileName}</a></li>"""
-          )
-          '/map/json/id'
-      })
 
-
-    render:->
-      ## first three entries currently filled in main.scala.html
-      @loadUserMaps()
-      @positionNodes()
-
-  module.exports = MapView  
+  module.exports = MapStarter

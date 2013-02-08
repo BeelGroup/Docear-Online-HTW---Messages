@@ -18,26 +18,13 @@ require [],  () ->
   loadUserMaps()
   
   
-  getRecursiveChildren = (childrenData)->
-    children = []
-    if childrenData.id != undefined && childrenData.id != null
-      newChild = new Node(childrenData.nodeText)
-      children.push newChild
-    else if childrenData != undefined
-      for child in childrenData
-        if child.nodeText != ""
-          newChild = new Node(child.nodeText)
-          newChild.folded = child.folded == "true"
-          if child.children != undefined
-            newChild.children = getRecursiveChildren(child.children)
-          children.push newChild
-    children
+
 
   DocearRouter = Backbone.Router.extend({
     routes: {
       "loadMap/:mapId": "loadMap"
     },
-   loadMap: (mapId)->
+    loadMap: (mapId)->
       href = jsRoutes.controllers.ControllerFactory.mindMap.map(mapId).url
       recall = (data)->
         $("#mindmap").html("")
@@ -71,6 +58,21 @@ require [],  () ->
       $.get(href, recall, "json")
       false
   })
+
+  getRecursiveChildren = (childrenData)->
+    children = []
+    if childrenData.id != undefined && childrenData.id != null
+      newChild = new Node(childrenData.nodeText)
+      children.push newChild
+    else if childrenData != undefined
+      for child in childrenData
+        if child.nodeText != ""
+          newChild = new Node(child.nodeText)
+          newChild.folded = child.folded == "true"
+          if child.children != undefined
+            newChild.children = getRecursiveChildren(child.children)
+          children.push newChild
+    children
 
   ApplicationView = Backbone.View.extend(
     el: $("body")
