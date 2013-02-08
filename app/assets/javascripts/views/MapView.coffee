@@ -4,23 +4,9 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
   class MapView extends Backbone.View
 
 
-    el: $("body")
-
-    events:
-      """click  a[href^="#"]""": "goToRoute" #catch all links starting with a hash
-
-    initialize: ->
-      @router = new  DocearRouter()
-      ##Backbone.history.stop()
-      Backbone.history.start()
-
-    goToRoute: (event)->
-      hashRoute = event.target.attributes.href.value
-      @router.navigate hashRoute, {trigger: true, replace: true} #TODO until "Uncaught Error: Backbone.history has already been started" replace:true must stay
-
-
+    ## pass a default map?
     constructor:(@json)->
-      
+      super()
 
 
     positionNodes:->

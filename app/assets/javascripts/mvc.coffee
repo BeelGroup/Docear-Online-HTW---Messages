@@ -1,13 +1,15 @@
-require ['views/MapView'],  (MapView) ->  
+require ['views/MapView', 'routers/DocearRouter'],  (MapView, DocearRouter) ->  
 
-
+  
   initializeJsPlumb()
+  router = new  DocearRouter()
+  
   ## ##############################################
-  start = new MapView('PASS JSON HERE')    ##!!!
+  mapView = new MapView('PASS JSON HERE')    ##!!!
   ## ##############################################
   
   ## just for debugging
-  start.render()
+  mapView.render()
 
 
   ###

@@ -3,9 +3,30 @@ define ['views/RootNodeView', 'views/NodeView', 'views/HtmlView', 'models/Node',
   
   class DocearRouter extends Backbone.Router
 
-    routes: "loadMap/:mapId": "loadMap"
+
+    ## splat parameter (*) (regex)
+    ## reg ex example: '/^(.*?)$/' : 'doIt'
+    routes:
+      'loadMap/:mapId': 'loadMap'
+      'doSomathingWithMap/:id/*action':  'resource'
+      '*path': 'notFound'
+
+
+    doIt:(id, action) -> console.log "do #{action} with map #{id}"  
+
+    constructor:()->
+      super()
+      Backbone.history.stop()
+      Backbone.history.start()
+
+    notFound:()->
+      console.log 'Route not found'
 
     loadMap: (mapId) ->
+      console.log "call: loadMap #{mapId} (DocearRouter)"
+
+    loadMap2: (mapId) ->
+      console.log "call: loadMap #{mapId} (DocearRouter)"
       href = jsRoutes.controllers.ControllerFactory.mindMap.map(mapId).url
       recall = (data)->
         $("#mindmap").html("")
