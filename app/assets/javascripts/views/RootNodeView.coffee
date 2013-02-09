@@ -5,7 +5,7 @@ define ['views/NodeView'], (NodeView) ->
 
     template: Handlebars.templates['RootNode']
 
-    initialize: (model) ->
+    constructor: (model) ->
       super model
 
 
@@ -14,12 +14,20 @@ define ['views/NodeView'], (NodeView) ->
       
       childrenRight = @model.get 'rightChildren'
       childrenLeft = @model.get 'leftChildren'
-      
       @adjustNodeHierarchy(@model, childrenRight, 'rightTree')
       @adjustNodeHierarchy(@model, childrenLeft, 'leftTree')
-      jsPlumb.repaintEverything()
       @centerInContainer()
+      jsPlumb.repaintEverything()
       @refreshDom()
+      # !!! Todo: add collaps/expand functionality
+      #@collapsFoldedNodes()
+      # !!!
+
+    collapsFoldedNodes:()->      
+      foldedNodes = $('.node.folded')
+      $(foldedNodes).children('.children').hide()
+      $(foldedNodes).find("i.fold").toggleClass('icon-minus-sign')
+      $(foldedNodes).find("i.fold").toggleClass('icon-plus-sign')
 
     #
     # Refresh the mind map an reposition the dom elements

@@ -1,12 +1,11 @@
-define ['models/Node'],  (Node) ->  
+define ['models/AbstractNode'],  (AbstractNode) ->  
   module = ->
   
-  class RootNode extends Node
-    constructor: (id, folded, nodeText, containerID) ->
-      super id, folded, nodeText
+  class RootNode extends AbstractNode
+    constructor: (id, folded, nodeText, containerID, isHTML, xPos, yPos, hGap, shiftY, locked) ->
+      super id, folded, nodeText, isHTML, xPos, yPos, hGap, shiftY, locked
       @set 'containerID', containerID
-      @node = new Node(id, folded, nodeText)
-      @leftchildren = []
-      @rightChildern = []
+      @set 'leftChildren', []
+      @set 'rightChildren', []
       
   module.exports = RootNode

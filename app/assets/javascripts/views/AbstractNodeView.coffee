@@ -18,10 +18,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
 
     # a.k.a. constructor
-    initialize: (@model) ->
+    constructor: (@model) ->
       super()
       id: @model.get 'id'
-
       @model.bind "change:locked",@changeLockStatus , @       
 
 

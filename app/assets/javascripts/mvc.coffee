@@ -1,15 +1,29 @@
-require ['views/MapView', 'routers/DocearRouter'],  (MapView, DocearRouter) ->  
+require ['MapController', 'routers/DocearRouter'],  (MapController, DocearRouter) ->  
 
   
   initializeJsPlumb()
-  router = new  DocearRouter()
+
+  loadUserMaps: ->
+    $.ajax({
+      type: 'GET',
+      url: jsRoutes.controllers.ControllerFactory.mindMap.mapListFromDB().url,
+      dataType: 'json',
+      success: (data)->
+        $selectMinmap = $('#select-mindmap')
+        $.each(data, (index,value)->
+          $selectMinmap.append """<li><a class="dropdown-toggle" href="#loadMap/#{value.mmIdOnServer}"> #{value.fileName}</a></li>"""
+        )
+        '/map/json/id'
+    })
+
+  
   
   ## ##############################################
-  mapView = new MapView('PASS JSON HERE')    ##!!!
+  mapController = new MapController('PASS JSON HERE')    ##!!!
   ## ##############################################
-  
+  router = new  DocearRouter(mapController)
   ## just for debugging
-  mapView.render()
+  #mapController.renderDummyMap()
 
 
   ###

@@ -5,7 +5,7 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
 
     template: Handlebars.templates['Node']
 
-    initialize: (model) ->
+    constructor: (model) ->
       super model
 
 
