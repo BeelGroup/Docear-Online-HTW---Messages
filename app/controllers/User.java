@@ -65,7 +65,7 @@ public class User extends Controller {
     }
 
     public Result profile() {
-        return redirect(routes.ControllerFactory.mindMap.mapListFromDB());
+        return redirect(routes.MindMap.mapListFromDB());
     }
 	
 	/**
