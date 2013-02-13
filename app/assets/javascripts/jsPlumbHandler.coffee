@@ -19,6 +19,6 @@ initializeJsPlumb = ->
     jsPlumb.repaintEverything()
 
 
-connectNodes = ($source, $target) -> 
-  $container = $('#'+$source.attr("id")+" .children:first")
-  connectWrapper({ source:$($source), target:$($target), container:$container })
+connectNodes = (sourceIdentifier, targetIdentifier) -> 
+  $container = $(targetIdentifier).parent()
+  connectWrapper({ source:$(sourceIdentifier), target:$(targetIdentifier), container:$container })

@@ -17,8 +17,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       # create and append new html 
       @$rootHtml = $(rootView.render().el).html()
       $("#mindmap").append @$rootHtml
-      # render, position, fold (not for debugging)
-      rootView.renderChilds()
+      
+      rootView.connectChildren()
+      rootView.centerInContainer()
+      rootView.refreshDom()
+      jsPlumb.repaintEverything()
 
 
     loadMap: (mapId) ->
