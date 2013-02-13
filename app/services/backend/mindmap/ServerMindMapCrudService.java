@@ -244,7 +244,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
     private static File getMindMapFileFromDocearServer(final User user, final String mmIdOnServer) throws IOException {
         String docearServerAPIURL = "https://api.docear.org/user";
 
-        util.backend.WS.Response response =  util.backend.WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + mmIdOnServer)
+        WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + mmIdOnServer)
                 .setHeader("accessToken", user.getAccessToken())
                 .get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
         
