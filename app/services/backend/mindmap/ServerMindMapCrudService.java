@@ -57,7 +57,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         	Logger.debug("ServerId: " + id + "; MapId: " + mindmapId + "; url: " +serverUrl.toString());
         }
         String wsUrl = serverUrl.toString();
-        WS.Response response = WS.url(wsUrl+"/map/"+mindmapId+"/json").get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
+        WS.Response response = WS.url(wsUrl+"/map/"+mindmapId+"/json").get().get();
         if(response.getStatus() != 200) {
             throw new IOException("couldn't obtain mind map from server. Response code: " + response.getStatus());
         }
@@ -94,8 +94,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
     	
         String docearServerAPIURL = "https://api.docear.org/user";
         WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/")
-                .setHeader("accessToken", user.getAccessToken()).get()
-                .getWrappedPromise().await(3,TimeUnit.MINUTES).get();
+                .setHeader("accessToken", user.getAccessToken()).get().get();
 
         BufferedReader br = new BufferedReader (new StringReader(response.getBody().toString()));
 
@@ -151,7 +150,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         WS.url(wsUrl+"/map")
                 .setHeader("Content-Type", "application/octet-stream")
                 .setHeader("Content-Deposition", "attachement; filename=\""+mapId+".mm\"")
-                .put(fileStream).getWrappedPromise().await(10,TimeUnit.SECONDS).get();
+                .put(fileStream).get();
         ServerMindmapMap.getInstance().put(serverUrl, mmId);
         
         return serverUrl;
@@ -246,7 +245,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
 
         WS.Response response =  WS.url(docearServerAPIURL + "/" + user.getUsername() + "/mindmaps/" + mmIdOnServer)
                 .setHeader("accessToken", user.getAccessToken())
-                .get().getWrappedPromise().await(3, TimeUnit.MINUTES).get();
+                .get().get();
         
         if(response.getStatus() == 200) {
         	return ZipUtils.extractMindmap(response.getBodyAsStream());
