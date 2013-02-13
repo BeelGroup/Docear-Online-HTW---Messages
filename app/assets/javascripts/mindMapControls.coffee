@@ -1,10 +1,4 @@
-$ ->
-  $( '#mindmap' ).draggable({
-    cancel: "a.ui-icon, .node",
-    containment: "mindmap-container",
-    cursor: "move",
-    handle: "#mindmap"
-  });
+
   
   changeZoom = (direction)->
     ## global variable?? :P
@@ -30,11 +24,7 @@ $ ->
     changeZoom(e.originalEvent.detail)
     false
   
-  $('#zoom-in').click ->
-    changeZoom(-1)
-    
-  $('#zoom-out').click ->
-    changeZoom(1)
+  
   
   $('body').on("mouseenter", ".node", 
     -> 

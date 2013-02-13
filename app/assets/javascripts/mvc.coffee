@@ -16,8 +16,8 @@ require ['MapController', 'routers/DocearRouter'],  (MapController, DocearRouter
         '/map/json/id'
     })
 
-  
-  
+
+
   ## ##############################################
   mapController = new MapController('PASS JSON HERE')    ##!!!
   ## ##############################################
