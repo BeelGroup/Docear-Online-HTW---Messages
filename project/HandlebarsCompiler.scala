@@ -165,9 +165,9 @@ var template = Handlebars.template, templates = Handlebars.templates = Handlebar
 }
 
 case class CompilationException(message: String, file: File, atLine: Option[Int]) extends PlayException(
-  "Compilation error", message) with PlayException.ExceptionSource {
-  def line = atLine
-  def position = None
-  def input = Some(scalax.file.Path(file))
-  def sourceName = Some(file.getAbsolutePath)
+  "Compilation error", message) {
+  def line = -1 //atLine.getOrElse(-1) //TODO since Play 2.1 this has to be an Integer
+  def position = -1 //TODO since Play 2.1 this has to be an Integer
+  def input = scalax.file.Path(file).path
+  def sourceName = file.getAbsolutePath.toString
 }
