@@ -38,10 +38,10 @@ public class Application extends Controller {
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
         return ok(
-            Routes.javascriptRouter("jsRoutes",
-                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().map(),
-                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().mapListFromDB(),
-                routes.javascript.ControllerFactory.new ReverseControllerFactory_mindMap().closeMap()
+            Routes.javascriptRouter("jsRoutes"/* ,
+               routes.javascript.MindMap().map(),
+                routes.javascript.MindMap().mapListFromDB(),
+                routes.javascript.MindMap().closeMap()*/
             )
         );
     }

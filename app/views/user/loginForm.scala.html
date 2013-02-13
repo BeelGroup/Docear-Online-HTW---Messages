@@ -5,7 +5,7 @@
 @implicitField = @{ FieldConstructor(views.html.bootstrap.form.horizontalFieldConstructor.f) }
 
 @main("Login", additionalBodyClasses = "login-page") {
-    @helper.form(action = routes.ControllerFactory.user.login, args = 'id -> "login-form") {
+    @helper.form(action = routes.User.login, args = 'id -> "login-form") {
         @helper.inputText(credentialsForm("username"), 'label -> "username")
         @helper.inputPassword(credentialsForm("password"),  'label -> "password")
 
