@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import akka.actor.Cancellable;
-import akka.util.Duration;
+import scala.concurrent.duration.Duration;
 
 import play.Logger;
 import play.libs.Akka;

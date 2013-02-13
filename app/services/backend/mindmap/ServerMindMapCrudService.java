@@ -36,7 +36,7 @@ import play.libs.Akka;
 import play.libs.F;
 import play.libs.WS;
 import util.backend.ZipUtils;
-import akka.util.Duration;
+import scala.concurrent.duration.Duration;
 
 @Profile("backendProd")
 @Component

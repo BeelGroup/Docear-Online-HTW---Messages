@@ -12,7 +12,7 @@ import org.codehaus.jackson.JsonNode;
 
 import play.libs.Akka;
 import akka.actor.Cancellable;
-import akka.util.Duration;
+import scala.concurrent.duration.Duration;
 
 public abstract class MindMapCrudServiceBase implements MindMapCrudService {
 	private static Cancellable lockCheckCancellable;
