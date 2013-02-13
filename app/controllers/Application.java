@@ -37,11 +37,15 @@ public class Application extends Controller {
     @Cached(key = "js-routes-file")
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
+
+
+
         return ok(
-            Routes.javascriptRouter("jsRoutes"/* ,
-               routes.javascript.MindMap().map(),
-                routes.javascript.MindMap().mapListFromDB(),
-                routes.javascript.MindMap().closeMap()*/
+             /* this currently looks like errors in IntelliJ IDEA */
+            Routes.javascriptRouter("jsRoutes",
+                    routes.javascript.MindMap.map(),
+                    routes.javascript.MindMap.mapListFromDB(),
+                    routes.javascript.MindMap.closeMap()
             )
         );
     }
