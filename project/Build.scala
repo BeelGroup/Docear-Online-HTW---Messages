@@ -4,7 +4,7 @@ import sbt.PlayProject._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "Docear Frontend"
+    val appName         = "Docear-Frontend"
     val appVersion      = "0.1-SNAPSHOT"
 
     val appDependencies = Seq(
