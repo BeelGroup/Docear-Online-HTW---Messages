@@ -28,14 +28,14 @@
     <meta charset="utf-8">
     <title>@title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='@routes.Assets.at("stylesheets/bootstrap.css")' rel="stylesheet">
+    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))' rel="stylesheet">
     <style type="text/css">
         body {
             padding-top: 60px;
             padding-bottom: 40px;
         }
     </style>
-    <link href='@routes.Assets.at("stylesheets/responsive.css")' rel="stylesheet">
+    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/responsive.min.css"))' rel="stylesheet">
     <link href='@routes.Assets.at("stylesheets/style.css")' rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->

@@ -8,8 +8,7 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.1-SNAPSHOT"
 
     val appDependencies = Seq(
-      "info.schleichardt" %% "play-2-twitter-bootstrap-integration" % "0.1-SNAPSHOT"
-      , "info.schleichardt" %% "play-2-basic-auth" % "0.2-SNAPSHOT"
+      "info.schleichardt" %% "play-2-basic-auth" % "0.3-SNAPSHOT"
       , "commons-io" % "commons-io" % "2.4"//heroku does not find it without the explicit dependency
       , "com.fasterxml.jackson.datatype" % "jackson-datatype-json-org" % "2.0.2"
       , "commons-lang" % "commons-lang" % "2.6"
@@ -25,6 +24,8 @@ object ApplicationBuild extends Build {
       , javaCore
       , javaJdbc
       , javaEbean
+      , "org.webjars" % "webjars-play" % "2.1.0"
+      , "org.webjars" % "bootstrap" % "2.1.1"
     )
 
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
@@ -50,7 +51,7 @@ object ApplicationBuild extends Build {
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
-      , resolvers += "schleichardts Github" at "http://schleichardt.github.com/jvmrepo/"
+      , resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
       , templatesImport += "views.TemplateUtil._"
       , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates")
       , handlebarsOptions := Seq.empty[String]
