@@ -57,7 +57,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         	Logger.debug("ServerId: " + id + "; MapId: " + mindmapId + "; url: " +serverUrl.toString());
         }
         String wsUrl = serverUrl.toString();
-        WS.Response response = WS.url(wsUrl+"/map/"+mindmapId+"/json").get().get();
+        WS.Response response = WS.url(wsUrl + "/map/" + mindmapId + "/json").get().get();
         if(response.getStatus() != 200) {
             throw new IOException("couldn't obtain mind map from server. Response code: " + response.getStatus());
         }
@@ -77,11 +77,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
             throw new IOException("Map is not open");
         }
         WS.Response response = WS.url(serverUrl.toString()+"/map/"+id).delete().get();
-        if(response.getStatus() == 200) {
-            if(!ServerMindmapMap.getInstance().hasOpenMaps(serverUrl)) {
-                closeDocearInstance(serverUrl);
-            }
-        } else {
+        if(response.getStatus() != 200) {
             throw new IOException("can't close map");
         }
     }
@@ -113,9 +109,6 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
     private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
         //find server with capacity
         URL serverUrl = ServerMindmapMap.getInstance().getServerWithFreeCapacity();
-        if(serverUrl == null) { //or start a new instance
-            serverUrl = startDocearInstance();
-        }
 
         
         InputStream fileStream = null;
@@ -159,69 +152,6 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
     @Deprecated
     public static String createWebserviceUrl(int port) {
         return "http://localhost:"+port+"/rest/v1";
-    }
-
-    /**
-     *
-     * @return port of new server or -1 on failure
-     */
-    private static URL startDocearInstance() {
-        int nextFreePort = ServerMindmapMap.getInstance().getNextAvailablePort();
-        String docearPath = Play.application().configuration().getString("backend.docearDirectory");
-        ProcessBuilder builder =  new ProcessBuilder();
-        builder.environment().put("webservice_port", ""+nextFreePort);
-        builder.directory(new File(docearPath));
-        builder.command(new File(docearPath+"/docear").getAbsolutePath());
-
-        try {
-            Process p = builder.start();
-
-            //Streams must be read, otherwise will the application pause to execute
-            Akka.system().scheduler()
-                    .scheduleOnce(Duration.create(0, TimeUnit.SECONDS),
-                            new StreamLogger(p.getInputStream(),
-                                    "docear in"));
-
-            Akka.system().scheduler()
-                    .scheduleOnce(Duration.create(0, TimeUnit.SECONDS),
-                            new StreamLogger(p.getErrorStream(),
-                                    "docear in"));
-
-//			Thread t = new Thread(new Transporter(p.getInputStream(), System.out));
-//			t.setDaemon(true);
-//			t.start();
-
-//			t = new Thread(new Transporter(p.getErrorStream(), System.err));
-//			t.setDaemon(true);
-//			t.start();
-
-        } catch (IOException e) {
-            return null;
-        }
-
-        //wait until webservice can be reached
-        URL wsUrl = null;
-        try {
-            wsUrl = new URL(createWebserviceUrl(nextFreePort));
-        } catch (MalformedURLException e1) {
-
-        }
-        boolean isOnline = false;
-        while(!isOnline) {
-            try {
-                Thread.sleep(1000);
-                isOnline = WS.url(wsUrl.toString()+"/status").get().get().getStatus() == 200;
-            } catch (InterruptedException e) {
-            } catch (Exception e) {}
-        }
-        //give docear another 3 seconds to start completely
-        //TODO better solution?!!
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-        }
-
-        return wsUrl;
     }
 
     private static boolean closeDocearInstance(URL serverUrl) {
