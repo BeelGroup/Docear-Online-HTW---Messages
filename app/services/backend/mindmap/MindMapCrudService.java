@@ -21,9 +21,4 @@ public interface MindMapCrudService {
 
     @Deprecated
     void closeMap(String id) throws IOException;
-
-    
-    public void startLockCheckThread();
-    public void startMindmapAccessCheck();
-    
 }

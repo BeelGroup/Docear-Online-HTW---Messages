@@ -15,11 +15,6 @@ import akka.actor.Cancellable;
 import scala.concurrent.duration.Duration;
 
 public abstract class MindMapCrudServiceBase implements MindMapCrudService {
-	private static Cancellable lockCheckCancellable;
-	private static Cancellable mindmapAccessCheckCancellable;
-	
-	
-	
     @Override
 	public JsonNode mindMapAsJson(String id) throws DocearServiceException,
 			IOException {
@@ -43,40 +38,4 @@ public abstract class MindMapCrudServiceBase implements MindMapCrudService {
 	public void closeMap(String id) throws IOException {
 		
 	}
-
-	public void startLockCheckThread() {
-    	lockCheckCancellable = Akka
-    	.system()
-    	.scheduler()
-    	.schedule(
-    			Duration.create(0, TimeUnit.SECONDS), 
-    			Duration.create(30, TimeUnit.SECONDS), 
-    			new LockChecker());
-    }
-    
-    public void startMindmapAccessCheck() {
-    	mindmapAccessCheckCancellable = Akka
-    	.system()
-    	.scheduler()
-    	.schedule(
-    			Duration.create(0, TimeUnit.SECONDS), 
-    			Duration.create(30, TimeUnit.SECONDS), 
-    			new MindMapAccessChecker());
-    	
-    }
-    
-    
-    private static class LockChecker implements Runnable {
-		@Override
-		public void run() {
-			// TODO check locks
-		}
-    }
-    
-    private static class MindMapAccessChecker implements Runnable {
-		@Override
-		public void run() {
-			// TODO check locks
-		}
-    }
 }
