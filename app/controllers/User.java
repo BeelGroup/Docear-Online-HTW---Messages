@@ -17,6 +17,7 @@ import services.backend.user.UserService;
 import static controllers.Secured.SESSION_KEY_TIMEOUT;
 import static controllers.Secured.SESSION_KEY_USERNAME;
 import static controllers.Secured.createTimeoutTimestamp;
+import static play.data.Form.form;
 
 @Component
 public class User extends Controller {
