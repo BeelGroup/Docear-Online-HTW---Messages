@@ -7,5 +7,7 @@ define ['models/AbstractNode'],  (AbstractNode) ->
       @set 'containerID', containerID
       @set 'leftChildren', []
       @set 'rightChildren', []
+
+
       
   module.exports = RootNode

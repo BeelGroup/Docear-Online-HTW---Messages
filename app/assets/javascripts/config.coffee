@@ -1,4 +1,5 @@
 document.mindmapID = 'mindmap'
 document.viewportID = 'mindmap-container'
-document.canvasWidth = 4000
+document.canvasWidth = 8000
 document.canvasHeight = 8000
+document.zoomStep = 25 

@@ -75,18 +75,44 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           "click #zoom-out" : "zoomOut"
 
         zoomIn:()=>
-          @zoomAmount += 10
-          console.log "zoom:#{@zoomAmount}%"
-          $(".root").css 'zoom', "#{@zoomAmount}%"
-         #@rootView.centerInContainer()
-          jsPlumb.repaintEverything()
+          if(@zoomAmount+document.zoomStep <= 300)
+            @zoomAmount += document.zoomStep
+            console.log "zoom:#{@zoomAmount}%"
+            
+            oldX = $(".root").position().left
+            oldY = $(".root").position().top
+
+            $(".root").css 'zoom', "#{@zoomAmount}%"
+
+            deltaX = oldX - $(".root").position().left
+            deltaY = oldY - $(".root").position().top
+            posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
+            posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
+
+            $(".root").css 'left', posX
+            $(".root").css 'top' , posY
+
+            jsPlumb.repaintEverything()
 
         zoomOut:()=>
-          @zoomAmount -= 10
-          console.log "zoom:#{@zoomAmount}%"
-          $(".root").css 'zoom', "#{@zoomAmount}%"
-          #@rootView.centerInContainer()
-          jsPlumb.repaintEverything()
+          if(@zoomAmount-document.zoomStep >= 50)
+            @zoomAmount -= document.zoomStep
+            console.log "zoom:#{@zoomAmount}%"
+
+            oldX = $(".root").position().left
+            oldY = $(".root").position().top
+
+            $(".root").css 'zoom', "#{@zoomAmount}%"
+
+            deltaX = oldX - $(".root").position().left
+            deltaY = oldY - $(".root").position().top
+            posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
+            posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
+
+            $(".root").css 'left', posX
+            $(".root").css 'top' , posY
+
+            jsPlumb.repaintEverything()
 
 
 
@@ -106,7 +132,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
 
     addCanvas:()->
-      MindmapContainer = Backbone.View.extend
+      MindmapCanvas = Backbone.View.extend
         id: document.mindmapID
         tagName: 'div'
         className: 'ui-draggable'
@@ -118,6 +144,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             cursor: "move",
             handle: document.mindmapID
           });
+
+        move:(x,y)->
+          @$el.css 
+           'left'  : "#{(@$el.css 'left')+x}px",
+           'top'   : "#{(@$el.css 'top')+y}px"
 
         center:->
           xPos = document.canvasWidth/2 - $("##{document.viewportID}").width()/2
@@ -136,10 +167,8 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           @center()
           @afterAppend()
 
-      @canvas = new MindmapContainer()
+      @canvas = new MindmapCanvas()
       @canvas.renderAndAppendTo(document.viewportID)
-
-
 
 
 
