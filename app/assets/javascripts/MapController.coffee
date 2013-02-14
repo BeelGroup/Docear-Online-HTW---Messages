@@ -71,49 +71,44 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         template: Handlebars.templates['ZoomPanel']
 
         events:
-          "click #zoom-in"  : "zoomIn"
-          "click #zoom-out" : "zoomOut"
+          "click #zoom-in"     : "zoomIn"
+          "click #zoom-out"    : "zoomOut"
+          "click #zoom-center" : "zoomCenter"
 
-        zoomIn:()=>
+        zoomIn:=>
           if(@zoomAmount+document.zoomStep <= 300)
             @zoomAmount += document.zoomStep
-            console.log "zoom:#{@zoomAmount}%"
-            
-            oldX = $(".root").position().left
-            oldY = $(".root").position().top
+            @zoomPanel.zoom()
 
-            $(".root").css 'zoom', "#{@zoomAmount}%"
-
-            deltaX = oldX - $(".root").position().left
-            deltaY = oldY - $(".root").position().top
-            posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
-            posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
-
-            $(".root").css 'left', posX
-            $(".root").css 'top' , posY
-
-            jsPlumb.repaintEverything()
-
-        zoomOut:()=>
+        zoomOut:=>
           if(@zoomAmount-document.zoomStep >= 50)
             @zoomAmount -= document.zoomStep
-            console.log "zoom:#{@zoomAmount}%"
+            @zoomPanel.zoom()
 
-            oldX = $(".root").position().left
-            oldY = $(".root").position().top
+        zoom:=>
+          console.log "zoom:#{@zoomAmount}%"
+          oldX = $(".root").position().left
+          oldY = $(".root").position().top
 
-            $(".root").css 'zoom', "#{@zoomAmount}%"
+          $(".root").css 'zoom', "#{@zoomAmount}%"
 
-            deltaX = oldX - $(".root").position().left
-            deltaY = oldY - $(".root").position().top
-            posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
-            posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
+          deltaX = oldX - $(".root").position().left
+          deltaY = oldY - $(".root").position().top
+          posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
+          posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
 
-            $(".root").css 'left', posX
-            $(".root").css 'top' , posY
+          $(".root").css 'left', posX
+          $(".root").css 'top' , posY
 
-            jsPlumb.repaintEverything()
+          jsPlumb.repaintEverything()
 
+        zoomCenter:()=>
+          if(@zoomAmount != 100)
+              @zoomAmount = 100
+              @zoomPanel.zoom()
+              $(".root").css 'left', 4000
+              $(".root").css 'top' , 4000
+              @canvas.center()
 
 
         renderAndAppendTo:(id)->
@@ -127,8 +122,8 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           @$el.css 'top', '1%'
           @
 
-      @newZoomPanelView = new zoomPanelView()
-      @newZoomPanelView.renderAndAppendTo document.viewportID
+      @zoomPanel = new zoomPanelView()
+      @zoomPanel.renderAndAppendTo document.viewportID
 
 
     addCanvas:()->
