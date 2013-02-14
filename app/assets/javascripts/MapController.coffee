@@ -85,6 +85,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             @zoomAmount -= document.zoomStep
             @zoomPanel.zoom()
 
+        #For Firefox, you can use the -moz-transform property with scale option. -moz-transform : { scale (0.5) }
         zoom:=>
           console.log "zoom:#{@zoomAmount}%"
           oldX = $(".root").position().left
@@ -103,12 +104,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           jsPlumb.repaintEverything()
 
         zoomCenter:()=>
-          if(@zoomAmount != 100)
-              @zoomAmount = 100
-              @zoomPanel.zoom()
-              $(".root").css 'left', 4000
-              $(".root").css 'top' , 4000
-              @canvas.center()
+          @zoomAmount = 100
+          @zoomPanel.zoom()
+          $(".root").css 'left', 4000
+          $(".root").css 'top' , 4000
+          @canvas.center()
 
 
         renderAndAppendTo:(id)->
