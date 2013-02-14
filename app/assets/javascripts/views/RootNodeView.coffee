@@ -41,10 +41,10 @@ define ['views/NodeView'], (NodeView) ->
       container = $('#'+@model.get 'containerID')
       node = $('#'+@model.get 'id')
 
-      halfContainerWidth = $(container).width()/2
-      halfContainerHeight = $(container).height()/2
-      halfNodeWidth = $(node).width()/2
-      halfNodeHeight = $(node).height()/2
+      halfContainerWidth = $(container).width() / 2
+      halfContainerHeight = $(container).height() / 2
+      halfNodeWidth = $(node).width()*($(node).css 'zoom') / 2
+      halfNodeHeight = $(node).height()*($(node).css 'zoom') / 2
 
       pos = 
         x: halfContainerWidth - halfNodeWidth

@@ -7,18 +7,19 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
     constructor:->
       @appendMindmapContainer()
       @appendZoomPanel()
+      @zoomAmount = 100
 
 
     positionNodes:()->
       jsPlumb.reset()
-      rootView = new RootNodeView @rootNode
+      @rootView = new RootNodeView @rootNode
       # remove old html elements
       $('.root').remove();
       # create and append new html 
-      @$rootHtml = $(rootView.render().el).html()
+      @$rootHtml = $(@rootView.render().el).html()
       $("#mindmap").append @$rootHtml
       # render, position, fold (not for debugging)
-      rootView.renderChilds()
+      @rootView.renderChilds()
 
 
     loadMap: (mapId) ->
@@ -70,11 +71,20 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           "click #zoom-in"  : "zoomIn"
           "click #zoom-out" : "zoomOut"
 
-        zoomIn:()->
-          console.log "zoom in"
+        zoomIn:()=>
+          @zoomAmount += 10
+          console.log "zoom:#{@zoomAmount}%"
+          $(".root").css 'zoom', "#{@zoomAmount}%"
+          @rootView.centerInContainer()
+          jsPlumb.repaintEverything()
 
-        zoomOut:()->
-          console.log "zoom out"
+        zoomOut:()=>
+          @zoomAmount -= 10
+          console.log "zoom:#{@zoomAmount}%"
+          $(".root").css 'zoom', "#{@zoomAmount}%"
+          @rootView.centerInContainer()
+          jsPlumb.repaintEverything()
+
 
 
         renderAndAppendTo:(id)->
