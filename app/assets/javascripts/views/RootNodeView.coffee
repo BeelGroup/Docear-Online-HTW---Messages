@@ -8,21 +8,6 @@ define ['views/NodeView'], (NodeView) ->
     constructor: (model) ->
       super model
 
-
-    renderChilds: () -> 
-      @verticalSpacer = 10
-      
-      childrenRight = @model.get 'rightChildren'
-      childrenLeft = @model.get 'leftChildren'
-      @adjustNodeHierarchy(@model, childrenRight, 'rightTree')
-      @adjustNodeHierarchy(@model, childrenLeft, 'leftTree')
-      @centerInContainer()
-      jsPlumb.repaintEverything()
-      @refreshDom()
-      # !!! Todo: add collaps/expand functionality
-      #@collapsFoldedNodes()
-      # !!!
-
     collapsFoldedNodes:()->      
       foldedNodes = $('.node.folded')
       $(foldedNodes).children('.children').hide()
@@ -33,9 +18,25 @@ define ['views/NodeView'], (NodeView) ->
     # Refresh the mind map an reposition the dom elements
     #
     refreshDom: () ->
-      height = @alignChildrenofElementWithID(@model.get 'id')
+      height1 = @alignChildrenofElement($('#'+@model.get 'id').children('.leftChildren:first'), 'left')
+      height2 = @alignChildrenofElement($('#'+@model.get 'id').children('.rightChildren:first'), 'right')
+      height = (height1 > height2) ? height1 : height2
+      
       jsPlumb.repaintEverything()
       height
+      
+    connectChildren: ->
+      @recursiveConnectNodes $(@$el).find('.rightChildren:first')
+      @recursiveConnectNodes $(@$el).find('.leftChildren:first')
+
+    recursiveConnectNodes: (childrenContainer)->
+      parent = $(childrenContainer).parent()
+      children = childrenContainer.children('.node')
+      if $(children).size() > 0
+        $.each(children, (index, child)=>
+          connectNodes "#"+parent.attr('id'), "#"+$(child).attr('id')
+          @recursiveConnectNodes $(child).children('.children:first')
+        ) 
 
     centerInContainer: ->
       container = $('#'+@model.get 'containerID')
@@ -54,12 +55,14 @@ define ['views/NodeView'], (NodeView) ->
         
     render: ->
       @$el.html @template @getRenderData()
-      @recursiveRender @, @model.get 'rightChildren'
-      @recursiveRender @, @model.get 'leftChildren'
+      @recursiveRender $(@$el).find('.rightChildren:first'), (@model.get 'rightChildren')
+      @recursiveRender $(@$el).find('.leftChildren:first'), (@model.get 'leftChildren')
+      
       # render the subviews
       for viewId, view of @subViews
         html = view.render().el
         $(html).appendTo(@el)
+      
       # extend the ready rendered htlm element
       @afterRender()
       @    
