@@ -36,8 +36,8 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
       node.css({
         'position':'absolute', 
-        'top': x + 'px',
-        'left': y+ 'px',
+        'top': y + 'px',
+        'left': x+ 'px',
       })
 
 

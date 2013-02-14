@@ -5,7 +5,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
 
     constructor:->
-      @appendMindmapContainer()
+      @addCanvas()
       @appendZoomPanel()
       @zoomAmount = 100
 
@@ -43,6 +43,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         @rootNode.set 'rightChildren', rightNodes
 
       @positionNodes()
+      @canvas.center()
       @rootNode
 
 
@@ -77,14 +78,14 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           @zoomAmount += 10
           console.log "zoom:#{@zoomAmount}%"
           $(".root").css 'zoom', "#{@zoomAmount}%"
-          @rootView.centerInContainer()
+         #@rootView.centerInContainer()
           jsPlumb.repaintEverything()
 
         zoomOut:()=>
           @zoomAmount -= 10
           console.log "zoom:#{@zoomAmount}%"
           $(".root").css 'zoom', "#{@zoomAmount}%"
-          @rootView.centerInContainer()
+          #@rootView.centerInContainer()
           jsPlumb.repaintEverything()
 
 
@@ -100,11 +101,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           @$el.css 'top', '1%'
           @
 
-      newZoomPanelView = new zoomPanelView()
-      newZoomPanelView.renderAndAppendTo document.mindmapContainer
+      @newZoomPanelView = new zoomPanelView()
+      @newZoomPanelView.renderAndAppendTo document.viewportID
 
 
-    appendMindmapContainer:()->
+    addCanvas:()->
       MindmapContainer = Backbone.View.extend
         id: document.mindmapID
         tagName: 'div'
@@ -113,17 +114,30 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         afterAppend:()->
           @$el.draggable({
             cancel: "a.ui-icon, .node",
-            containment: document.mindmapContainer,
+            containment: document.viewportID,
             cursor: "move",
             handle: document.mindmapID
           });
 
+        center:->
+          xPos = document.canvasWidth/2 - $("##{document.viewportID}").width()/2
+          yPos = document.canvasHeight/2 - $("##{document.viewportID}").height()/2
+          @$el.css 
+           'left'  : "#{-xPos}px",
+           'top'   : "#{-yPos}px"
+
         renderAndAppendTo:(id)->
           $("##{id}").append(@render().el)
+
+          @$el.css 
+            'width' : "#{document.canvasWidth}px" ,
+            'height': "#{document.canvasHeight}px"
+
+          @center()
           @afterAppend()
 
-      newMindmapContainer = new MindmapContainer()
-      newMindmapContainer.renderAndAppendTo(document.mindmapContainer)
+      @canvas = new MindmapContainer()
+      @canvas.renderAndAppendTo(document.viewportID)
 
 
 

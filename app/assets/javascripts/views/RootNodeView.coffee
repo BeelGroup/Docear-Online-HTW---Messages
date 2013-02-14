@@ -44,15 +44,15 @@ define ['views/NodeView'], (NodeView) ->
 
       halfContainerWidth = $(container).width() / 2
       halfContainerHeight = $(container).height() / 2
-      halfNodeWidth = $(node).width()*($(node).css 'zoom') / 2
-      halfNodeHeight = $(node).height()*($(node).css 'zoom') / 2
+      halfNodeWidth = $(node).outerWidth() / 2
+      halfNodeHeight = $(node).outerHeight() / 2
 
       pos = 
         x: halfContainerWidth - halfNodeWidth
         y: halfContainerHeight - halfNodeHeight
 
       @model.set 'Pos', pos
-        
+
     render: ->
       @$el.html @template @getRenderData()
       @recursiveRender $(@$el).find('.rightChildren:first'), (@model.get 'rightChildren')
@@ -65,7 +65,7 @@ define ['views/NodeView'], (NodeView) ->
       
       # extend the ready rendered htlm element
       @afterRender()
-      @    
+      @
 
 
 
