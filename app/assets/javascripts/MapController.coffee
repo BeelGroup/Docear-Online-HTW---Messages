@@ -18,9 +18,9 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       # create and append new html 
       @$rootHtml = $(@rootView.render().el).html()
       $("#mindmap").append @$rootHtml      
-      rootView.connectChildren()
-      rootView.centerInContainer()
-      rootView.refreshDom()
+      @rootView.connectChildren()
+      @rootView.centerInContainer()
+      @rootView.refreshDom()
       jsPlumb.repaintEverything()
 
 
