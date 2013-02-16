@@ -17,7 +17,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       @rootView.getElement().remove();
       # create and append new html 
       @$rootHtml = $(@rootView.render().el).html()
-      $("#mindmap").append @$rootHtml      
+      $("##{document.canvasID}").append @$rootHtml      
       @rootView.connectChildren()
       @rootView.centerInContainer()
       @rootView.refreshDom()
@@ -89,20 +89,26 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         zoom:=>
           node = @rootView.getElement()
           console.log "zoom:#{@zoomAmount}%"
+
+          #CSS3:
           oldX = node.position().left
           oldY = node.position().top
 
-          node.css 'zoom', "#{@zoomAmount}%"
+          #node.css 'zoom', "#{@zoomAmount}%"
+          #node.effect("scale", {percent:150, origin:['middle','center']}, 500)
+          zoomVar = @zoomAmount/100
+          node.css
+            '-moz-transform'    : "scale(#{zoomVar})"  #/* Firefox */
+            '-webkit-transform' : "scale(#{zoomVar})"  #/* Safari and Chrome */
+            '-ms-transform'     : "scale(#{zoomVar})"  #/* IE 9 */
+            '-o-transform'      : "scale(#{zoomVar})"  #/* Opera */
 
           deltaX = oldX - node.position().left
           deltaY = oldY - node.position().top
-          posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px'
-          posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px'
-          console.log posX
+          posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px' # 1.23 because ?
+          posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px' # 1.09 because ?
           node.css 'left', posX
           node.css 'top' , posY
-
-          jsPlumb.repaintEverything()
 
         zoomCenter:()=>
           @zoomAmount = 100
