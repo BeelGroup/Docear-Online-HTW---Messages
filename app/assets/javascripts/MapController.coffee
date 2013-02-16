@@ -14,7 +14,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       jsPlumb.reset()
       @rootView = new RootNodeView @rootNode
       # remove old html elements
-      $('.root').remove();
+      @rootView.getElement().remove();
       # create and append new html 
       @$rootHtml = $(@rootView.render().el).html()
       $("#mindmap").append @$rootHtml      
@@ -32,7 +32,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
     createJSONMap: (data)=>
       #id, folded, nodeText, containerID, isHTML, xPos, yPos, hGap, shiftY, locked
-      @rootNode = new RootNodeModel(data.root.id, false, data.root.nodeText, document.mindmapID ,data.root.isHtml, 0,0,0,0,false) 
+      @rootNode = new RootNodeModel(data.root.id, false, data.root.nodeText, document.canvasID ,data.root.isHtml, 0,0,0,0,false) 
       
       if data.root.leftChildren != undefined
         leftNodes = getRecursiveChildren(data.root.leftChildren)
@@ -87,27 +87,27 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
         #For Firefox, you can use the -moz-transform property with scale option. -moz-transform : { scale (0.5) }
         zoom:=>
+          node = @rootView.getElement()
           console.log "zoom:#{@zoomAmount}%"
-          oldX = $(".root").position().left
-          oldY = $(".root").position().top
+          oldX = node.position().left
+          oldY = node.position().top
 
-          $(".root").css 'zoom', "#{@zoomAmount}%"
+          node.css 'zoom', "#{@zoomAmount}%"
 
-          deltaX = oldX - $(".root").position().left
-          deltaY = oldY - $(".root").position().top
-          posX = parseFloat($(".root").css('left')) + deltaX*1.23 + 'px'
-          posY = parseFloat($(".root").css('top'))  + deltaY*1.09 + 'px'
-
-          $(".root").css 'left', posX
-          $(".root").css 'top' , posY
+          deltaX = oldX - node.position().left
+          deltaY = oldY - node.position().top
+          posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px'
+          posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px'
+          console.log posX
+          node.css 'left', posX
+          node.css 'top' , posY
 
           jsPlumb.repaintEverything()
 
         zoomCenter:()=>
           @zoomAmount = 100
           @zoomPanel.zoom()
-          $(".root").css 'left', 4000
-          $(".root").css 'top' , 4000
+          @rootView.centerInContainer()
           @canvas.center()
 
 
@@ -117,9 +117,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
         render:->
           @$el.html @template {zoomFactor: 0}
-          @$el.css 'position', 'absolute'
-          @$el.css 'left', '1%'
-          @$el.css 'top', '1%'
+
+          @$el.css 
+            'position' : 'absolute'
+            'left'     : '1%'
+            'top'      : '1%'
           @
 
       @zoomPanel = new zoomPanelView()
@@ -128,7 +130,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
     addCanvas:()->
       MindmapCanvas = Backbone.View.extend
-        id: document.mindmapID
+        id: document.canvasID
         tagName: 'div'
         className: 'ui-draggable'
 
@@ -137,12 +139,12 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             cancel: "a.ui-icon, .node",
             containment: document.viewportID,
             cursor: "move",
-            handle: document.mindmapID
+            handle: document.canvasID
           });
 
         move:(x,y)->
           @$el.css 
-           'left'  : "#{(@$el.css 'left')+x}px",
+           'left'  : "#{(@$el.css 'left')+x}px"
            'top'   : "#{(@$el.css 'top')+y}px"
 
         center:->
@@ -156,7 +158,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           $("##{id}").append(@render().el)
 
           @$el.css 
-            'width' : "#{document.canvasWidth}px" ,
+            'width' : "#{document.canvasWidth}px"
             'height': "#{document.canvasHeight}px"
 
           @center()

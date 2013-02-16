@@ -39,19 +39,15 @@ define ['views/NodeView'], (NodeView) ->
         ) 
 
     centerInContainer: ->
-      container = $('#'+@model.get 'containerID')
       node = $('#'+@model.get 'id')
 
-      halfContainerWidth = $(container).width() / 2
-      halfContainerHeight = $(container).height() / 2
-      halfNodeWidth = $(node).outerWidth() / 2
-      halfNodeHeight = $(node).outerHeight() / 2
+      posX = document.canvasWidth  / 2  - $(node).outerWidth()  / 2
+      posY = document.canvasHeight / 2  - $(node).outerHeight() / 2
+      
+      node.css 'left', posX + 'px'
+      node.css 'top' , posY + 'px'
 
-      pos = 
-        x: halfContainerWidth - halfNodeWidth
-        y: halfContainerHeight - halfNodeHeight
 
-      @model.set 'Pos', pos
 
     render: ->
       @$el.html @template @getRenderData()

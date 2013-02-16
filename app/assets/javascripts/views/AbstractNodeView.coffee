@@ -34,11 +34,12 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       y = (@model.get 'Pos').y
       node = $('#'+@model.get 'id')
 
-      node.css({
-        'position':'absolute', 
-        'top': y + 'px',
-        'left': x+ 'px',
-      })
+      node.css
+        'left'    : x + 'px'
+        'top'     : y + 'px'
+
+    getElement:()->
+      $('#'+@model.get 'id')
 
 
     # define events -> here u can pass informations to the model

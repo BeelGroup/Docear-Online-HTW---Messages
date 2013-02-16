@@ -24,8 +24,6 @@
     changeZoom(e.originalEvent.detail)
     false
   
-  
-  
   $('body').on("mouseenter", ".node", 
     -> 
       $(this).children('i.fold:first, .controls').show()
