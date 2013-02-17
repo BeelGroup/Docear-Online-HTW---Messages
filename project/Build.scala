@@ -16,7 +16,7 @@ object ApplicationBuild extends Build {
       , "cglib" % "cglib" % "2.2.2"
       , "org.seleniumhq.selenium" % "selenium-firefox-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
       , "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.25.0" % "test" //find new versions on http://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
-      , "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.25.0"
+      , "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.25.0" % "test"
       , "com.novocode" % "junit-interface" % "0.9" % "test"
       , "org.reflections" % "reflections" % "0.9.8"//fix for error: NoSuchMethodError: com.google.common.cache.CacheBuilder.maximumSize(I)Lcom/google/common/cache/CacheBuilder;
       , "joda-time" % "joda-time" % "2.1"
@@ -33,9 +33,8 @@ object ApplicationBuild extends Build {
 
     def HandlebarsPrecompileTask(handlebarsJsFilename: String) = {
       val compiler = new sbt.handlebars.HandlebarsCompiler(handlebarsJsFilename)
-      AssetsCompiler("handlebars-precompile", (_ ** "*.handlebars"),
-      handlebarsEntryPoints,
-      { (name, min) => "" + name + ".pre" + (if (min) ".min.js" else ".js") },
+
+      AssetsCompiler("handlebars-precompile", (_ ** "*.handlebars"), handlebarsEntryPoints, { (name, min) => "" + name + ".pre" + (if (min) ".min.js" else ".js") },
       { (handlebarsFile, options) =>
         val (jsSource, dependencies) = compiler.compileDir(handlebarsFile, options)
         // Any error here would be because of Handlebars, not the developer;
