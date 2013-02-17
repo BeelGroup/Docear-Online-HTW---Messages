@@ -62,6 +62,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             children.push newChild
       children
 
+
     appendZoomPanel:()->
       zoomPanelView = Backbone.View.extend
 
@@ -75,6 +76,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           "click #zoom-out"    : "zoomOut"
           "click #zoom-center" : "zoomCenter"
 
+
         zoomIn:=>
           if(@zoomAmount+document.zoomStep <= 300)
             @zoomAmount += document.zoomStep
@@ -85,30 +87,38 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             @zoomAmount -= document.zoomStep
             @zoomPanel.zoom()
 
+
         #For Firefox, you can use the -moz-transform property with scale option. -moz-transform : { scale (0.5) }
         zoom:=>
           node = @rootView.getElement()
           console.log "zoom:#{@zoomAmount}%"
 
           #CSS3:
-          oldX = node.position().left
-          oldY = node.position().top
-
+          possibilities = document.body.style
+          if($.inArray('WebkitTransform', possibilities) or 
+             $.inArray('MozTransform', inpossibilities) or 
+             $.inArray('OTransform', possibilities) or 
+             $.inArray('transform', possibilities))
+            zoomVar = @zoomAmount/100
+            node.css
+              '-moz-transform'    : "scale(#{zoomVar})"  #/* Firefox */
+              '-webkit-transform' : "scale(#{zoomVar})"  #/* Safari and Chrome */
+              '-ms-transform'     : "scale(#{zoomVar})"  #/* IE 9 */
+              '-o-transform'      : "scale(#{zoomVar})"  #/* Opera */
           #node.css 'zoom', "#{@zoomAmount}%"
           #node.effect("scale", {percent:150, origin:['middle','center']}, 500)
-          zoomVar = @zoomAmount/100
-          node.css
-            '-moz-transform'    : "scale(#{zoomVar})"  #/* Firefox */
-            '-webkit-transform' : "scale(#{zoomVar})"  #/* Safari and Chrome */
-            '-ms-transform'     : "scale(#{zoomVar})"  #/* IE 9 */
-            '-o-transform'      : "scale(#{zoomVar})"  #/* Opera */
+          else
+            console.log 'No CSS3'
 
-          deltaX = oldX - node.position().left
-          deltaY = oldY - node.position().top
-          posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px' # 1.23 because ?
-          posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px' # 1.09 because ?
-          node.css 'left', posX
-          node.css 'top' , posY
+
+          #oldX = node.position().left
+          #oldY = node.position().top
+          #deltaX = oldX - node.position().left
+          #deltaY = oldY - node.position().top
+          #posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px' # 1.23 because ?
+          #posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px' # 1.09 because ?
+          #node.css 'left', posX
+          #node.css 'top' , posY
 
         zoomCenter:()=>
           @zoomAmount = 100
@@ -140,6 +150,13 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         tagName: 'div'
         className: 'ui-draggable'
 
+        moreEvents:()=>
+          $('#mindmap').mousewheel (event, delta, deltaX, deltaY)=>
+            #event.stopPropagation()   # not IE
+            #event.cancelBubble = true # IE
+            if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
+            event.preventDefault() 
+
         afterAppend:()->
           @$el.draggable({
             cancel: "a.ui-icon, .node",
@@ -168,6 +185,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             'height': "#{document.canvasHeight}px"
 
           @center()
+          @moreEvents()
           @afterAppend()
 
       @canvas = new MindmapCanvas()
