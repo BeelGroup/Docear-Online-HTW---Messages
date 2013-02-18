@@ -166,7 +166,7 @@ define ['views/AbstractNodeView', 'models/RootNode'], (AbstractNodeView, RootNod
         else
           @model.set 'selected', true
           
-      event.preventDefault()
+        event.preventDefault()
       
       
 
