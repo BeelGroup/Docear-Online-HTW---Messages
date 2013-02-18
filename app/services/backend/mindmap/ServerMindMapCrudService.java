@@ -37,7 +37,7 @@ import play.libs.F.Promise;
 
 @Profile("backendProd")
 @Component
-@Deprecated
+@Deprecated//will be implemented stateless and with Akka Actors
 public class ServerMindMapCrudService extends MindMapCrudServiceBase implements MindMapCrudService {
 	private static Map<String, String> serverIdToMapIdMap = new HashMap<String, String>();
 	

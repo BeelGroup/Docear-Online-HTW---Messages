@@ -15,7 +15,7 @@ import java.util.Set;
 //TODO backend team, what is the task of this class?
 //TODO Play Framework is stateless don't keep state there
 //TODO maybe bad code because of Singleton
-@Deprecated
+@Deprecated//will be implemented stateless and with Akka Actors
 public class ServerMindmapMap {
 	private final Map<URL, Set<String>> serverMapIdMap;
 	private final Map<String, URL> mapIdServerMap;
