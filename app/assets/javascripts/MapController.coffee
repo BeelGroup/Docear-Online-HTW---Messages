@@ -35,11 +35,11 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       @rootNode = new RootNodeModel(data.root.id, false, data.root.nodeText, document.canvasID ,data.root.isHtml, 0,0,0,0,false) 
       
       if data.root.leftChildren != undefined
-        leftNodes = getRecursiveChildren(data.root.leftChildren)
+        leftNodes = getRecursiveChildren(data.root.leftChildren, @rootNode)
         @rootNode.set 'leftChildren', leftNodes
       
       if data.root.rightChildren != undefined
-        rightNodes = getRecursiveChildren(data.root.rightChildren)
+        rightNodes = getRecursiveChildren(data.root.rightChildren, @rootNode)
         @rootNode.set 'rightChildren', rightNodes
 
       @positionNodes()
@@ -47,18 +47,18 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       @rootNode
 
 
-    getRecursiveChildren = (childrenData)->
+    getRecursiveChildren = (childrenData, parent)->
       children = []
       if childrenData.id != undefined && childrenData.id != null
         #id, folded, nodeText, isHTML, xPos, yPos, hGap, shiftY, locked
-        newChild = new NodeModel(childrenData.id, childrenData.folded, childrenData.nodeText, childrenData.isHtml,0,0,0,0,false)
+        newChild = new NodeModel(childrenData.id, childrenData.folded, childrenData.nodeText, childrenData.isHtml,0,0,0,0,false, parent)
         children.push newChild
       else if childrenData != undefined
         for child in childrenData
           if child.nodeText != ""
-            newChild = new NodeModel(child.id, child.folded, child.nodeText, child.isHtml,0,0,0,0,false)
+            newChild = new NodeModel(child.id, child.folded, child.nodeText, child.isHtml,0,0,0,0,false, parent)
             if child.children != undefined
-              newChild.set 'children', getRecursiveChildren(child.children)
+              newChild.set 'children', getRecursiveChildren(child.children, newChild)
             children.push newChild
       children
 
@@ -156,6 +156,8 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             #event.cancelBubble = true # IE
             if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
             event.preventDefault() 
+          $(document).keydown (event)=>
+            @rootView.userKeyInput event
 
         afterAppend:()->
           @$el.draggable({
