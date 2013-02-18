@@ -31,12 +31,14 @@ object ApplicationBuild extends Build {
     val handlebarsOptions = SettingKey[Seq[String]]("ember-options")
     val handlebarsEntryPoints = SettingKey[PathFinder]("ember-entry-points")
 
+    //TODO impove performance: in Play 2.1 the asset compilation mechanism changed, the current implementation compiles
+    // for every handlebars file all other files again
     def HandlebarsPrecompileTask(handlebarsJsFilename: String) = {
       val compiler = new sbt.handlebars.HandlebarsCompiler(handlebarsJsFilename)
 
-      AssetsCompiler("handlebars-precompile", (_ ** "*.handlebars"), handlebarsEntryPoints, { (name, min) => "" + name + ".pre" + (if (min) ".min.js" else ".js") },
+      AssetsCompiler("handlebars-precompile", (_ ** "*.handlebars"), handlebarsEntryPoints, { (name, min) => "javascripts/views/templates.pre" + (if (min) ".min.js" else ".js") },
       { (handlebarsFile, options) =>
-        val (jsSource, dependencies) = compiler.compileDir(handlebarsFile, options)
+        val (jsSource, dependencies) = compiler.compileDir(handlebarsFile.getParentFile, options)
         // Any error here would be because of Handlebars, not the developer;
         // so we don't want compilation to fail.
         import scala.util.control.Exception._
@@ -52,7 +54,7 @@ object ApplicationBuild extends Build {
       coffeescriptOptions := Seq("bare")//coffee script code will not be wrapped in an anonymous function, necessary for tests
       , resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
       , templatesImport += "views.TemplateUtil._"
-      , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates")
+      , handlebarsEntryPoints <<= (sourceDirectory in Compile)(base => base / "assets" / "javascripts" / "views" / "templates" ** "*.handlebars")
       , handlebarsOptions := Seq.empty[String]
       , resourceGenerators in Compile <+= HandlebarsPrecompileTask("handlebars-1.0.rc.1.js")
       , logBuffered in Test := false
