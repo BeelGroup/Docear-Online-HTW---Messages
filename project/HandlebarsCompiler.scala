@@ -120,7 +120,6 @@ var template = Handlebars.template, templates = Handlebars.templates = Handlebar
         }
         else if (file.isFile && name.endsWith(".handlebars")) {
           val templateName = path + name.replace(".handlebars", "")
-          println("ember: processing template %s".format(templateName))
           val jsSource = compile(file, options)
           dependencies += file
           output ++= "templates['%s'] = template(%s);\n\n".format(templateName, jsSource)
