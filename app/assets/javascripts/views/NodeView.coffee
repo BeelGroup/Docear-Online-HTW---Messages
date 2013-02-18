@@ -1,4 +1,4 @@
-define ['views/AbstractNodeView'], (AbstractNodeView) ->
+define ['views/AbstractNodeView', 'models/RootNode'], (AbstractNodeView, RootNode) ->
   module = ->
   
   class NodeView extends AbstractNodeView
@@ -79,12 +79,10 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
         
         $(childrenContainer).css('top', -(totalChildrenHeight/2 - elementHeight/2))
         
-        $(childrenContainer).css('height', totalChildrenHeight+'px');
         if sideOfTree == 'left'
           $(childrenContainer).css('left', -elementWidth+'px')
         else
           $(childrenContainer).css('left', elementWidth+'px');	
-        $(childrenContainer).css('width', (elementWidth+50)+'px');
         
       Math.max(totalChildrenHeight, elementHeight)
 
@@ -102,6 +100,75 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
     leave: (done = ->) ->
       @destroy()
       done()
+
+
+    selectNextChild: (selectedNode, side = 'left')->
+      $selectedNode = $('#'+(selectedNode.get 'id')) 
+      
+      nextNode = null
+      if selectedNode instanceof RootNode
+        if side == 'left'
+          nextNode = selectedNode.getNextLeftChild()
+        else
+          nextNode = selectedNode.getNextRightChild()
+      else
+          nextNode = selectedNode.getNextChild()
+
+      if nextNode != null
+        selectedNode.set 'selected', false
+        nextNode.set 'selected', true
+        return true
+      false
+        
+    selectParent: (selectedNode)->
+      selectedNode.get('parent').set 'selected', true
+      selectedNode.set 'selected', false
+    
+    selectBrother: (selectedNode, next = true)->
+      $selectedNode = $('#'+(selectedNode.get 'id'))
+      if not (selectedNode instanceof RootNode)
+        prevNode = null
+        nextNode = null
+        
+        if next
+          $brother = $($selectedNode).next('.node')
+        else
+          $brother = $($selectedNode).prev('.node')
+        if $($brother).size() > 0
+          id = $($brother).attr('id')
+          selectedNode.get('parent').findById(id).set 'selected', true
+          selectedNode.get('parent').findById(id).set 'previouslySelected', true
+          selectedNode.set 'selected', false
+          selectedNode.set 'previouslySelected', false
+          return true
+      false
+    
+    userKeyInput: (event)->
+      if event.keyCode in [37,38,39,40]
+        selectedNode = @model.getSelectedNode()
+        if selectedNode != null
+          $selectedNode = $('#'+(selectedNode.get 'id')) 
+          switch event.keyCode
+            when 37 #LEFT
+              if $($selectedNode).hasClass('right')  
+                @selectParent selectedNode
+              else
+                @selectNextChild selectedNode, 'left'
+            when 38 #TOP
+              @selectBrother selectedNode, false
+            when 39 #RIGHT
+              if $($selectedNode).hasClass('left')  
+                @selectParent selectedNode
+              else
+                @selectNextChild selectedNode, 'right'
+            when 40 #DOWN
+              @selectBrother selectedNode, true
+        else
+          @model.set 'selected', true
+          
+      event.preventDefault()
+      
+      
 
 
   module.exports = NodeView

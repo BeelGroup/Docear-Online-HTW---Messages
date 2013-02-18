@@ -21,8 +21,8 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
     constructor: (@model) ->
       super()
       id: @model.get 'id'
-      @model.bind "change:locked",@changeLockStatus , @       
-
+      @model.bind "change:locked",@changeLockStatus , @   
+      @model.bind "change:selected",@changeSelectStatus , @   
 
     PosToModel: ->
       # TODO: Event will not be called on change
@@ -60,6 +60,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
           @$('.changeable').attr('disabled', 'disabled')
       else
         @$('.changeable').removeAttr('disabled')
+    
+    changeSelectStatus: ->
+      $('#'+@model.id).toggleClass('selected')
 
     # [Debugging] 
     printModel: ->      
