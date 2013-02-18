@@ -43,8 +43,7 @@ public class Application extends Controller {
              /* this currently looks like errors in IntelliJ IDEA */
             Routes.javascriptRouter("jsRoutes",
                     routes.javascript.MindMap.map(),
-                    routes.javascript.MindMap.mapListFromDB(),
-                    routes.javascript.MindMap.closeMap()
+                    routes.javascript.MindMap.mapListFromDB()
             )
         );
     }
