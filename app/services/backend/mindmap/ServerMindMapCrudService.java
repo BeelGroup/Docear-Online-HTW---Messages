@@ -10,10 +10,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,16 +33,16 @@ import play.libs.Akka;
 import play.libs.F;
 import play.libs.WS;
 import util.backend.ZipUtils;
-import scala.concurrent.duration.Duration;
+import play.libs.F.Promise;
 
 @Profile("backendProd")
 @Component
+@Deprecated
 public class ServerMindMapCrudService extends MindMapCrudServiceBase implements MindMapCrudService {
 	private static Map<String, String> serverIdToMapIdMap = new HashMap<String, String>();
 	
     @Override
-    public JsonNode mindMapAsJson(String id) throws DocearServiceException, IOException {
-    	super.mindMapAsJson(id);
+    public Promise<JsonNode>  mindMapAsJson(String id) throws DocearServiceException, IOException {
     	String mindmapId = serverIdToMapIdMap.get(id);
         URL serverUrl = null;
         if(mindmapId == null) { //if not hosted, send to a server
@@ -61,29 +58,11 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         if(response.getStatus() != 200) {
             throw new IOException("couldn't obtain mind map from server. Response code: " + response.getStatus());
         }
-        return response.asJson();
+        return Promise.pure(response.asJson());
     }
 
     @Override
-    public File mapTest() throws IOException {
-        User user = new User("alschwank", "05CC18009CCAF1EC07C91C4C85FD57E9");
-        return getMindMapFileFromDocearServer(user, "103805");
-    }
-
-    @Override
-    public void closeMap(String id) throws IOException {
-        URL serverUrl = ServerMindmapMap.getInstance().remove(id);
-        if(serverUrl == null) {
-            throw new IOException("Map is not open");
-        }
-        WS.Response response = WS.url(serverUrl.toString()+"/map/"+id).delete().get();
-        if(response.getStatus() != 200) {
-            throw new IOException("can't close map");
-        }
-    }
-
-    @Override
-    public UserMindmapInfo[] getListOfMindMapsFromUser(User user) throws IOException {
+    public Promise<List<UserMindmapInfo>> getListOfMindMapsFromUser(User user) throws IOException {
     	if(user == null) {
     		throw new NullPointerException("user cannot be null");
     	}
@@ -102,8 +81,7 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
             infos.add(info);
         }
         
-        return infos.toArray(new UserMindmapInfo[0]);
-        //return toJson(infos);
+        return Promise.pure(Arrays.asList(infos.toArray(new UserMindmapInfo[0])));
     }
 
     private static URL sendMapToDocearInstance(String mapId) throws NoUserLoggedInException {
@@ -164,12 +142,6 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         return false;
     }
 
-    /**
-     * retrieves a mindmap from the server
-     * @param user 
-     * @param mapId
-     * @return .mm-file or null on failure
-     */
     private static File getMindMapFileFromDocearServer(final User user, final String mmIdOnServer) throws IOException {
         String docearServerAPIURL = "https://api.docear.org/user";
 
@@ -183,30 +155,6 @@ public class ServerMindMapCrudService extends MindMapCrudServiceBase implements 
         	return null;
         }
         	
-    }
-
-    private static class StreamLogger implements Runnable {
-        private final BufferedReader in;
-        private final String prefix;
-
-        public StreamLogger(InputStream in, String prefix) {
-            this.in = new BufferedReader(new InputStreamReader(in));
-            this.prefix = prefix;
-        }
-
-        @Override
-        public void run() {
-            String line;
-            try {
-                while((line = in.readLine()) != null) {
-                    Logger.info(prefix+": "+line);
-                }
-            } catch (Exception e) {
-                Logger.trace(prefix+": "+"Error!", e);
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-        }
     }
     
     private static String getMapIdFromFile(File mindmapFile) {

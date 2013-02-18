@@ -18,8 +18,6 @@ GET     /qunit                      controllers.QUnit.testAll()
 # Mindmap
 GET		/map/json/:id				@controllers.MindMap.map(id: String)
 GET		/maps			    		@controllers.MindMap.mapListFromDB()
-GET		/map/close/:id				@controllers.MindMap.closeMap(id: String)
-GET		/map/test					@controllers.MindMap.mapTest()
 
 # User
 POST	/login						@controllers.User.login()
