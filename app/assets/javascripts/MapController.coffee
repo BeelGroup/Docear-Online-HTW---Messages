@@ -157,7 +157,8 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
             event.preventDefault() 
           $(document).keydown (event)=>
-            @rootView.userKeyInput event
+            if @rootView
+              @rootView.userKeyInput event
 
         afterAppend:()->
           @$el.draggable({
