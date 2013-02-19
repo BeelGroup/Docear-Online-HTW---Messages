@@ -1,11 +1,11 @@
-define ['views/AbstractNodeView'], (AbstractNodeView) ->
+define ['views/AbstractNodeView', 'models/RootNode'], (AbstractNodeView, RootNode) ->
   module = ->
   
   class NodeView extends AbstractNodeView
 
     template: Handlebars.templates['Node']
 
-    initialize: (model) ->
+    constructor: (model) ->
       super model
 
 
@@ -13,12 +13,12 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
       $.each(nodes, (index, node)=>
         nodeView = new NodeView(node)
         $nodeHtml = $($(nodeView.render().el).html())
-        $('#'+@model.get 'containerID').append($nodeHtml)
+        $(parent).append($nodeHtml)
+        
         children = node.get 'children'
         if children != undefined
-          @recursiveRender(nodeView, children)
-      )
-
+          @recursiveRender($nodeHtml.find('.children:first'), children)
+      )      
     
     adjustNodeHierarchy: (parent, children, treeIdentifier)->
       parentId = parent.get 'id'
@@ -36,45 +36,55 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
       )
       
       
-    getCenterCoordinates: (id) ->
-      $element = $('#'+id)
-      left = $element.position().left + $element.width() / 2
-      top = $element.position().top + $element.height() / 2
-      top: top, left: left
+    getCenterCoordinates: ($element) ->
+      leftCenter = $element.position().left + $element.width() / 2
+      topCenter = $element.position().top + $element.height() / 2
+      top: topCenter, left: leftCenter
 
     
-    alignChildrenofElementWithID:(id) ->
-      element = $('#'+id)
-      $children = $(element).children('.children').children('.node')
+    alignChildrenofElement:(childrenContainer, sideOfTree, i = 1) ->
+      element = $(childrenContainer).parent()
+      $children = $(childrenContainer).children('.node')
       elementHeight = $(element).outerHeight()
       elementWidth = $(element).outerWidth()
       heightOfChildren = {}
-      parentCenterTop = @getCenterCoordinates(id).top
+      parentCenterTop = @getCenterCoordinates(element).top
 
-      currentLeftTop = currentRightTop = currentTop = 0
-
+      currentTop = 0
+      
+      totalChildrenHeight = 0
       if $children.length > 0
         for child in $children
-          childHeight = @alignChildrenofElementWithID(child.id) 
-          heightOfChildren[$(child).attr('id')] = childHeight + @verticalSpacer
+          childHeight = @alignChildrenofElement($(child).children('.children'), sideOfTree, i+1)
+          heightOfChildren[$(child).attr('id')] = childHeight
         
         lastChild = null
         for child in $children
-          ##$(child).css('border', '3px dotted #0000FF')
-          if $(child).hasClass('leftTree')
+          totalChildrenHeight += heightOfChildren[$(child).attr('id')] + @verticalSpacer
+          if lastChild == null
+            currentTop = -$(child).outerHeight()/2
+          currentTop += heightOfChildren[$(child).attr('id')]/2
+          $(child).css('top', currentTop)
+          
+          if sideOfTree == 'left'
+            $(child).addClass('left')
             $(child).css('left', -$(child).outerWidth() - @horizontalSpacer)
-            $(child).css('top', currentLeftTop)
-            currentLeftTop = currentLeftTop + heightOfChildren[$(child).attr('id')]
           else
-            $(child).css('left', elementWidth + @horizontalSpacer) 
-            $(child).css('top', currentRightTop)
-            currentRightTop = currentRightTop + heightOfChildren[$(child).attr('id')]
+            $(child).addClass('right')	
+            $(child).css('left', @horizontalSpacer) 
           lastChild = child
-
-        currentTop = Math.max(currentRightTop, currentLeftTop) + heightOfChildren[$(lastChild).attr('id')]
-        $(element).children('.children:first').css('top', -currentTop/2 + elementHeight/2)
-      
-      Math.max(currentTop, elementHeight)
+          currentTop += heightOfChildren[$(child).attr('id')]/2 + @verticalSpacer
+        # to correct the addition on the last run we subtract the last added height
+        currentTop = currentTop - heightOfChildren[$(lastChild).attr('id')] - @verticalSpacer
+        
+        $(childrenContainer).css('top', -(totalChildrenHeight/2 - elementHeight/2))
+        
+        if sideOfTree == 'left'
+          $(childrenContainer).css('left', -elementWidth+'px')
+        else
+          $(childrenContainer).css('left', elementWidth+'px');	
+        
+      Math.max(totalChildrenHeight, elementHeight)
 
 
     destroy: ->
@@ -90,6 +100,75 @@ define ['views/AbstractNodeView'], (AbstractNodeView) ->
     leave: (done = ->) ->
       @destroy()
       done()
+
+
+    selectNextChild: (selectedNode, side = 'left')->
+      $selectedNode = $('#'+(selectedNode.get 'id')) 
+      
+      nextNode = null
+      if selectedNode instanceof RootNode
+        if side == 'left'
+          nextNode = selectedNode.getNextLeftChild()
+        else
+          nextNode = selectedNode.getNextRightChild()
+      else
+          nextNode = selectedNode.getNextChild()
+
+      if nextNode != null
+        selectedNode.set 'selected', false
+        nextNode.set 'selected', true
+        return true
+      false
+        
+    selectParent: (selectedNode)->
+      selectedNode.get('parent').set 'selected', true
+      selectedNode.set 'selected', false
+    
+    selectBrother: (selectedNode, next = true)->
+      $selectedNode = $('#'+(selectedNode.get 'id'))
+      if not (selectedNode instanceof RootNode)
+        prevNode = null
+        nextNode = null
+        
+        if next
+          $brother = $($selectedNode).next('.node')
+        else
+          $brother = $($selectedNode).prev('.node')
+        if $($brother).size() > 0
+          id = $($brother).attr('id')
+          selectedNode.get('parent').findById(id).set 'selected', true
+          selectedNode.get('parent').findById(id).set 'previouslySelected', true
+          selectedNode.set 'selected', false
+          selectedNode.set 'previouslySelected', false
+          return true
+      false
+    
+    userKeyInput: (event)->
+      if event.keyCode in [37,38,39,40]
+        selectedNode = @model.getSelectedNode()
+        if selectedNode != null
+          $selectedNode = $('#'+(selectedNode.get 'id')) 
+          switch event.keyCode
+            when 37 #LEFT
+              if $($selectedNode).hasClass('right')  
+                @selectParent selectedNode
+              else
+                @selectNextChild selectedNode, 'left'
+            when 38 #TOP
+              @selectBrother selectedNode, false
+            when 39 #RIGHT
+              if $($selectedNode).hasClass('left')  
+                @selectParent selectedNode
+              else
+                @selectNextChild selectedNode, 'right'
+            when 40 #DOWN
+              @selectBrother selectedNode, true
+        else
+          @model.set 'selected', true
+          
+        event.preventDefault()
+      
+      
 
 
   module.exports = NodeView

@@ -18,12 +18,11 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
 
 
     # a.k.a. constructor
-    initialize: (@model) ->
+    constructor: (@model) ->
       super()
       id: @model.get 'id'
-
-      @model.bind "change:locked",@changeLockStatus , @       
-
+      @model.bind "change:locked",@changeLockStatus , @   
+      @model.bind "change:selected",@changeSelectStatus , @   
 
     PosToModel: ->
       # TODO: Event will not be called on change
@@ -35,11 +34,12 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
       y = (@model.get 'Pos').y
       node = $('#'+@model.get 'id')
 
-      node.css({
-        'position':'absolute', 
-        'top': x + 'px',
-        'left': y+ 'px',
-      })
+      node.css
+        'left'    : x + 'px'
+        'top'     : y + 'px'
+
+    getElement:()->
+      $('#'+@model.get 'id')
 
 
     # define events -> here u can pass informations to the model
@@ -60,6 +60,9 @@ define ['models/Node', 'views/SyncedView', 'views/HtmlView'], (nodeModel, Synced
           @$('.changeable').attr('disabled', 'disabled')
       else
         @$('.changeable').removeAttr('disabled')
+    
+    changeSelectStatus: ->
+      $('#'+@model.id).toggleClass('selected')
 
     # [Debugging] 
     printModel: ->      

@@ -18,10 +18,12 @@ define ['collections/ChildNodes'], (ChildNodes)->
       @set 'hGap', hGap
       @set 'shiftY', shiftY
       @set 'locked', locked
+      
+      @set 'selected', false
+      @set 'previouslySelected', false
       ## THROW events on all (also possible: save/update/change)
       #@on 'all', (event) -> console.log "Event: " + event
       @sup = AbstractNode.__super__
-      @children = new ChildNodes()
 
     # will be set to /map/json/id, when fetch() or update() will be called
     urlRoot: '/map/json/' #TODO replace with jsRoutes command
@@ -53,8 +55,42 @@ define ['collections/ChildNodes'], (ChildNodes)->
       error: (model, response) ->
         editor.log "Error: #{response.status} #{response.statusText}"
 
-    
-
+    getNextChild: (children = (@get('children')))->
+      nextChild = null
+      getNext = false
+      for child in (children)
+        if nextChild == null
+          nextChild = child
+        else if child.get 'previouslySelected'
+          nextChild = child
+      nextChild
       
-
+    getSelectedNode: ->
+      nodes = []
+      nodes = $.merge(nodes, @get('children').slice()  )
+      
+      if @get 'selected'
+        return @
+      else
+        # used to be recursive via child.getSelectedNode() but could create mem problems
+        while node = nodes.shift()
+          if node.get 'selected'
+            return node
+          else 
+            nodes = $.merge(nodes, node.get('children').slice()  )
+      return null
+        
+    findById: (id)->
+      nodes = []
+      nodes = $.merge(nodes, @get('children').slice()  )
+      if @get 'id' == id
+        return @
+      else 
+        while node = nodes.shift()
+          if node.get('id') == id
+            return node
+          else
+            nodes = $.merge(nodes, node.get('children').slice())
+      return null
+    
   module.exports = AbstractNode
