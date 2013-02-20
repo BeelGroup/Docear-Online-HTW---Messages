@@ -6,7 +6,8 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
     constructor:->
       @addCanvas()
-      @appendZoomPanel()
+      @addZoomPanel()
+      @addMinimap()
       @zoomAmount = 100
 
 
@@ -63,7 +64,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
       children
 
 
-    appendZoomPanel:()->
+    addZoomPanel:()->
       zoomPanelView = Backbone.View.extend
 
         id: 'zoomPanel'
@@ -215,38 +216,52 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             event.preventDefault() 
 
         afterAppend:()->
-          @$el.draggable({
+          $("##{document.minimapViewportID}").draggable({
             cancel: "a.ui-icon, .node",
-            containment: document.viewportID,
+            containment: "parent",
             cursor: "move",
-            handle: document.canvasID
+            drag: (event, ui)->
+              xPos = document.canvasWidth*ui.position.left/100 - $("##{document.viewportID}").width()/2
+              yPos = document.canvasHeight*ui.position.top/100 - $("##{document.viewportID}").height()/2
+              $("##{document.canvasID}").css 
+                'left'  : "#{-xPos}px",
+                'top'   : "#{-yPos}px"
+              console.log ui.position
           });
 
-        move:(x,y)->
-          @$el.css 
-           'left'  : "#{(@$el.css 'left')+x}px"
-           'top'   : "#{(@$el.css 'top')+y}px"
-
-        center:->
-          xPos = document.canvasWidth/2 - $("##{document.viewportID}").width()/2
-          yPos = document.canvasHeight/2 - $("##{document.viewportID}").height()/2
-          @$el.css 
-           'left'  : "#{-xPos}px",
-           'top'   : "#{-yPos}px"
 
         renderAndAppendTo:(id)->
-          $("##{id}").append(@render().el)
+          $viewport = $("##{document.viewportID}")
+          $canvas = $("##{document.canvasID}")
+          # TODO: posistion cavas -> position viewport in minimap
+          posX = ((parseFloat($canvas.css('left')) - $("##{document.viewportID}").width()  + document.canvasWidth ) / document.canvasWidth  ) * 100
+          posY = ((parseFloat($canvas.css('top'))  - $("##{document.viewportID}").height() + document.canvasHeight) / document.canvasHeight ) * 100
+          stats = 
+            width: $viewport.width() / 70
+            height: $viewport.height() / 70
+            left: posX
+            top:  posY
+
+
+
+
+          @$el.html @template stats
+          $("##{id}").append(@el)
 
           @$el.css 
-            'width' : "#{document.canvasWidth}px"
-            'height': "#{document.canvasHeight}px"
+            'position' : 'absolute'
+            'background-color':'rgba(190,190,190, 0.6)'
+            'left'     : '90%'
+            'top'      : '1%'
+            'width'    : document.canvasWidth / 70
+            'height'   : document.canvasHeight / 70
+          @
 
-          @center()
           @moreEvents()
           @afterAppend()
 
-      @canvas = new MindmapCanvas()
-      @canvas.renderAndAppendTo(document.viewportID)      
+      @minimap = new MindmapMinimap()
+      @minimap.renderAndAppendTo(document.viewportID)      
 
 
 
