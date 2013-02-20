@@ -87,8 +87,6 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
             @zoomAmount -= document.zoomStep
             @zoomPanel.zoom()
 
-
-        #For Firefox, you can use the -moz-transform property with scale option. -moz-transform : { scale (0.5) }
         zoom:=>
           node = @rootView.getElement()
           console.log "zoom:#{@zoomAmount}%"
@@ -110,15 +108,6 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           else
             console.log 'No CSS3'
 
-
-          #oldX = node.position().left
-          #oldY = node.position().top
-          #deltaX = oldX - node.position().left
-          #deltaY = oldY - node.position().top
-          #posX = parseFloat(node.css('left')) + deltaX*1.23 + 'px' # 1.23 because ?
-          #posY = parseFloat(node.css('top'))  + deltaY*1.09 + 'px' # 1.09 because ?
-          #node.css 'left', posX
-          #node.css 'top' , posY
 
         zoomCenter:()=>
           @zoomAmount = 100
@@ -151,7 +140,7 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
         className: 'ui-draggable'
 
         moreEvents:()=>
-          $('#mindmap').mousewheel (event, delta, deltaX, deltaY)=>
+          $("##{document.canvasID}").mousewheel (event, delta, deltaX, deltaY)=>
             #event.stopPropagation()   # not IE
             #event.cancelBubble = true # IE
             if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
@@ -190,6 +179,56 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
       @canvas = new MindmapCanvas()
       @canvas.renderAndAppendTo(document.viewportID)
+
+
+
+    addMinimap:()->
+      MindmapMinimap = Backbone.View.extend
+        id: document.minimapCanvasID
+        tagName: 'div'
+        className: 'minimap-canvas'
+        template: Handlebars.templates['Minimap']
+
+        moreEvents:()=>
+          $("##{document.canvasID}").mousewheel (event, delta, deltaX, deltaY)=>
+            #event.stopPropagation()   # not IE
+            #event.cancelBubble = true # IE
+            if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
+            event.preventDefault() 
+
+        afterAppend:()->
+          @$el.draggable({
+            cancel: "a.ui-icon, .node",
+            containment: document.viewportID,
+            cursor: "move",
+            handle: document.canvasID
+          });
+
+        move:(x,y)->
+          @$el.css 
+           'left'  : "#{(@$el.css 'left')+x}px"
+           'top'   : "#{(@$el.css 'top')+y}px"
+
+        center:->
+          xPos = document.canvasWidth/2 - $("##{document.viewportID}").width()/2
+          yPos = document.canvasHeight/2 - $("##{document.viewportID}").height()/2
+          @$el.css 
+           'left'  : "#{-xPos}px",
+           'top'   : "#{-yPos}px"
+
+        renderAndAppendTo:(id)->
+          $("##{id}").append(@render().el)
+
+          @$el.css 
+            'width' : "#{document.canvasWidth}px"
+            'height': "#{document.canvasHeight}px"
+
+          @center()
+          @moreEvents()
+          @afterAppend()
+
+      @canvas = new MindmapCanvas()
+      @canvas.renderAndAppendTo(document.viewportID)      
 
 
 
