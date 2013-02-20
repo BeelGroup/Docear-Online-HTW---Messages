@@ -77,17 +77,20 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
           "click #zoom-center" : "zoomCenter"
 
 
-        zoomIn:=>
+        zoomIn:(event, shift ='x' : 0, 'y' : 0)=>
           if(@zoomAmount+document.zoomStep <= 300)
             @zoomAmount += document.zoomStep
-            @zoomPanel.zoom()
+            if(shift.x != 0 or shift.y != 0)
+              negativeShift = 'x': -shift.x, 'y': -shift.y
+            @zoomPanel.zoom(event, negativeShift)
+            
 
-        zoomOut:=>
+        zoomOut:(event, shift)=>
           if(@zoomAmount-document.zoomStep >= 50)
             @zoomAmount -= document.zoomStep
-            @zoomPanel.zoom()
+            @zoomPanel.zoom(event, shift)
 
-        zoom:=>
+        zoom:(event, shift = 'x':0, 'y':0)=>
           node = @rootView.getElement()
           console.log "zoom:#{@zoomAmount}%"
 
@@ -97,6 +100,13 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
              $.inArray('MozTransform', inpossibilities) or 
              $.inArray('OTransform', possibilities) or 
              $.inArray('transform', possibilities))
+            if(shift.x != 0 or shift.y != 0)
+              console.log shift
+              $canvas = $("##{document.canvasID}")
+              posX = parseFloat($canvas.css('left')) + shift.x/7 + 'px' 
+              posY = parseFloat($canvas.css('top'))  + shift.y/5 + 'px' 
+              $canvas.css 'left', posX
+              $canvas.css 'top' , posY
             zoomVar = @zoomAmount/100
             node.css
               '-moz-transform'    : "scale(#{zoomVar})"  #/* Firefox */
@@ -141,10 +151,15 @@ define ['routers/DocearRouter', 'views/RootNodeView', 'views/NodeView', 'views/H
 
         moreEvents:()=>
           $("##{document.canvasID}").mousewheel (event, delta, deltaX, deltaY)=>
-            #event.stopPropagation()   # not IE
-            #event.cancelBubble = true # IE
-            if deltaY > 0 then @zoomPanel.zoomIn() else @zoomPanel.zoomOut()
+            $viewport = $("##{document.viewportID}")          
+            $right = $(".rightChildren")
+            console.log $right
+            x = event.pageX - $viewport.offset().left - $viewport.width()/2
+            y = event.pageY - $viewport.offset().top - $viewport.height()/2
+            shift = 'x': x, 'y': y
+            if deltaY > 0 then @zoomPanel.zoomIn(event, shift) else @zoomPanel.zoomOut(event, shift)
             event.preventDefault() 
+
           $(document).keydown (event)=>
             if @rootView
               @rootView.userKeyInput event
