@@ -1,4 +1,4 @@
 set -x
 
-export xsbt="java -Xms600M -Xmx600M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=600M  -jar sbtwrapper/sbt-launch.jar -Dsbt.log.noformat=true"
+export xsbt="java -Xmx1024M -Xss10M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=1024M  -jar sbtwrapper/sbt-launch.jar -Dsbt.log.noformat=true"
 $xsbt clean test
