@@ -9,3 +9,4 @@ It should not have dependencies to Play or Freeplane.
 
 # Packaging
 * `sbt package`
+* inclusion in Play project: put the jar into the lib folder
