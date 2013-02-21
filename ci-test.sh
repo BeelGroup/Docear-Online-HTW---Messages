@@ -1,3 +1,3 @@
 set -x
 
-./sbt clean test publish-local 
+./sbt -Dsbt.log.noformat=true clean test publish-local 
