@@ -29,6 +29,7 @@ object ApplicationBuild extends Build {
         , javaEbean
         , "org.webjars" % "webjars-play" % "2.1.0"
         , "org.webjars" % "bootstrap" % "2.1.1"
+        , "com.typesafe.akka" %% "akka-remote" % "2.1.0"
       )
     }
 
