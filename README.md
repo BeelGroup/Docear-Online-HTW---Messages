@@ -8,7 +8,4 @@ It should not have dependencies to Play or Freeplane.
 * Eclipse: `sbt eclipse`
 
 # Packaging
-* `sbt one-jar`
-
-# Publishing
-* local: `sbt publish-local`
+* `sbt package`
