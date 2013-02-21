@@ -9,3 +9,6 @@ It should not have dependencies to Play or Freeplane.
 
 # Packaging
 * `sbt one-jar`
+
+# Publishing
+* local: `sbt publish-local`
