@@ -197,15 +197,15 @@ public class Messages {
 	}
 
 	public static class OpenMindMapRequest implements Serializable {
-		final private File mindmapFile;
+		final private String mindmapFileContent;
 
-		public OpenMindMapRequest(File mindmapFile) {
+		public OpenMindMapRequest(String mindmapFileContent) {
 			super();
-			this.mindmapFile = mindmapFile;
+			this.mindmapFileContent = mindmapFileContent;
 		}
 
-		public File getMindmapFile() {
-			return mindmapFile;
+		public String getMindmapFileContent() {
+			return mindmapFileContent;
 		}
 	}
 
