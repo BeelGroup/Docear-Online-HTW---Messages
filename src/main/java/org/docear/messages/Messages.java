@@ -315,4 +315,20 @@ public class Messages {
 			return expiredNodesAsJSON;
 		}
 	}
+	
+	public static class CloseUnusedMaps implements Serializable {
+		private final long unusedSinceInMs;
+		
+		public CloseUnusedMaps() {
+			unusedSinceInMs = 600000; // 10 minutes
+		}
+		
+		public CloseUnusedMaps(long timeInMillis) {
+			unusedSinceInMs = timeInMillis;
+		}
+
+		public long getUnusedSinceInMs() {
+			return unusedSinceInMs;
+		}
+	}
 }
