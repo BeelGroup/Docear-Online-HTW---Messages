@@ -10,4 +10,8 @@ public class LockNotFoundException extends Exception {
     public LockNotFoundException(String s) {
         super(s);
     }
+    
+    public LockNotFoundException(String message, Throwable cause) {
+		super(message,cause);
+	}
 }

@@ -10,4 +10,8 @@ public class NodeAlreadyLockedException extends Exception {
     public NodeAlreadyLockedException(String message) {
         super(message);
     }
+    
+    public NodeAlreadyLockedException(String message, Throwable cause) {
+		super(message,cause);
+	}
 }

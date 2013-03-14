@@ -6,4 +6,8 @@ public class MapNotFoundException extends Exception {
     public MapNotFoundException(String s) {
         super(s);
     }
+    
+    public MapNotFoundException(String message, Throwable cause) {
+		super(message,cause);
+	}
 }
