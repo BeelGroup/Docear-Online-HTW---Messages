@@ -333,4 +333,31 @@ public class Messages {
 			return unusedSinceInMs;
 		}
 	}
+	
+	public static class ListenToUpdateOccurrenceRequest implements Serializable {
+		private final String mapId;
+
+
+		public ListenToUpdateOccurrenceRequest(String mapId) {
+			this.mapId = mapId;
+		}
+
+		public String getMapId() {
+			return mapId;
+		}
+		
+	}
+	
+	public static class ListenToUpdateOccurrenceRespone implements Serializable {
+		private final Boolean result;
+
+		public ListenToUpdateOccurrenceRespone(Boolean result) {
+			super();
+			this.result = result;
+		}
+
+		public Boolean getResult() {
+			return result;
+		}
+	}
 }
