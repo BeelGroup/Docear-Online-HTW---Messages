@@ -68,10 +68,12 @@ public class Messages {
 	public static class RemoveNodeRequest implements Serializable {
 		private final String mapId;
 		private final String nodeId;
+		private final String username;
 
-		public RemoveNodeRequest(String mapId, String nodeId) {
+		public RemoveNodeRequest(String mapId, String nodeId, String username) {
 			this.mapId = mapId;
 			this.nodeId = nodeId;
+			this.username = username;
 		}
 
 		public String getMapId() {
@@ -81,6 +83,11 @@ public class Messages {
 		public String getNodeId() {
 			return nodeId;
 		}
+
+		public String getUsername() {
+			return username;
+		}
+
 	}
 
 	public static class RemoveNodeResponse implements Serializable {
@@ -100,11 +107,13 @@ public class Messages {
 	public static class AddNodeRequest implements Serializable {
 		private final String mapId;
 		private final String parentNodeId;
+		private final String username;
 
-		public AddNodeRequest(String mapId, String parentNodeId) {
+		public AddNodeRequest(String mapId, String parentNodeId, String username) {
 			super();
 			this.mapId = mapId;
 			this.parentNodeId = parentNodeId;
+			this.username = username;
 		}
 
 		public String getMapId() {
@@ -114,6 +123,11 @@ public class Messages {
 		public String getParentNodeId() {
 			return parentNodeId;
 		}
+
+		public String getUsername() {
+			return username;
+		}
+
 	}
 
 	public static class AddNodeResponse implements Serializable {
@@ -132,10 +146,13 @@ public class Messages {
 	public static class ChangeNodeRequest implements Serializable {
 		final private String mapId;
 		final private String nodeAsJsonString;
+		private final String username;
 
-		public ChangeNodeRequest(String mapId, String nodeAsJsonString) {
+		public ChangeNodeRequest(String mapId, String nodeAsJsonString,
+				String username) {
 			this.mapId = mapId;
 			this.nodeAsJsonString = nodeAsJsonString;
+			this.username = username;
 		}
 
 		public String getMapId() {
@@ -145,6 +162,11 @@ public class Messages {
 		public String getNodeAsJsonString() {
 			return nodeAsJsonString;
 		}
+
+		public String getUsername() {
+			return username;
+		}
+
 	}
 
 	public static class ChangeNodeResponse implements Serializable {
@@ -241,44 +263,44 @@ public class Messages {
 		}
 	}
 
-	public static class RefreshLockRequest implements Serializable {
-		private final String mapId;
-		private final String nodeId;
-		private final String username;
-
-		public RefreshLockRequest(String mapId, String nodeId, String username) {
-			super();
-			this.mapId = mapId;
-			this.nodeId = nodeId;
-			this.username = username;
-		}
-
-		public String getMapId() {
-			return mapId;
-		}
-
-		public String getNodeId() {
-			return nodeId;
-		}
-		
-		public String getUsername() {
-			return username;
-		}
-	}
-
-	public static class RefreshLockResponse implements Serializable {
-		private final Boolean lockRefreshed;
-
-		public RefreshLockResponse(Boolean lockRefreshed) {
-			super();
-			this.lockRefreshed = lockRefreshed;
-		}
-
-		public Boolean getLockRefreshed() {
-			return lockRefreshed;
-		}
-
-	}
+	// public static class RefreshLockRequest implements Serializable {
+	// private final String mapId;
+	// private final String nodeId;
+	// private final String username;
+	//
+	// public RefreshLockRequest(String mapId, String nodeId, String username) {
+	// super();
+	// this.mapId = mapId;
+	// this.nodeId = nodeId;
+	// this.username = username;
+	// }
+	//
+	// public String getMapId() {
+	// return mapId;
+	// }
+	//
+	// public String getNodeId() {
+	// return nodeId;
+	// }
+	//
+	// public String getUsername() {
+	// return username;
+	// }
+	// }
+	//
+	// public static class RefreshLockResponse implements Serializable {
+	// private final Boolean lockRefreshed;
+	//
+	// public RefreshLockResponse(Boolean lockRefreshed) {
+	// super();
+	// this.lockRefreshed = lockRefreshed;
+	// }
+	//
+	// public Boolean getLockRefreshed() {
+	// return lockRefreshed;
+	// }
+	//
+	// }
 
 	public static class RequestLockRequest implements Serializable {
 		private final String mapId;
@@ -343,7 +365,7 @@ public class Messages {
 		public String getNodeId() {
 			return nodeId;
 		}
-		
+
 		public String getUsername() {
 			return username;
 		}
@@ -368,37 +390,37 @@ public class Messages {
 		}
 	}
 
-	public static class GetExpiredLocksRequest implements Serializable {
-		private final String mapId;
-		private final int deltaTimeInMs;
-
-		public GetExpiredLocksRequest(String mapId, int deltaTimeInMs) {
-			super();
-			this.mapId = mapId;
-			this.deltaTimeInMs = deltaTimeInMs;
-		}
-
-		public String getMapId() {
-			return mapId;
-		}
-
-		public int getDeltaTimeInMs() {
-			return deltaTimeInMs;
-		}
-	}
-
-	public static class GetExpiredLocksResponse implements Serializable {
-		private final String expiredNodesAsJSON;
-
-		public GetExpiredLocksResponse(String expiredNodesAsJSON) {
-			super();
-			this.expiredNodesAsJSON = expiredNodesAsJSON;
-		}
-
-		public String getExpiredNodesAsJSON() {
-			return expiredNodesAsJSON;
-		}
-	}
+	// public static class GetExpiredLocksRequest implements Serializable {
+	// private final String mapId;
+	// private final int deltaTimeInMs;
+	//
+	// public GetExpiredLocksRequest(String mapId, int deltaTimeInMs) {
+	// super();
+	// this.mapId = mapId;
+	// this.deltaTimeInMs = deltaTimeInMs;
+	// }
+	//
+	// public String getMapId() {
+	// return mapId;
+	// }
+	//
+	// public int getDeltaTimeInMs() {
+	// return deltaTimeInMs;
+	// }
+	// }
+	//
+	// public static class GetExpiredLocksResponse implements Serializable {
+	// private final String expiredNodesAsJSON;
+	//
+	// public GetExpiredLocksResponse(String expiredNodesAsJSON) {
+	// super();
+	// this.expiredNodesAsJSON = expiredNodesAsJSON;
+	// }
+	//
+	// public String getExpiredNodesAsJSON() {
+	// return expiredNodesAsJSON;
+	// }
+	// }
 
 	public static class CloseUnusedMaps implements Serializable {
 		private final long unusedSinceInMs;
