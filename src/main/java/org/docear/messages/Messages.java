@@ -83,6 +83,20 @@ public class Messages {
 		}
 	}
 
+	public static class RemoveNodeResponse implements Serializable {
+		private final Boolean deleted;
+
+		public RemoveNodeResponse(Boolean deleted) {
+			super();
+			this.deleted = deleted;
+		}
+
+		public Boolean getDeleted() {
+			return deleted;
+		}
+
+	}
+
 	public static class AddNodeRequest implements Serializable {
 		private final String mapId;
 		private final String parentNodeId;
@@ -115,19 +129,6 @@ public class Messages {
 		}
 	}
 
-	public static class ErrorMessage implements Serializable {
-		private final Exception e;
-
-		public ErrorMessage(Exception e) {
-			super();
-			this.e = e;
-		}
-
-		public Exception getException() {
-			return e;
-		}
-	}
-
 	public static class ChangeNodeRequest implements Serializable {
 		final private String mapId;
 		final private String nodeAsJsonString;
@@ -143,6 +144,19 @@ public class Messages {
 
 		public String getNodeAsJsonString() {
 			return nodeAsJsonString;
+		}
+	}
+
+	public static class ChangeNodeResponse implements Serializable {
+		private final String nodeAsJson;
+
+		public ChangeNodeResponse(String nodeAsJson) {
+			super();
+			this.nodeAsJson = nodeAsJson;
+		}
+
+		public String getNode() {
+			return nodeAsJson;
 		}
 	}
 
@@ -199,13 +213,17 @@ public class Messages {
 	public static class OpenMindMapRequest implements Serializable {
 		final private String mindmapFileName;
 		final private String mindmapFileContent;
-		public OpenMindMapRequest(String mindmapFileContent, String mindmapFileName) {
+
+		public OpenMindMapRequest(String mindmapFileContent,
+				String mindmapFileName) {
 			this.mindmapFileName = mindmapFileName;
 			this.mindmapFileContent = mindmapFileContent;
 		}
+
 		public String getMindmapFileName() {
 			return mindmapFileName;
 		}
+
 		public String getMindmapFileContent() {
 			return mindmapFileContent;
 		}
@@ -226,11 +244,13 @@ public class Messages {
 	public static class RefreshLockRequest implements Serializable {
 		private final String mapId;
 		private final String nodeId;
+		private final String username;
 
-		public RefreshLockRequest(String mapId, String nodeId) {
+		public RefreshLockRequest(String mapId, String nodeId, String username) {
 			super();
 			this.mapId = mapId;
 			this.nodeId = nodeId;
+			this.username = username;
 		}
 
 		public String getMapId() {
@@ -240,6 +260,24 @@ public class Messages {
 		public String getNodeId() {
 			return nodeId;
 		}
+		
+		public String getUsername() {
+			return username;
+		}
+	}
+
+	public static class RefreshLockResponse implements Serializable {
+		private final Boolean lockRefreshed;
+
+		public RefreshLockResponse(Boolean lockRefreshed) {
+			super();
+			this.lockRefreshed = lockRefreshed;
+		}
+
+		public Boolean getLockRefreshed() {
+			return lockRefreshed;
+		}
+
 	}
 
 	public static class RequestLockRequest implements Serializable {
@@ -266,15 +304,36 @@ public class Messages {
 			return username;
 		}
 	}
-	
+
+	public static class RequestLockResponse implements Serializable {
+		private final Boolean lockGained;
+		private final String nodeAsJson;
+
+		public RequestLockResponse(Boolean lockGained, String nodeAsJson) {
+			super();
+			this.lockGained = lockGained;
+			this.nodeAsJson = nodeAsJson;
+		}
+
+		public Boolean getLockGained() {
+			return lockGained;
+		}
+
+		public String getNodeAsJson() {
+			return nodeAsJson;
+		}
+	}
+
 	public static class ReleaseLockRequest implements Serializable {
 		private final String mapId;
 		private final String nodeId;
+		private final String username;
 
-		public ReleaseLockRequest(String mapId, String nodeId) {
+		public ReleaseLockRequest(String mapId, String nodeId, String username) {
 			super();
 			this.mapId = mapId;
 			this.nodeId = nodeId;
+			this.username = username;
 		}
 
 		public String getMapId() {
@@ -284,8 +343,31 @@ public class Messages {
 		public String getNodeId() {
 			return nodeId;
 		}
+		
+		public String getUsername() {
+			return username;
+		}
 	}
-	
+
+	public static class ReleaseLockResponse implements Serializable {
+		private final Boolean lockReleased;
+		private final String nodeAsJson;
+
+		public ReleaseLockResponse(Boolean lockReleased, String nodeAsJson) {
+			super();
+			this.lockReleased = lockReleased;
+			this.nodeAsJson = nodeAsJson;
+		}
+
+		public Boolean getLockReleased() {
+			return lockReleased;
+		}
+
+		public String getNodeAsJson() {
+			return nodeAsJson;
+		}
+	}
+
 	public static class GetExpiredLocksRequest implements Serializable {
 		private final String mapId;
 		private final int deltaTimeInMs;
@@ -317,14 +399,14 @@ public class Messages {
 			return expiredNodesAsJSON;
 		}
 	}
-	
+
 	public static class CloseUnusedMaps implements Serializable {
 		private final long unusedSinceInMs;
-		
+
 		public CloseUnusedMaps() {
 			unusedSinceInMs = 600000; // 10 minutes
 		}
-		
+
 		public CloseUnusedMaps(long timeInMillis) {
 			unusedSinceInMs = timeInMillis;
 		}
@@ -333,10 +415,9 @@ public class Messages {
 			return unusedSinceInMs;
 		}
 	}
-	
+
 	public static class ListenToUpdateOccurrenceRequest implements Serializable {
 		private final String mapId;
-
 
 		public ListenToUpdateOccurrenceRequest(String mapId) {
 			this.mapId = mapId;
@@ -345,9 +426,9 @@ public class Messages {
 		public String getMapId() {
 			return mapId;
 		}
-		
+
 	}
-	
+
 	public static class ListenToUpdateOccurrenceRespone implements Serializable {
 		private final Boolean result;
 
