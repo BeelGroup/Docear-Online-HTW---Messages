@@ -489,9 +489,9 @@ public class Messages {
 	
 	public static class FetchMindmapUpdatesRequest implements Serializable {
 		private final String mapId;
-		private final Long revisionId;
+		private final Integer revisionId;
 		
-		public FetchMindmapUpdatesRequest(String mapId, Long revisionId) {
+		public FetchMindmapUpdatesRequest(String mapId, Integer revisionId) {
 			super();
 			this.mapId = mapId;
 			this.revisionId = revisionId;
@@ -501,7 +501,7 @@ public class Messages {
 			return mapId;
 		}
 
-		public Long getRevisionId() {
+		public Integer getRevisionId() {
 			return revisionId;
 		}
 	}
