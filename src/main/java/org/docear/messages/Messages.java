@@ -3,24 +3,33 @@ package org.docear.messages;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 @SuppressWarnings("serial")
 public class Messages {
 
-	public static class MindmapAsJsonRequest implements Serializable {
-		private final String id;
+	public abstract static class MindMapRequest implements Serializable {
+		private final String mapId;
+
+		public MindMapRequest(String mapId) {
+			super();
+			this.mapId = mapId;
+		}
+
+		public String getMapId() {
+			return mapId;
+		}
+	}
+
+	public static class MindmapAsJsonRequest extends MindMapRequest implements Serializable {
 		private final int nodeCount;
 
-		public MindmapAsJsonRequest(String id) {
-			this(id, -1);
+		public MindmapAsJsonRequest(String mapId) {
+			this(mapId, -1);
 		}
 
-		public MindmapAsJsonRequest(String id, int nodeCount) {
-			this.id = id;
+		public MindmapAsJsonRequest(String mapId, int nodeCount) {
+			super(mapId);
 			this.nodeCount = nodeCount;
-		}
-
-		public String getId() {
-			return id;
 		}
 
 		public int getNodeCount() {
@@ -28,16 +37,10 @@ public class Messages {
 		}
 	}
 
-	public static class MindmapAsXmlRequest implements Serializable {
-		private final String mapId;
+	public static class MindmapAsXmlRequest extends MindMapRequest implements Serializable {
 
 		public MindmapAsXmlRequest(String mapId) {
-			super();
-			this.mapId = mapId;
-		}
-
-		public String getMapId() {
-			return mapId;
+			super(mapId);
 		}
 	}
 
@@ -66,19 +69,14 @@ public class Messages {
 		}
 	}
 
-	public static class RemoveNodeRequest implements Serializable {
-		private final String mapId;
+	public static class RemoveNodeRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 		private final String username;
 
 		public RemoveNodeRequest(String mapId, String nodeId, String username) {
-			this.mapId = mapId;
+			super(mapId);
 			this.nodeId = nodeId;
 			this.username = username;
-		}
-
-		public String getMapId() {
-			return mapId;
 		}
 
 		public String getNodeId() {
@@ -105,20 +103,14 @@ public class Messages {
 
 	}
 
-	public static class AddNodeRequest implements Serializable {
-		private final String mapId;
+	public static class AddNodeRequest extends MindMapRequest implements Serializable {
 		private final String parentNodeId;
 		private final String username;
 
 		public AddNodeRequest(String mapId, String parentNodeId, String username) {
-			super();
-			this.mapId = mapId;
+			super(mapId);
 			this.parentNodeId = parentNodeId;
 			this.username = username;
-		}
-
-		public String getMapId() {
-			return mapId;
 		}
 
 		public String getParentNodeId() {
@@ -144,16 +136,13 @@ public class Messages {
 		}
 	}
 
-	public static class ChangeNodeRequest implements Serializable {
-		private final String mapId;
+	public static class ChangeNodeRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
-		private final Map<String,Object> attributeValueMap;
+		private final Map<String, Object> attributeValueMap;
 		private final String username;
 
-		public ChangeNodeRequest(String mapId, String nodeId,
-				Map<String, Object> attributeValueMap, String username) {
-			super();
-			this.mapId = mapId;
+		public ChangeNodeRequest(String mapId, String nodeId, Map<String, Object> attributeValueMap, String username) {
+			super(mapId);
 			this.nodeId = nodeId;
 			this.attributeValueMap = attributeValueMap;
 			this.username = username;
@@ -161,10 +150,6 @@ public class Messages {
 
 		public String getNodeId() {
 			return nodeId;
-		}
-
-		public String getMapId() {
-			return mapId;
 		}
 
 		public Map<String, Object> getAttributeValueMap() {
@@ -190,13 +175,12 @@ public class Messages {
 		}
 	}
 
-	public static class GetNodeRequest implements Serializable {
-		private final String mapId;
+	public static class GetNodeRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 		private final int nodeCount;
 
 		public GetNodeRequest(String mapId, String nodeId, int nodeCount) {
-			this.mapId = mapId;
+			super(mapId);
 			this.nodeId = nodeId;
 			this.nodeCount = nodeCount;
 		}
@@ -208,22 +192,12 @@ public class Messages {
 		public int getNodeCount() {
 			return nodeCount;
 		}
-
-		public String getMapId() {
-			return mapId;
-		}
 	}
 
-	public static class CloseMapRequest implements Serializable {
-		final private String mapId;
+	public static class CloseMapRequest extends MindMapRequest implements Serializable {
 
 		public CloseMapRequest(String mapId) {
-			super();
-			this.mapId = mapId;
-		}
-
-		public String getMapId() {
-			return mapId;
+			super(mapId);
 		}
 	}
 
@@ -240,12 +214,12 @@ public class Messages {
 		}
 	}
 
-	public static class OpenMindMapRequest implements Serializable {
+	public static class OpenMindMapRequest extends MindMapRequest implements Serializable {
 		final private String mindmapFileName;
 		final private String mindmapFileContent;
 
-		public OpenMindMapRequest(String mindmapFileContent,
-				String mindmapFileName) {
+		public OpenMindMapRequest(String mapId, String mindmapFileContent, String mindmapFileName) {
+			super(mapId);
 			this.mindmapFileName = mindmapFileName;
 			this.mindmapFileContent = mindmapFileContent;
 		}
@@ -285,59 +259,14 @@ public class Messages {
 		}
 	}
 
-	// public static class RefreshLockRequest implements Serializable {
-	// private final String mapId;
-	// private final String nodeId;
-	// private final String username;
-	//
-	// public RefreshLockRequest(String mapId, String nodeId, String username) {
-	// super();
-	// this.mapId = mapId;
-	// this.nodeId = nodeId;
-	// this.username = username;
-	// }
-	//
-	// public String getMapId() {
-	// return mapId;
-	// }
-	//
-	// public String getNodeId() {
-	// return nodeId;
-	// }
-	//
-	// public String getUsername() {
-	// return username;
-	// }
-	// }
-	//
-	// public static class RefreshLockResponse implements Serializable {
-	// private final Boolean lockRefreshed;
-	//
-	// public RefreshLockResponse(Boolean lockRefreshed) {
-	// super();
-	// this.lockRefreshed = lockRefreshed;
-	// }
-	//
-	// public Boolean getLockRefreshed() {
-	// return lockRefreshed;
-	// }
-	//
-	// }
-
-	public static class RequestLockRequest implements Serializable {
-		private final String mapId;
+	public static class RequestLockRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 		private final String username;
 
 		public RequestLockRequest(String mapId, String nodeId, String username) {
-			super();
-			this.mapId = mapId;
+			super(mapId);
 			this.nodeId = nodeId;
 			this.username = username;
-		}
-
-		public String getMapId() {
-			return mapId;
 		}
 
 		public String getNodeId() {
@@ -368,20 +297,14 @@ public class Messages {
 		}
 	}
 
-	public static class ReleaseLockRequest implements Serializable {
-		private final String mapId;
+	public static class ReleaseLockRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 		private final String username;
 
 		public ReleaseLockRequest(String mapId, String nodeId, String username) {
-			super();
-			this.mapId = mapId;
+			super(mapId);
 			this.nodeId = nodeId;
 			this.username = username;
-		}
-
-		public String getMapId() {
-			return mapId;
 		}
 
 		public String getNodeId() {
@@ -412,38 +335,6 @@ public class Messages {
 		}
 	}
 
-	// public static class GetExpiredLocksRequest implements Serializable {
-	// private final String mapId;
-	// private final int deltaTimeInMs;
-	//
-	// public GetExpiredLocksRequest(String mapId, int deltaTimeInMs) {
-	// super();
-	// this.mapId = mapId;
-	// this.deltaTimeInMs = deltaTimeInMs;
-	// }
-	//
-	// public String getMapId() {
-	// return mapId;
-	// }
-	//
-	// public int getDeltaTimeInMs() {
-	// return deltaTimeInMs;
-	// }
-	// }
-	//
-	// public static class GetExpiredLocksResponse implements Serializable {
-	// private final String expiredNodesAsJSON;
-	//
-	// public GetExpiredLocksResponse(String expiredNodesAsJSON) {
-	// super();
-	// this.expiredNodesAsJSON = expiredNodesAsJSON;
-	// }
-	//
-	// public String getExpiredNodesAsJSON() {
-	// return expiredNodesAsJSON;
-	// }
-	// }
-
 	public static class CloseUnusedMaps implements Serializable {
 		private final long unusedSinceInMs;
 
@@ -460,15 +351,10 @@ public class Messages {
 		}
 	}
 
-	public static class ListenToUpdateOccurrenceRequest implements Serializable {
-		private final String mapId;
+	public static class ListenToUpdateOccurrenceRequest extends MindMapRequest implements Serializable {
 
 		public ListenToUpdateOccurrenceRequest(String mapId) {
-			this.mapId = mapId;
-		}
-
-		public String getMapId() {
-			return mapId;
+			super(mapId);
 		}
 
 	}
@@ -485,33 +371,25 @@ public class Messages {
 			return result;
 		}
 	}
-	
-	
-	public static class FetchMindmapUpdatesRequest implements Serializable {
-		private final String mapId;
-		private final Integer revisionId;
-		
-		public FetchMindmapUpdatesRequest(String mapId, Integer revisionId) {
-			super();
-			this.mapId = mapId;
-			this.revisionId = revisionId;
-		}
 
-		public String getMapId() {
-			return mapId;
+	public static class FetchMindmapUpdatesRequest extends MindMapRequest implements Serializable {
+		private final Integer revisionId;
+
+		public FetchMindmapUpdatesRequest(String mapId, Integer revisionId) {
+			super(mapId);
+			this.revisionId = revisionId;
 		}
 
 		public Integer getRevisionId() {
 			return revisionId;
 		}
 	}
-	
+
 	public static class FetchMindmapUpdatesResponse implements Serializable {
 		private final Integer currentRevision;
 		private final List<String> orderedUpdates;
 
-		public FetchMindmapUpdatesResponse(Integer currentRevision,
-				List<String> orderedUpdates) {
+		public FetchMindmapUpdatesResponse(Integer currentRevision, List<String> orderedUpdates) {
 			this.currentRevision = currentRevision;
 			this.orderedUpdates = orderedUpdates;
 		}
