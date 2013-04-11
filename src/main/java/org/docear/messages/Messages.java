@@ -175,6 +175,44 @@ public class Messages {
 		}
 	}
 
+	public static class MoveNodeToRequest extends MindMapRequest implements Serializable {
+		private final String newParentNodeId;
+		private final String nodeToMoveId;
+		private final Integer newIndex;
+
+		public MoveNodeToRequest(String mapId, String newParentNodeId, String nodeToMoveId, Integer newIndex) {
+			super(mapId);
+			this.newParentNodeId = newParentNodeId;
+			this.nodeToMoveId = nodeToMoveId;
+			this.newIndex = newIndex;
+		}
+
+		public String getNewParentNodeId() {
+			return newParentNodeId;
+		}
+
+		public String getNodeToMoveId() {
+			return nodeToMoveId;
+		}
+
+		public Integer getNewIndex() {
+			return newIndex;
+		}
+	}
+
+	public static class MoveNodeToResponse implements Serializable {
+		private final Boolean success;
+
+		public MoveNodeToResponse(Boolean success) {
+			super();
+			this.success = success;
+		}
+
+		public Boolean getSuccess() {
+			return success;
+		}
+	}
+
 	public static class GetNodeRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 		private final int nodeCount;
