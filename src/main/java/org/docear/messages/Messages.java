@@ -374,6 +374,45 @@ public class Messages {
 		}
 	}
 
+	public static class ChangeEdgeRequest extends MindMapRequest implements Serializable {
+		private final Integer width;
+		private final Integer color;
+		private final String style;
+
+		public ChangeEdgeRequest(String source, String username, String mapId, Integer width, Integer color, String style) {
+			super(source, username, mapId);
+			this.width = width;
+			this.color = color;
+			this.style = style;
+		}
+
+		public Integer getWidth() {
+			return width;
+		}
+
+		public Integer getColor() {
+			return color;
+		}
+
+		public String getStyle() {
+			return style;
+		}
+
+	}
+
+	public static class ChangeEdgeResponse implements Serializable {
+		private final boolean success;
+
+		public ChangeEdgeResponse(boolean success) {
+			this.success = success;
+		}
+
+		public boolean isSuccess() {
+			return success;
+		}
+
+	}
+
 	public static class CloseUnusedMaps extends BaseRequest implements Serializable {
 		private final long unusedSinceInMs;
 
@@ -399,11 +438,10 @@ public class Messages {
 
 	}
 
-	public static class ListenToUpdateOccurrenceRespone implements Serializable {
+	public static class ListenToUpdateOccurrenceResponse implements Serializable {
 		private final Boolean result;
 
-		public ListenToUpdateOccurrenceRespone(Boolean result) {
-			super();
+		public ListenToUpdateOccurrenceResponse(Boolean result) {
 			this.result = result;
 		}
 
