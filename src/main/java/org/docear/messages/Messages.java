@@ -4,51 +4,64 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.docear.messages.models.MapIdentifier;
+import org.docear.messages.models.UserIdentifier;
+
 @SuppressWarnings("serial")
 public class Messages {
 
 	public abstract static class BaseRequest implements Serializable {
-		private final String username;
-		private final String source;
+		private final UserIdentifier userIdentifier;
 
-		public BaseRequest(String source, String username) {
-			super();
-			this.username = username;
-			this.source = source;
+		public BaseRequest(UserIdentifier userIdentifier) {
+			this.userIdentifier = userIdentifier;
+		}
+
+		public UserIdentifier getUserIdentifier() {
+			return userIdentifier;
 		}
 
 		public String getUsername() {
-			return username;
+			return userIdentifier.getUsername();
 		}
 
 		public String getSource() {
-			return source;
+			return userIdentifier.getSource();
 		}
 
 	}
 
 	public abstract static class MindMapRequest extends BaseRequest implements Serializable {
-		private final String mapId;
+		private final MapIdentifier mapIdentifier;
 
-		public MindMapRequest(String source, String username, String mapId) {
-			super(source, username);
-			this.mapId = mapId;
+		public MindMapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			super(userIdentifier);
+			this.mapIdentifier = mapIdentifier;
+		}
+
+		public MapIdentifier getMapIdentifier() {
+			return mapIdentifier;
 		}
 
 		public String getMapId() {
-			return mapId;
+			return mapIdentifier.getMapId();
 		}
+
+		public String getProjectId() {
+			return mapIdentifier.getProjectId();
+		}
+
 	}
 
 	public static class MindmapAsJsonRequest extends MindMapRequest implements Serializable {
 		private final int nodeCount;
 
-		public MindmapAsJsonRequest(String source, String username, String mapId) {
-			this(source, username, mapId, -1);
+		public MindmapAsJsonRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			this(userIdentifier, mapIdentifier, -1);
 		}
 
-		public MindmapAsJsonRequest(String source, String username, String mapId, int nodeCount) {
-			super(source, username, mapId);
+		public MindmapAsJsonRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, int nodeCount) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeCount = nodeCount;
 		}
 
@@ -59,8 +72,8 @@ public class Messages {
 
 	public static class MindmapAsXmlRequest extends MindMapRequest implements Serializable {
 
-		public MindmapAsXmlRequest(String source, String username, String mapId) {
-			super(source, username, mapId);
+		public MindmapAsXmlRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			super(userIdentifier, mapIdentifier);
 		}
 	}
 
@@ -99,8 +112,8 @@ public class Messages {
 	public static class RemoveNodeRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 
-		public RemoveNodeRequest(String source, String username, String mapId, String nodeId) {
-			super(source, username, mapId);
+		public RemoveNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeId = nodeId;
 		}
 
@@ -126,8 +139,8 @@ public class Messages {
 	public static class AddNodeRequest extends MindMapRequest implements Serializable {
 		private final String parentNodeId;
 
-		public AddNodeRequest(String source, String username, String mapId, String parentNodeId) {
-			super(source, username, mapId);
+		public AddNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String parentNodeId) {
+			super(userIdentifier, mapIdentifier);
 			this.parentNodeId = parentNodeId;
 		}
 
@@ -154,8 +167,8 @@ public class Messages {
 		private final String nodeId;
 		private final Map<String, Object> attributeValueMap;
 
-		public ChangeNodeRequest(String source, String username, String mapId, String nodeId, Map<String, Object> attributeValueMap) {
-			super(source, username, mapId);
+		public ChangeNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId, Map<String, Object> attributeValueMap) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeId = nodeId;
 			this.attributeValueMap = attributeValueMap;
 
@@ -189,8 +202,8 @@ public class Messages {
 		private final String nodeToMoveId;
 		private final Integer newIndex;
 
-		public MoveNodeToRequest(String source, String username, String mapId, String newParentNodeId, String nodeToMoveId, Integer newIndex) {
-			super(source, username, mapId);
+		public MoveNodeToRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String newParentNodeId, String nodeToMoveId, Integer newIndex) {
+			super(userIdentifier, mapIdentifier);
 			this.newParentNodeId = newParentNodeId;
 			this.nodeToMoveId = nodeToMoveId;
 			this.newIndex = newIndex;
@@ -226,8 +239,8 @@ public class Messages {
 		private final String nodeId;
 		private final int nodeCount;
 
-		public GetNodeRequest(String source, String username, String mapId, String nodeId, int nodeCount) {
-			super(source, username, mapId);
+		public GetNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId, int nodeCount) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeId = nodeId;
 			this.nodeCount = nodeCount;
 		}
@@ -243,8 +256,8 @@ public class Messages {
 
 	public static class CloseMapRequest extends MindMapRequest implements Serializable {
 
-		public CloseMapRequest(String source, String username, String mapId) {
-			super(source, username, mapId);
+		public CloseMapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			super(userIdentifier, mapIdentifier);
 		}
 	}
 
@@ -265,8 +278,8 @@ public class Messages {
 		final private String mindmapFileName;
 		final private String mindmapFileContent;
 
-		public OpenMindMapRequest(String source, String username, String mapId, String mindmapFileContent, String mindmapFileName) {
-			super(source, username, mapId);
+		public OpenMindMapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String mindmapFileContent, String mindmapFileName) {
+			super(userIdentifier, mapIdentifier);
 			this.mindmapFileName = mindmapFileName;
 			this.mindmapFileContent = mindmapFileContent;
 		}
@@ -296,23 +309,23 @@ public class Messages {
 
 	public static class CloseAllOpenMapsRequest extends BaseRequest implements Serializable {
 
-		public CloseAllOpenMapsRequest(String source, String username) {
-			super(source, username);
+		public CloseAllOpenMapsRequest(UserIdentifier userIdentifier) {
+			super(userIdentifier);
 		}
 	}
 
 	public static class CloseServerRequest extends BaseRequest implements Serializable {
 
-		public CloseServerRequest(String source, String username) {
-			super(source, username);
+		public CloseServerRequest(UserIdentifier userIdentifier) {
+			super(userIdentifier);
 		}
 	}
 
 	public static class RequestLockRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 
-		public RequestLockRequest(String source, String username, String mapId, String nodeId) {
-			super(source, username, mapId);
+		public RequestLockRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeId = nodeId;
 		}
 
@@ -344,8 +357,8 @@ public class Messages {
 	public static class ReleaseLockRequest extends MindMapRequest implements Serializable {
 		private final String nodeId;
 
-		public ReleaseLockRequest(String source, String username, String mapId, String nodeId) {
-			super(source, username, mapId);
+		public ReleaseLockRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId) {
+			super(userIdentifier, mapIdentifier);
 			this.nodeId = nodeId;
 		}
 
@@ -375,27 +388,22 @@ public class Messages {
 	}
 
 	public static class ChangeEdgeRequest extends MindMapRequest implements Serializable {
-		private final Integer width;
-		private final Integer color;
-		private final String style;
+		private final String nodeId;
+		private final Map<String, Object> attributeValueMap;
 
-		public ChangeEdgeRequest(String source, String username, String mapId, Integer width, Integer color, String style) {
-			super(source, username, mapId);
-			this.width = width;
-			this.color = color;
-			this.style = style;
+		public ChangeEdgeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String nodeId, Map<String, Object> attributeValueMap) {
+			super(userIdentifier, mapIdentifier);
+			this.nodeId = nodeId;
+			this.attributeValueMap = attributeValueMap;
+
 		}
 
-		public Integer getWidth() {
-			return width;
+		public String getNodeId() {
+			return nodeId;
 		}
 
-		public Integer getColor() {
-			return color;
-		}
-
-		public String getStyle() {
-			return style;
+		public Map<String, Object> getAttributeValueMap() {
+			return attributeValueMap;
 		}
 
 	}
@@ -416,12 +424,12 @@ public class Messages {
 	public static class CloseUnusedMaps extends BaseRequest implements Serializable {
 		private final long unusedSinceInMs;
 
-		public CloseUnusedMaps(String source, String username) {
-			this(source, username, 600000);// 10 minutes
+		public CloseUnusedMaps(UserIdentifier userIdentifier) {
+			this(userIdentifier, 600000);// 10 minutes
 		}
 
-		public CloseUnusedMaps(String source, String username, long timeInMillis) {
-			super(source, username);
+		public CloseUnusedMaps(UserIdentifier userIdentifier, long timeInMillis) {
+			super(userIdentifier);
 			unusedSinceInMs = timeInMillis;
 		}
 
@@ -432,8 +440,8 @@ public class Messages {
 
 	public static class ListenToUpdateOccurrenceRequest extends MindMapRequest implements Serializable {
 
-		public ListenToUpdateOccurrenceRequest(String source, String username, String mapId) {
-			super(source, username, mapId);
+		public ListenToUpdateOccurrenceRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			super(userIdentifier, mapIdentifier);
 		}
 
 	}
@@ -453,8 +461,8 @@ public class Messages {
 	public static class FetchMindmapUpdatesRequest extends MindMapRequest implements Serializable {
 		private final Integer revisionId;
 
-		public FetchMindmapUpdatesRequest(String source, String username, String mapId, Integer revisionId) {
-			super(source, username, mapId);
+		public FetchMindmapUpdatesRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, Integer revisionId) {
+			super(userIdentifier, mapIdentifier);
 			this.revisionId = revisionId;
 		}
 

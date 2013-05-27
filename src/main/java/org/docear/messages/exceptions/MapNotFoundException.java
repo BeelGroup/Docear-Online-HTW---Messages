@@ -1,23 +1,24 @@
 package org.docear.messages.exceptions;
 
+import org.docear.messages.models.MapIdentifier;
+
 public class MapNotFoundException extends RuntimeException {
-    private static final long serialVersionUID = 5455448353150522704L;
+	private static final long serialVersionUID = 5455448353150522704L;
 
-    private final String mapId;
-    
-    public MapNotFoundException(String s, String mapId) {
-        super(s);
-        this.mapId = mapId;
-    }
-    
-    public MapNotFoundException(String message, Throwable cause, String mapId) {
-		super(message,cause);
-		this.mapId = mapId;
+	private final MapIdentifier mapIdentifier;
+
+	public MapNotFoundException(String s, MapIdentifier mapIdentifier) {
+		super(s);
+		this.mapIdentifier = mapIdentifier;
 	}
 
-	public String getMapId() {
-		return mapId;
+	public MapNotFoundException(String message, Throwable cause, MapIdentifier mapIdentifier) {
+		super(message, cause);
+		this.mapIdentifier = mapIdentifier;
 	}
-    
-    
+
+	public MapIdentifier getMapIdentifier() {
+		return mapIdentifier;
+	}
+
 }
