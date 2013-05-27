@@ -36,4 +36,9 @@ public class MapIdentifier implements Serializable {
 	public int hashCode() {
 		return (projectId+mapId).hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return "{ProjectId: "+projectId+"; MapId: "+mapId+"}";
+	}
 }

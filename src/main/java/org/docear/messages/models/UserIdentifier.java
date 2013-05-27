@@ -35,4 +35,9 @@ public class UserIdentifier implements Serializable {
 	public int hashCode() {
 		return (username+source).hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return "{Source: "+source+"; Username: "+username+"}";
+	}
 }
