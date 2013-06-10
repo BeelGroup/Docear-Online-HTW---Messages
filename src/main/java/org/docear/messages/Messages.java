@@ -138,14 +138,24 @@ public class Messages {
 
 	public static class AddNodeRequest extends MindMapRequest implements Serializable {
 		private final String parentNodeId;
+		private final String side;
 
 		public AddNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String parentNodeId) {
+			this(userIdentifier, mapIdentifier, parentNodeId, null);
+		}
+		
+		public AddNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String parentNodeId, String side) {
 			super(userIdentifier, mapIdentifier);
 			this.parentNodeId = parentNodeId;
+			this.side = side;
 		}
 
 		public String getParentNodeId() {
 			return parentNodeId;
+		}
+		
+		public String getSide(){
+			return side;
 		}
 
 	}
