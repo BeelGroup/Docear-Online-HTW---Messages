@@ -488,4 +488,22 @@ public class Messages {
 			return currentRevision;
 		}
 	}
+
+	public static class CreateMindmapRequest extends MindMapRequest implements Serializable {
+		public CreateMindmapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+			super(userIdentifier, mapIdentifier);
+		}
+	}
+
+	public static class CreateMindmapResponse implements Serializable {
+		private final boolean success;
+
+		public CreateMindmapResponse(boolean success) {
+			this.success = success;
+		}
+
+		public boolean isSuccess() {
+			return success;
+		}
+	}
 }
