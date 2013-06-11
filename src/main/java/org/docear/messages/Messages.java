@@ -53,6 +53,26 @@ public class Messages {
 
 	}
 
+	public abstract static class MindMapChangeResponse implements Serializable {
+		private final long currentRevision;
+		private final boolean success;
+
+		public MindMapChangeResponse(long currentRevision, boolean success) {
+
+			this.currentRevision = currentRevision;
+			this.success = success;
+		}
+
+		public long getCurrentRevision() {
+			return currentRevision;
+		}
+
+		public boolean isSuccess() {
+			return success;
+		}
+
+	}
+
 	public static class MindmapAsJsonRequest extends MindMapRequest implements Serializable {
 		private final int nodeCount;
 
@@ -122,18 +142,10 @@ public class Messages {
 		}
 	}
 
-	public static class RemoveNodeResponse implements Serializable {
-		private final Boolean deleted;
-
-		public RemoveNodeResponse(Boolean deleted) {
-			super();
-			this.deleted = deleted;
+	public static class RemoveNodeResponse extends MindMapChangeResponse implements Serializable {
+		public RemoveNodeResponse(long currentRevision, boolean deleted) {
+			super(currentRevision, deleted);
 		}
-
-		public Boolean getDeleted() {
-			return deleted;
-		}
-
 	}
 
 	public static class AddNodeRequest extends MindMapRequest implements Serializable {
@@ -143,7 +155,7 @@ public class Messages {
 		public AddNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String parentNodeId) {
 			this(userIdentifier, mapIdentifier, parentNodeId, null);
 		}
-		
+
 		public AddNodeRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String parentNodeId, String side) {
 			super(userIdentifier, mapIdentifier);
 			this.parentNodeId = parentNodeId;
@@ -153,18 +165,18 @@ public class Messages {
 		public String getParentNodeId() {
 			return parentNodeId;
 		}
-		
-		public String getSide(){
+
+		public String getSide() {
 			return side;
 		}
 
 	}
 
-	public static class AddNodeResponse implements Serializable {
+	public static class AddNodeResponse extends MindMapChangeResponse implements Serializable {
 		private final String mapUpdate;
 
-		public AddNodeResponse(String mapUpdate) {
-			super();
+		public AddNodeResponse(long currentRevision, boolean success, String mapUpdate) {
+			super(currentRevision, success);
 			this.mapUpdate = mapUpdate;
 		}
 
@@ -194,11 +206,11 @@ public class Messages {
 
 	}
 
-	public static class ChangeNodeResponse implements Serializable {
+	public static class ChangeNodeResponse extends MindMapChangeResponse implements Serializable {
 		private final List<String> mapUpdates;
 
-		public ChangeNodeResponse(List<String> mapUpdates) {
-			super();
+		public ChangeNodeResponse(long currentRevision, boolean success, List<String> mapUpdates) {
+			super(currentRevision, success);
 			this.mapUpdates = mapUpdates;
 		}
 
@@ -232,17 +244,12 @@ public class Messages {
 		}
 	}
 
-	public static class MoveNodeToResponse implements Serializable {
-		private final Boolean success;
+	public static class MoveNodeToResponse extends MindMapChangeResponse implements Serializable {
 
-		public MoveNodeToResponse(Boolean success) {
-			super();
-			this.success = success;
+		public MoveNodeToResponse(long currentRevision, boolean success) {
+			super(currentRevision, success);
 		}
 
-		public Boolean getSuccess() {
-			return success;
-		}
 	}
 
 	public static class GetNodeRequest extends MindMapRequest implements Serializable {
@@ -303,16 +310,9 @@ public class Messages {
 		}
 	}
 
-	public static class OpenMindMapResponse implements Serializable {
-		final private Boolean success;
-
-		public OpenMindMapResponse(Boolean success) {
-			super();
-			this.success = success;
-		}
-
-		public Boolean getSuccess() {
-			return success;
+	public static class OpenMindMapResponse extends MindMapChangeResponse implements Serializable {
+		public OpenMindMapResponse(long currentRevision, boolean success) {
+			super(currentRevision, success);
 		}
 
 	}
@@ -345,18 +345,12 @@ public class Messages {
 
 	}
 
-	public static class RequestLockResponse implements Serializable {
-		private final Boolean lockGained;
+	public static class RequestLockResponse extends MindMapChangeResponse implements Serializable {
 		private final String mapUpdate;
 
-		public RequestLockResponse(Boolean lockGained, String mapUpdate) {
-			super();
-			this.lockGained = lockGained;
+		public RequestLockResponse(long currentRevision, boolean success, String mapUpdate) {
+			super(currentRevision, success);
 			this.mapUpdate = mapUpdate;
-		}
-
-		public Boolean getLockGained() {
-			return lockGained;
 		}
 
 		public String getMapUpdate() {
@@ -378,18 +372,12 @@ public class Messages {
 
 	}
 
-	public static class ReleaseLockResponse implements Serializable {
-		private final Boolean lockReleased;
+	public static class ReleaseLockResponse extends MindMapChangeResponse implements Serializable {
 		private final String mapUpdate;
 
-		public ReleaseLockResponse(Boolean lockReleased, String mapUpdate) {
-			super();
-			this.lockReleased = lockReleased;
+		public ReleaseLockResponse(long currentRevision, boolean success, String mapUpdate) {
+			super(currentRevision, success);
 			this.mapUpdate = mapUpdate;
-		}
-
-		public Boolean getLockReleased() {
-			return lockReleased;
 		}
 
 		public String getMapUpdate() {
@@ -418,15 +406,10 @@ public class Messages {
 
 	}
 
-	public static class ChangeEdgeResponse implements Serializable {
-		private final boolean success;
+	public static class ChangeEdgeResponse extends MindMapChangeResponse implements Serializable {
 
-		public ChangeEdgeResponse(boolean success) {
-			this.success = success;
-		}
-
-		public boolean isSuccess() {
-			return success;
+		public ChangeEdgeResponse(long currentRevision, boolean success) {
+			super(currentRevision, success);
 		}
 
 	}
@@ -505,15 +488,11 @@ public class Messages {
 		}
 	}
 
-	public static class CreateMindmapResponse implements Serializable {
-		private final boolean success;
+	public static class CreateMindmapResponse extends MindMapChangeResponse implements Serializable {
 
-		public CreateMindmapResponse(boolean success) {
-			this.success = success;
+		public CreateMindmapResponse(long currentRevision, boolean success) {
+			super(currentRevision, success);
 		}
 
-		public boolean isSuccess() {
-			return success;
-		}
 	}
 }
