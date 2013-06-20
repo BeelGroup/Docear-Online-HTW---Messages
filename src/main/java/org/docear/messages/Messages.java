@@ -99,16 +99,16 @@ public class Messages {
 
 	public static class MindmapAsXmlResponse implements Serializable {
 		private final int currentRevision;
-		private final String xmlString;
+		private final byte[] fileBytes;
 
-		public MindmapAsXmlResponse(String xmlString, int currentRevision) {
+		public MindmapAsXmlResponse(byte[] fileBytes, int currentRevision) {
 			super();
-			this.xmlString = xmlString;
+			this.fileBytes = fileBytes;
 			this.currentRevision = currentRevision;
 		}
 
-		public String getXmlString() {
-			return xmlString;
+		public byte[] getFileBytes() {
+			return fileBytes;
 		}
 
 		public int getCurrentRevision() {
@@ -480,6 +480,19 @@ public class Messages {
 		public Integer getCurrentRevision() {
 			return currentRevision;
 		}
+	}
+
+	public static class ForceSaveAndCloseRequest implements Serializable {
+		private final MapIdentifier mapIdentifier;
+
+		public ForceSaveAndCloseRequest(MapIdentifier mapIdentifier) {
+			this.mapIdentifier = mapIdentifier;
+		}
+
+		public MapIdentifier getMapIdentifier() {
+			return mapIdentifier;
+		}
+
 	}
 
 	public static class CreateMindmapRequest extends MindMapRequest implements Serializable {
