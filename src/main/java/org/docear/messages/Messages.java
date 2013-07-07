@@ -292,22 +292,23 @@ public class Messages {
 	}
 
 	public static class OpenMindMapRequest extends MindMapRequest implements Serializable {
-		final private String mindmapFileName;
-		final private String mindmapFileContent;
+		final private byte[] mindmapFileContent;
+		final private Object actorRefForClosing;
 
-		public OpenMindMapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, String mindmapFileContent, String mindmapFileName) {
+		public OpenMindMapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, byte[] mindmapFileContent, Object actorRefForClosing) {
 			super(userIdentifier, mapIdentifier);
-			this.mindmapFileName = mindmapFileName;
 			this.mindmapFileContent = mindmapFileContent;
+			this.actorRefForClosing = actorRefForClosing;
 		}
 
-		public String getMindmapFileName() {
-			return mindmapFileName;
-		}
-
-		public String getMindmapFileContent() {
+		public byte[] getMindmapFileContent() {
 			return mindmapFileContent;
 		}
+
+		public Object getActorRefForClosing() {
+			return actorRefForClosing;
+		}
+
 	}
 
 	public static class OpenMindMapResponse extends MindMapChangeResponse implements Serializable {
@@ -482,23 +483,38 @@ public class Messages {
 		}
 	}
 
-	public static class ForceSaveAndCloseRequest implements Serializable {
+	public static class MapClosedMessage implements Serializable {
 		private final MapIdentifier mapIdentifier;
+		private final byte[] fileBytes;
 
-		public ForceSaveAndCloseRequest(MapIdentifier mapIdentifier) {
+		public MapClosedMessage(MapIdentifier mapIdentifier, byte[] fileBytes) {
+			super();
 			this.mapIdentifier = mapIdentifier;
+			this.fileBytes = fileBytes;
 		}
 
 		public MapIdentifier getMapIdentifier() {
 			return mapIdentifier;
 		}
 
+		public byte[] getFileBytes() {
+			return fileBytes;
+		}
+
 	}
 
 	public static class CreateMindmapRequest extends MindMapRequest implements Serializable {
-		public CreateMindmapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier) {
+		private final Object closingActor;
+
+		public CreateMindmapRequest(UserIdentifier userIdentifier, MapIdentifier mapIdentifier, Object closingActor) {
 			super(userIdentifier, mapIdentifier);
+			this.closingActor = closingActor;
 		}
+
+		public Object getClosingActor() {
+			return closingActor;
+		}
+
 	}
 
 	public static class CreateMindmapResponse extends MindMapChangeResponse implements Serializable {
